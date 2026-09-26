@@ -8,6 +8,20 @@
       "when": 1790459048654,
       "tag": "20260926214408_init_users_organizations",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790466034292,
+      "tag": "20260926234034_credits_and_generation_jobs",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790466057147,
+      "tag": "20260926234057_credit_ledger_immutable",
+      "breakpoints": true
     }
   ]
 }

@@ -38,7 +38,18 @@ export async function createTestDatabase() {
     /** Vacía las tablas entre tests (más rápido que crear otra base). */
     async reset() {
       await client.exec(`
-        truncate auth.users, public.users, public.organizations, public.memberships cascade;
+        truncate
+          auth.users,
+          public.users,
+          public.organizations,
+          public.memberships,
+          public.credit_wallets,
+          public.credit_lots,
+          public.credit_transactions,
+          public.credit_allocations,
+          public.generation_jobs,
+          public.model_pricing
+        cascade;
       `);
     },
     /** Simula un usuario registrado en Supabase Auth. */
