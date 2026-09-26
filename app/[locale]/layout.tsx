@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
@@ -54,12 +53,7 @@ export default async function LocaleLayout({
       className={cn(fontSans.variable, fontMono.variable, "h-full antialiased")}
     >
       <body className="flex min-h-full flex-col">
-        <NextIntlClientProvider>
-          <header className="flex justify-end px-6 py-4">
-            <LocaleSwitcher />
-          </header>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
