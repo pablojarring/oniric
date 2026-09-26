@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
-import "./globals.css";
+import "../globals.css";
 
 const fontSans = Geist({
   variable: "--font-sans",
@@ -17,8 +20,17 @@ const fontMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Metadata");
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+
+  const t = await getTranslations({ locale, namespace: "Metadata" });
 
   return {
     title: t("title"),
@@ -26,8 +38,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const locale = await getLocale();
+export default async function LocaleLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]">) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+
+  // Permite el renderizado estático de las páginas de este idioma.
+  setRequestLocale(locale);
 
   return (
     <html
@@ -35,7 +54,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={cn(fontSans.variable, fontMono.variable, "h-full antialiased")}
     >
       <body className="flex min-h-full flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <header className="flex justify-end px-6 py-4">
+            <LocaleSwitcher />
+          </header>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
