@@ -1,0 +1,13 @@
+# Archivos generados o de terceros
+pnpm-lock.yaml
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+db/migrations/
+
+# Documentos de contexto: CLAUDE.md se edita a mano y AGENTS.md lo gestiona `next dev`
+CLAUDE.md
+AGENTS.md

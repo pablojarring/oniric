@@ -1,0 +1,10 @@
+# pnpm 10 no ejecuta scripts de instalación salvo que se permitan aquí.
+onlyBuiltDependencies:
+  - esbuild
+
+# Estos paquetes traen binarios precompilados; sus scripts no son necesarios.
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
+  - "@swc/core"
+  - sharp
+  - unrs-resolver
