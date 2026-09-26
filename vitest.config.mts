@@ -16,6 +16,22 @@ export default defineConfig({
           name: "unit",
           environment: "node",
           include: ["**/*.test.ts"],
+          exclude: [
+            ...configDefaults.exclude,
+            "e2e/**",
+            "**/*.integration.test.ts",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          // Contra el Postgres real de Supabase local (`pnpm test:integration`).
+          name: "integration",
+          environment: "node",
+          include: ["**/*.integration.test.ts"],
+          setupFiles: ["./test/integration-setup.ts"],
+          testTimeout: 30_000,
         },
       },
       {
