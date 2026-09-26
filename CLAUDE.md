@@ -29,7 +29,7 @@ No construir un "playground" genérico de modelos.
 ## 2. Stack
 
 - **Frontend + backend:** Next.js (App Router) + TypeScript estricto
-- **UI:** Tailwind CSS + shadcn/ui
+- **UI:** Tailwind CSS + shadcn/ui (preset `base-nova`, sobre Base UI)
 - **Base de datos:** PostgreSQL (Supabase) con Drizzle ORM
 - **Auth:** Supabase Auth (email + Google)
 - **Almacenamiento de outputs:** Supabase Storage o Cloudflare R2
@@ -37,14 +37,16 @@ No construir un "playground" genérico de modelos.
 - **Jobs asíncronos:** webhooks de Higgsfield + tabla de jobs con polling de respaldo
 - **Pagos:** interfaz `PaymentProvider` desacoplada (ver §5). No asumir Stripe.
 - **Tests:** Vitest (unit) + Playwright (e2e de flujos principales)
-- **i18n:** todo texto visible en archivos de traducción (`es` por defecto, `pt` preparado)
+- **i18n:** next-intl. Todo texto visible en `messages/*.json`. El usuario elige el idioma
+  (`es` por defecto, `pt` activo; lenguas originarias previstas). Ver `docs/idiomas.md`.
 
 ## 3. Arquitectura
 
 ```
 /app
-  /(pyme)/...        rutas y layouts del modo guiado
-  /(empresa)/...     rutas y layouts del workspace avanzado
+  /[locale]
+    /(pyme)/...      rutas y layouts del modo guiado
+    /(empresa)/...   rutas y layouts del workspace avanzado
   /api/webhooks/higgsfield
   /api/webhooks/payments
 /lib

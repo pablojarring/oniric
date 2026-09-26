@@ -55,16 +55,20 @@ La primera vez que corras los tests e2e instala el navegador:
 ## Estructura
 
 ```
-app/                 rutas (App Router)
-components/ui/       componentes de shadcn/ui
+app/
+  [locale]/          rutas por idioma (App Router)
+components/          componentes propios
+  ui/                componentes de shadcn/ui
 db/
   index.ts           cliente de Drizzle (solo servidor)
   schema.ts          esquema de la base de datos
   migrations/        migraciones generadas por drizzle-kit
+docs/                documentación de decisiones (idiomas, etc.)
 e2e/                 tests de Playwright
-i18n/                configuración de next-intl
+i18n/                idiomas, routing y carga de textos (next-intl)
 messages/            textos por idioma (es.json, pt.json)
 lib/                 utilidades compartidas
+proxy.ts             detección de idioma y redirecciones
 ```
 
 ## Convenciones
@@ -72,6 +76,10 @@ lib/                 utilidades compartidas
 - **Textos:** todo texto visible va en `messages/*.json`; nada de strings en los
   componentes. `es.json` es la fuente de verdad del tipado y un test verifica que
   `pt.json` tenga las mismas claves.
+- **Idiomas:** el usuario elige el idioma; español en `/` y el resto con prefijo
+  (`/pt`). Usa `Link`, `redirect`, `useRouter` y `usePathname` de
+  `@/i18n/navigation` para conservar el idioma. Cómo activar idiomas, las lenguas
+  originarias previstas y el formato de moneda: [docs/idiomas.md](./docs/idiomas.md).
 - **Tests:** los archivos `*.test.ts` corren en Node y los `*.test.tsx` en jsdom
   con Testing Library.
 - **Base de datos:** las propiedades del esquema van en camelCase y Drizzle las
