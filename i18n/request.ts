@@ -1,14 +1,19 @@
+import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
-import { defaultLocale } from "./config";
+import { loadMessages } from "./messages";
+import { routing } from "./routing";
 
-export default getRequestConfig(async () => {
-  // TODO(producto): definir cómo se elige el idioma (preferencia del usuario,
-  // país de la organización o Accept-Language). Por ahora siempre `es`.
-  const locale = defaultLocale;
+export default getRequestConfig(async ({ requestLocale }) => {
+  // El idioma viene del segmento `[locale]`, que resuelve proxy.ts a partir de
+  // la URL, la cookie o el encabezado Accept-Language.
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: await loadMessages(locale),
   };
 });
