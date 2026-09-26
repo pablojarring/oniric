@@ -51,7 +51,20 @@ explícitas en ese momento.
 | `organizations` | Negocio del onboarding: segmento, país, industria, equipo y usos.        |
 | `memberships`   | Usuario ↔ organización con rol (`admin`, `editor`, `revisor`).           |
 
+Créditos y generaciones (detalle en [creditos.md](./creditos.md)):
+
+| Tabla                 | Qué guarda                                                         |
+| --------------------- | ------------------------------------------------------------------ |
+| `credit_wallets`      | Billetera de cada organización (su fila serializa movimientos).    |
+| `credit_lots`         | Cada acreditación, con lo que queda y su vencimiento.              |
+| `credit_transactions` | Ledger inmutable de todos los movimientos.                         |
+| `credit_allocations`  | De qué lotes salieron los créditos reservados de cada job.         |
+| `model_pricing`       | Margen y precio mínimo por proveedor, modelo y segmento.           |
+| `generation_jobs`     | Cada generación: estado, proveedor, costo, precio, outputs, error. |
+
 Borrar un usuario en Supabase Auth borra su perfil y sus membresías (cascada).
+Las organizaciones con movimientos de créditos no se pueden borrar: el ledger es
+inmutable y es registro contable.
 
 ## Tests
 

@@ -4,7 +4,8 @@ Plataforma SaaS para que empresas de Latinoamérica creen videos e imágenes
 publicitarias con IA. El contexto completo del producto, la arquitectura y el
 roadmap está en [CLAUDE.md](./CLAUDE.md).
 
-> Estado: Fase 1, paso 2 — auth, onboarding y asignación de segmento.
+> Estado: Fase 1, paso 3 — proveedor de generación (mock), jobs y billetera de
+> créditos.
 
 ## Stack
 
@@ -38,24 +39,25 @@ confirmación y de recuperación de contraseña llegan a Mailpit
 
 ## Scripts
 
-| Script                | Qué hace                                                    |
-| --------------------- | ----------------------------------------------------------- |
-| `pnpm dev`            | Servidor de desarrollo                                      |
-| `pnpm build`          | Build de producción                                         |
-| `pnpm start`          | Sirve el build de producción                                |
-| `pnpm lint`           | ESLint (falla con cualquier warning)                        |
-| `pnpm typecheck`      | Genera los tipos de rutas de Next.js y corre `tsc --noEmit` |
-| `pnpm format`         | Formatea el código con Prettier                             |
-| `pnpm format:check`   | Verifica el formato sin modificar archivos                  |
-| `pnpm test`           | Tests unitarios con Vitest (no necesitan Supabase)          |
-| `pnpm test:watch`     | Vitest en modo watch                                        |
-| `pnpm test:e2e`       | Tests e2e con Playwright (necesitan `pnpm supabase:start`)  |
-| `pnpm supabase:start` | Levanta Supabase en Docker                                  |
-| `pnpm supabase:stop`  | Detiene Supabase                                            |
-| `pnpm db:generate`    | Genera una migración a partir de `db/schema.ts`             |
-| `pnpm db:migrate`     | Aplica las migraciones pendientes al Supabase local         |
-| `pnpm db:reset`       | Recrea la base local desde cero con todas las migraciones   |
-| `pnpm db:studio`      | Abre Drizzle Studio                                         |
+| Script                  | Qué hace                                                    |
+| ----------------------- | ----------------------------------------------------------- |
+| `pnpm dev`              | Servidor de desarrollo                                      |
+| `pnpm build`            | Build de producción                                         |
+| `pnpm start`            | Sirve el build de producción                                |
+| `pnpm lint`             | ESLint (falla con cualquier warning)                        |
+| `pnpm typecheck`        | Genera los tipos de rutas de Next.js y corre `tsc --noEmit` |
+| `pnpm format`           | Formatea el código con Prettier                             |
+| `pnpm format:check`     | Verifica el formato sin modificar archivos                  |
+| `pnpm test`             | Tests unitarios con Vitest (no necesitan Supabase)          |
+| `pnpm test:watch`       | Vitest en modo watch                                        |
+| `pnpm test:integration` | Tests contra el Postgres de Supabase local (concurrencia)   |
+| `pnpm test:e2e`         | Tests e2e con Playwright (necesitan `pnpm supabase:start`)  |
+| `pnpm supabase:start`   | Levanta Supabase en Docker                                  |
+| `pnpm supabase:stop`    | Detiene Supabase                                            |
+| `pnpm db:generate`      | Genera una migración a partir de `db/schema.ts`             |
+| `pnpm db:migrate`       | Aplica las migraciones pendientes al Supabase local         |
+| `pnpm db:reset`         | Recrea la base local desde cero con todas las migraciones   |
+| `pnpm db:studio`        | Abre Drizzle Studio                                         |
 
 La primera vez que corras los tests e2e instala el navegador:
 `pnpm exec playwright install chromium`.
@@ -71,6 +73,7 @@ app/
     onboarding/      preguntas iniciales y asignación de segmento
     settings/        configuración ("Modo avanzado")
   api/auth/          vuelta de los enlaces de correo y del login con Google
+  api/cron/          tareas programadas (polling de jobs, vencimiento de créditos)
 components/          componentes propios
   ui/                componentes de shadcn/ui
 db/
@@ -81,8 +84,11 @@ e2e/                 tests de Playwright
 i18n/                idiomas, routing y carga de textos (next-intl)
 lib/
   auth/              sesión, acciones de auth y redirecciones seguras
+  billing/           precios en créditos y billetera (reservar, cobrar, reembolsar)
+  generation/        jobs de generación y polling
   onboarding/        opciones y validación del onboarding
   organizations/     organizaciones y membresías
+  providers/         GenerationProvider y MockProvider
   segment/           regla de segmento y feature flags
   supabase/          clientes de Supabase
   users/             perfiles e idioma preferido
@@ -108,6 +114,8 @@ test/                utilidades de tests (Postgres en memoria)
   segmento en los componentes.
 - **Páginas con sesión:** usa `requireUser`, `requireOrganization` o
   `requireSegmentArea` de `lib/auth/session.ts`. Ver [docs/auth.md](./docs/auth.md).
+- **Créditos:** precios, billetera y jobs según [docs/creditos.md](./docs/creditos.md).
+  El margen nunca se hardcodea en la UI y todo movimiento queda en el ledger.
 - **Base de datos:** los servicios reciben la base por parámetro (`Database`)
   para poder probarlos con PGlite. Las tablas tienen RLS sin políticas y solo se
   acceden desde el servidor. Ver [docs/base-de-datos.md](./docs/base-de-datos.md).
@@ -122,5 +130,5 @@ test/                utilidades de tests (Postgres en memoria)
 
 1. `lint`, `format:check`, `typecheck`, migraciones al día con el esquema y
    tests unitarios
-2. Supabase local, `build` y tests e2e con Playwright sobre el build de
-   producción
+2. Supabase local, tests de integración, `build` y tests e2e con Playwright
+   sobre el build de producción
