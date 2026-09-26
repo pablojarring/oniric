@@ -1,0 +1,21 @@
+{{ if eq .Data.locale "pt" }}
+<h2>Confirme seu e-mail</h2>
+<p>Olá! Para ativar sua conta Oniric, confirme seu e-mail:</p>
+<p>
+  <a
+    href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+    >Confirmar e-mail</a
+  >
+</p>
+<p>Se você não criou uma conta, ignore este e-mail.</p>
+{{ else }}
+<h2>Confirma tu correo</h2>
+<p>¡Hola! Para activar tu cuenta de Oniric, confirma tu correo:</p>
+<p>
+  <a
+    href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+    >Confirmar correo</a
+  >
+</p>
+<p>Si no creaste una cuenta, ignora este mensaje.</p>
+{{ end }}

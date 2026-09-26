@@ -6,7 +6,9 @@ build/
 coverage/
 playwright-report/
 test-results/
-db/migrations/
+supabase/migrations/
+# Plantillas de correo de Supabase (Go templates)
+supabase/templates/
 
 # Documentos de contexto: CLAUDE.md se edita a mano y AGENTS.md lo gestiona `next dev`
 CLAUDE.md
