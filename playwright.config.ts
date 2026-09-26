@@ -1,4 +1,8 @@
+import { loadEnvConfig } from "@next/env";
 import { defineConfig, devices } from "@playwright/test";
+
+// Los tests leen .env.local (Supabase local, Mailpit) igual que Next.js.
+loadEnvConfig(process.cwd());
 
 const PORT = 3000;
 const baseURL = `http://localhost:${PORT}`;

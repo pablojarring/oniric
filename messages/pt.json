@@ -15,5 +15,141 @@
     "title": "Página não encontrada",
     "description": "A página que você procura não existe ou foi movida.",
     "home": "Voltar ao início"
+  },
+  "Nav": {
+    "brand": "Oniric",
+    "login": "Entrar",
+    "signup": "Criar conta",
+    "settings": "Configurações",
+    "logout": "Sair"
+  },
+  "Auth": {
+    "email": "E-mail",
+    "password": "Senha",
+    "passwordHint": "Mínimo de {min} caracteres.",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Repita a senha",
+    "or": "ou",
+    "continueWithGoogle": "Continuar com o Google",
+    "login": {
+      "title": "Entre na sua conta",
+      "description": "Acesse sua conta Oniric.",
+      "submit": "Entrar",
+      "forgotPassword": "Esqueceu sua senha?",
+      "noAccount": "Não tem conta?",
+      "signupLink": "Crie uma grátis"
+    },
+    "signup": {
+      "title": "Crie sua conta",
+      "description": "Comece a criar anúncios com IA para o seu negócio.",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem conta?",
+      "loginLink": "Entre",
+      "checkEmailTitle": "Confira seu e-mail",
+      "checkEmail": "Enviamos um link para {email} para ativar sua conta."
+    },
+    "forgotPassword": {
+      "title": "Recupere sua senha",
+      "description": "Vamos enviar um link para você criar uma nova senha.",
+      "submit": "Enviar link",
+      "sentTitle": "Confira seu e-mail",
+      "sent": "Se {email} tiver uma conta, você receberá um link para redefinir sua senha.",
+      "backToLogin": "Voltar para o login"
+    },
+    "updatePassword": {
+      "title": "Crie uma nova senha",
+      "description": "Digite a senha que você vai usar para entrar no Oniric.",
+      "submit": "Salvar senha"
+    },
+    "errors": {
+      "invalidEmail": "Digite um e-mail válido.",
+      "invalidCredentials": "O e-mail ou a senha estão incorretos.",
+      "emailNotConfirmed": "Confirme seu e-mail antes de entrar. Confira sua caixa de entrada.",
+      "weakPassword": "A senha deve ter pelo menos 8 caracteres.",
+      "samePassword": "A nova senha deve ser diferente da anterior.",
+      "passwordMismatch": "As senhas não coincidem.",
+      "rateLimited": "Muitas tentativas. Aguarde alguns minutos e tente de novo.",
+      "sessionExpired": "Sua sessão expirou. Peça um novo link.",
+      "invalidLink": "O link é inválido ou expirou. Peça um novo.",
+      "oauth": "Não conseguimos entrar com o Google. Tente de novo.",
+      "unknown": "Algo deu errado. Tente de novo."
+    }
+  },
+  "Onboarding": {
+    "title": "Conte sobre o seu negócio",
+    "description": "Assim preparamos o Oniric para você. Você pode mudar depois.",
+    "fields": {
+      "businessName": "Nome do negócio",
+      "country": "País",
+      "countryPlaceholder": "Escolha um país",
+      "industry": "Setor",
+      "industryPlaceholder": "Escolha um setor",
+      "teamSize": "Quantas pessoas trabalham no seu negócio?",
+      "teamType": "Quem vai criar os anúncios?",
+      "videoPurposes": "Para que você quer os vídeos?",
+      "videoPurposesHint": "Escolha todas as que se aplicam."
+    },
+    "options": {
+      "industries": {
+        "food": "Restaurantes e alimentação",
+        "retail": "Loja ou comércio",
+        "beauty": "Beleza e cuidados pessoais",
+        "health": "Saúde e bem-estar",
+        "professional_services": "Serviços profissionais",
+        "real_estate": "Imobiliária",
+        "education": "Educação",
+        "tourism": "Turismo e hotelaria",
+        "automotive": "Automotivo",
+        "technology": "Tecnologia",
+        "other": "Outro"
+      },
+      "teamSizes": {
+        "1": "Só eu",
+        "2-5": "De 2 a 5",
+        "6-10": "De 6 a 10",
+        "11-50": "De 11 a 50",
+        "51+": "Mais de 50"
+      },
+      "teamTypes": {
+        "owner": "Eu, sou o dono ou a dona",
+        "marketing_team": "Nossa equipe de marketing",
+        "agency": "Somos uma agência e criamos para clientes"
+      },
+      "videoPurposes": {
+        "social_media": "Redes sociais (Instagram, TikTok, Facebook)",
+        "whatsapp": "WhatsApp (status e catálogo)",
+        "paid_ads": "Anúncios pagos",
+        "website": "Meu site ou loja on-line",
+        "other": "Outro"
+      }
+    },
+    "submit": "Continuar",
+    "errors": {
+      "businessName": "Digite o nome do seu negócio (mínimo de 2 caracteres).",
+      "country": "Escolha um país.",
+      "industry": "Escolha um setor.",
+      "teamSize": "Escolha quantas pessoas trabalham no seu negócio.",
+      "teamType": "Escolha quem vai criar os anúncios.",
+      "videoPurposes": "Escolha pelo menos uma opção."
+    }
+  },
+  "PymeHome": {
+    "title": "Olá, {name}!",
+    "description": "Em breve você vai poder criar seu primeiro anúncio em 3 passos."
+  },
+  "EmpresaHome": {
+    "title": "Workspace de {name}",
+    "description": "Aqui sua equipe vai produzir e aprovar os anúncios. Estamos construindo essas ferramentas."
+  },
+  "Settings": {
+    "title": "Configurações",
+    "description": "Ajustes de {name}.",
+    "advancedMode": {
+      "label": "Modo avançado",
+      "description": "Workspace completo pensado para equipes de marketing e agências. Você pode voltar ao modo guiado quando quiser.",
+      "onlyAdmins": "Só um administrador da organização pode mudar o modo.",
+      "saved": "Pronto, salvamos a alteração.",
+      "error": "Não conseguimos salvar a alteração. Tente de novo."
+    }
   }
 }

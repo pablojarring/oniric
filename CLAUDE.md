@@ -30,7 +30,9 @@ No construir un "playground" genérico de modelos.
 
 - **Frontend + backend:** Next.js (App Router) + TypeScript estricto
 - **UI:** Tailwind CSS + shadcn/ui (preset `base-nova`, sobre Base UI)
-- **Base de datos:** PostgreSQL (Supabase) con Drizzle ORM
+- **Base de datos:** PostgreSQL (Supabase) con Drizzle ORM. Migraciones generadas por drizzle-kit en
+  `supabase/migrations` y aplicadas con la CLI de Supabase; RLS sin políticas en todas las tablas.
+  Ver `docs/base-de-datos.md`.
 - **Auth:** Supabase Auth (email + Google)
 - **Almacenamiento de outputs:** Supabase Storage o Cloudflare R2
   (Higgsfield borra los archivos después de ~7 días; siempre descargar a almacenamiento propio)
@@ -95,6 +97,9 @@ interface GenerationProvider {
   y para qué quiere los videos.
 - Con eso se asigna `organization.segment = 'pyme' | 'empresa'`. El usuario puede cambiar
   de modo en configuración ("Modo avanzado").
+- Regla (decisión de producto): **empresa** si el equipo tiene más de 10 personas o se identifica
+  como agencia o equipo de marketing; **pyme** en cualquier otro caso. Implementada en
+  `lib/segment` (`assignSegment`). Ver `docs/auth.md`.
 - Las capacidades se controlan con feature flags por segmento en `/lib/segment`,
   **nunca** con `if` dispersos en componentes.
 

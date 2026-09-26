@@ -38,13 +38,22 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Migraciones al día con db/schema.ts
+        run: |
+          pnpm db:generate
+          if [ -n "$(git status --porcelain supabase/migrations)" ]; then
+            echo "::error::db/schema.ts cambió sin migración. Corre pnpm db:generate y sube el archivo."
+            git status --porcelain supabase/migrations
+            exit 1
+          fi
+
       - name: Tests unitarios
         run: pnpm test
 
   e2e:
     name: Build y tests e2e
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
 
@@ -56,6 +65,23 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      # Postgres, Auth y Mailpit en Docker; aplica supabase/migrations al iniciar.
+      - name: Levantar Supabase local
+        run: pnpm exec supabase start -x studio,postgres-meta
+
+      - name: Variables de entorno de Supabase local
+        run: |
+          status="$(pnpm exec supabase status -o json)"
+          {
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000"
+            echo "NEXT_PUBLIC_SUPABASE_URL=$(jq -r .API_URL <<< "$status")"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$(jq -r .PUBLISHABLE_KEY <<< "$status")"
+            echo "SUPABASE_SECRET_KEY=$(jq -r .SECRET_KEY <<< "$status")"
+            echo "DATABASE_URL=$(jq -r .DB_URL <<< "$status")"
+            echo "MAILPIT_URL=$(jq -r .MAILPIT_URL <<< "$status")"
+            echo "AUTH_GOOGLE_ENABLED=false"
+          } >> "$GITHUB_ENV"
 
       - name: Build
         run: pnpm build
