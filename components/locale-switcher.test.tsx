@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -13,6 +13,12 @@ vi.mock("@/i18n/navigation", () => ({
   useRouter: () => ({ replace }),
 }));
 
+const { saveLocalePreference } = vi.hoisted(() => ({
+  saveLocalePreference: vi.fn(async () => undefined),
+}));
+
+vi.mock("@/lib/users/actions", () => ({ saveLocalePreference }));
+
 function renderSwitcher() {
   return render(
     <NextIntlClientProvider locale="es" messages={messages}>
@@ -24,6 +30,7 @@ function renderSwitcher() {
 describe("LocaleSwitcher", () => {
   beforeEach(() => {
     replace.mockClear();
+    saveLocalePreference.mockClear();
   });
 
   it("muestra los idiomas activos con su nombre nativo", () => {
@@ -41,13 +48,16 @@ describe("LocaleSwitcher", () => {
     );
   });
 
-  it("navega a la misma página en el idioma elegido", () => {
+  it("guarda el idioma y navega a la misma página en el idioma elegido", async () => {
     renderSwitcher();
 
     fireEvent.change(screen.getByRole("combobox", { name: "Idioma" }), {
       target: { value: "pt" },
     });
 
-    expect(replace).toHaveBeenCalledWith("/galeria", { locale: "pt" });
+    expect(saveLocalePreference).toHaveBeenCalledWith("pt");
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/galeria", { locale: "pt" }),
+    );
   });
 });
