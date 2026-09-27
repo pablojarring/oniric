@@ -37,6 +37,8 @@ export function LocaleSwitcher() {
       onChange={onChange}
       disabled={isPending}
       size="sm"
+      // Nunca se encoge: el idioma elegido debe leerse completo en el celular.
+      className="shrink-0"
     >
       {locales.map((code) => (
         <NativeSelectOption key={code} value={code} lang={code}>

@@ -1,6 +1,8 @@
+import { LogOutIcon, SettingsIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { NavLabel, navIconOnlyClassName } from "@/components/nav-label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth/actions";
@@ -27,14 +29,23 @@ export function AppHeader({ homePath }: { homePath?: string }) {
         {homePath && (
           <Link
             href="/settings"
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
+            className={buttonVariants({
+              variant: "ghost",
+              size: "sm",
+              className: navIconOnlyClassName,
+            })}
           >
-            {t("settings")}
+            <NavLabel icon={SettingsIcon}>{t("settings")}</NavLabel>
           </Link>
         )}
         <form action={signOut}>
-          <Button type="submit" variant="outline" size="sm">
-            {t("logout")}
+          <Button
+            type="submit"
+            variant="outline"
+            size="sm"
+            className={navIconOnlyClassName}
+          >
+            <NavLabel icon={LogOutIcon}>{t("logout")}</NavLabel>
           </Button>
         </form>
       </nav>
