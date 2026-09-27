@@ -12,7 +12,7 @@ import { createOrganizationForOwner } from "@/lib/organizations/service";
 import { MockProvider } from "@/lib/providers/mock";
 import { ensureUser } from "@/lib/users/service";
 
-import { startGeneration, syncJob } from "./service";
+import { RateLimitExceededError, startGeneration, syncJob } from "./service";
 
 // Concurrencia real contra el Postgres de Supabase local (`pnpm supabase:start`).
 
@@ -24,55 +24,74 @@ afterAll(async () => {
   await client.end();
 });
 
+// 10 s de video estándar: 70 créditos.
+const request = {
+  modelId: "mock-video-standard",
+  prompt: "Promo",
+  aspectRatio: "9:16",
+  durationSeconds: 10,
+} as const;
+
+async function fundedOrganization(credits: number) {
+  const id = randomUUID();
+  const email = `jobs-${id.slice(0, 8)}@oniric.test`;
+  await db.execute(
+    sql`insert into auth.users (id, email) values (${id}, ${email})`,
+  );
+  const user = await ensureUser(db, { id, email, locale: "es" });
+  const organization = await createOrganizationForOwner(db, user.id, {
+    businessName: "Jobs en paralelo",
+    country: "EC",
+    industry: "retail",
+    teamSize: "1",
+    teamType: "owner",
+    videoPurposes: ["social_media"],
+  });
+  await grantCredits(db, {
+    organizationId: organization.id,
+    credits,
+    note: "Test de jobs",
+  });
+  return { user, organization };
+}
+
+/**
+ * Barrera: la función envuelta espera a que lleguen `parties` llamadas y las
+ * suelta juntas, para que las transacciones que siguen compitan de verdad.
+ */
+function barrier<Args extends unknown[], Result>(
+  parties: number,
+  fn: (...args: Args) => Promise<Result>,
+) {
+  let arrived = 0;
+  let releaseAll = () => {};
+  const allArrived = new Promise<void>((resolve) => {
+    releaseAll = resolve;
+  });
+  return async (...args: Args) => {
+    arrived += 1;
+    if (arrived === parties) releaseAll();
+    await allArrived;
+    return fn(...args);
+  };
+}
+
 describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
   it("sincronizar el mismo job en paralelo cobra una sola vez", async () => {
-    const id = randomUUID();
-    const email = `jobs-${id.slice(0, 8)}@oniric.test`;
-    await db.execute(
-      sql`insert into auth.users (id, email) values (${id}, ${email})`,
-    );
-    const user = await ensureUser(db, { id, email, locale: "es" });
-    const organization = await createOrganizationForOwner(db, user.id, {
-      businessName: "Jobs en paralelo",
-      country: "EC",
-      industry: "retail",
-      teamSize: "1",
-      teamType: "owner",
-      videoPurposes: ["social_media"],
-    });
-    await grantCredits(db, {
-      organizationId: organization.id,
-      credits: 100,
-      note: "Test de jobs",
-    });
+    const { user, organization } = await fundedOrganization(100);
 
     const job = await startGeneration(db, provider, {
       organizationId: organization.id,
       userId: user.id,
-      request: {
-        modelId: "mock-video-standard",
-        prompt: "Promo",
-        aspectRatio: "9:16",
-        durationSeconds: 10,
-      },
+      request,
     });
 
-    // Barrera: fetchOutput espera a que lleguen las 5 sincronizaciones y las
-    // suelta juntas, así las 5 transacciones que cierran el job compiten de
-    // verdad.
+    // Las 5 transacciones que cierran el job arrancan juntas.
     const parallel = 5;
-    let arrived = 0;
-    let releaseAll = () => {};
-    const allArrived = new Promise<void>((resolve) => {
-      releaseAll = resolve;
-    });
     const racingProvider = Object.assign(Object.create(provider), {
-      fetchOutput: async (providerJobId: string) => {
-        arrived += 1;
-        if (arrived === parallel) releaseAll();
-        await allArrived;
-        return provider.fetchOutput(providerJobId);
-      },
+      fetchOutput: barrier(parallel, (providerJobId: string) =>
+        provider.fetchOutput(providerJobId),
+      ),
     }) as MockProvider;
 
     const results = await Promise.all(
@@ -93,6 +112,38 @@ describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
     expect(await getBalance(db, organization.id)).toEqual({
       available: 30,
       held: 0,
+    });
+  });
+
+  it("el límite por organización se respeta con generaciones simultáneas", async () => {
+    const { user, organization } = await fundedOrganization(1_000);
+    const parallel = 6;
+    const racingProvider = Object.assign(Object.create(provider), {
+      estimate: barrier(parallel, (req: typeof request) =>
+        provider.estimate(req),
+      ),
+    }) as MockProvider;
+
+    const results = await Promise.allSettled(
+      Array.from({ length: parallel }, () =>
+        startGeneration(db, racingProvider, {
+          organizationId: organization.id,
+          userId: user.id,
+          request,
+          rateLimit: { maxJobs: 2, windowSeconds: 3_600 },
+        }),
+      ),
+    );
+
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(2);
+    for (const result of results) {
+      if (result.status === "rejected") {
+        expect(result.reason).toBeInstanceOf(RateLimitExceededError);
+      }
+    }
+    expect(await getBalance(db, organization.id)).toEqual({
+      available: 860,
+      held: 140,
     });
   });
 });

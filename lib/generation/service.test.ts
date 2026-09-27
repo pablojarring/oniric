@@ -17,6 +17,8 @@ import { createOrganization } from "@/test/fixtures";
 
 import {
   InvalidGenerationRequestError,
+  PriceChangedError,
+  RateLimitExceededError,
   startGeneration,
   SUBMIT_TIMEOUT_MS,
   syncActiveJobs,
@@ -125,6 +127,103 @@ describe("startGeneration", () => {
       constructor: InvalidGenerationRequestError,
       reason,
     });
+  });
+
+  it("guarda los datos del asistente pyme", async () => {
+    const context = await fundedOrganization();
+    const brief = {
+      productName: "Pan de yuca",
+      adCopy: "Hoy en La Esquina: pan de yuca",
+      photoConsent: true,
+    };
+
+    const job = await startGeneration(testDb.db, provider, {
+      organizationId: context.organization.id,
+      userId: context.user.id,
+      request: videoRequest,
+      ad: {
+        templateId: "whatsappStatus",
+        brief,
+        inputImagePath: "org/foto.jpg",
+      },
+      now: now(),
+    });
+
+    expect(job).toMatchObject({
+      templateId: "whatsappStatus",
+      brief,
+      inputImagePath: "org/foto.jpg",
+    });
+  });
+
+  it("si el precio no es el que vio el cliente, no crea el job", async () => {
+    const context = await fundedOrganization();
+
+    const attempt = startGeneration(testDb.db, provider, {
+      organizationId: context.organization.id,
+      userId: context.user.id,
+      request: videoRequest,
+      expectedPriceCredits: 60,
+      now: now(),
+    });
+
+    await expect(attempt).rejects.toMatchObject({
+      constructor: PriceChangedError,
+      priceCredits: 70,
+    });
+    expect(await testDb.db.select().from(generationJobs)).toEqual([]);
+  });
+
+  it("respeta el límite de generaciones por organización", async () => {
+    const context = await fundedOrganization(1_000);
+    const other = await fundedOrganization(1_000);
+    const rateLimit = { maxJobs: 2, windowSeconds: 3_600 };
+    const startLimited = (organization = context) =>
+      startGeneration(testDb.db, provider, {
+        organizationId: organization.organization.id,
+        userId: organization.user.id,
+        request: videoRequest,
+        rateLimit,
+        now: now(),
+      });
+
+    await startLimited();
+    await startLimited();
+    await expect(startLimited()).rejects.toBeInstanceOf(RateLimitExceededError);
+
+    // El intento rechazado no deja job ni reserva, y no afecta a otras organizaciones.
+    const jobs = await testDb.db
+      .select()
+      .from(generationJobs)
+      .where(eq(generationJobs.organizationId, context.organization.id));
+    expect(jobs).toHaveLength(2);
+    expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
+      {
+        available: 860,
+        held: 140,
+      },
+    );
+    await expect(startLimited(other)).resolves.toMatchObject({
+      status: "pending",
+    });
+  });
+
+  it("el límite solo cuenta las generaciones de la ventana", async () => {
+    const context = await fundedOrganization(1_000);
+    await start(context);
+    await testDb.db
+      .update(generationJobs)
+      .set({ createdAt: new Date(Date.now() - 2 * 3_600_000) });
+
+    const job = await startGeneration(testDb.db, provider, {
+      organizationId: context.organization.id,
+      userId: context.user.id,
+      request: videoRequest,
+      rateLimit: { maxJobs: 1, windowSeconds: 3_600 },
+      now: now(),
+    });
+
+    expect(job.status).toBe("pending");
   });
 
   it("si el proveedor no acepta el job, lo marca fallido y reembolsa", async () => {

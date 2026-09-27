@@ -29,6 +29,13 @@
       "when": 1790467721285,
       "tag": "20260927000841_margin_on_price",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790474011322,
+      "tag": "20260927015331_ad_brief_on_generation_jobs",
+      "breakpoints": true
     }
   ]
 }

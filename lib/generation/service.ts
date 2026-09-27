@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, sql } from "drizzle-orm";
 
 import {
   generationJobs,
@@ -7,6 +7,7 @@ import {
   type GenerationStatus,
 } from "@/db/schema";
 import type { Database } from "@/db/types";
+import type { AdBrief } from "@/lib/ads/types";
 import { priceGeneration } from "@/lib/billing/pricing";
 import {
   refundReservation,
@@ -38,6 +39,35 @@ export class InvalidGenerationRequestError extends Error {
   }
 }
 
+/** El precio cambió entre la cotización que vio el cliente y el envío. */
+export class PriceChangedError extends Error {
+  constructor(readonly priceCredits: number) {
+    super(`El precio cambió a ${priceCredits} créditos.`);
+  }
+}
+
+export type RateLimit = { maxJobs: number; windowSeconds: number };
+
+/**
+ * Máximo de generaciones por organización (CLAUDE.md §7). Frena el abuso y los
+ * errores de integración; el saldo ya impide gastar de más.
+ *
+ * TODO(producto): valor definitivo y si cambia por segmento (empresa genera
+ * por lotes en la fase 2).
+ */
+export const GENERATION_RATE_LIMIT: RateLimit = {
+  maxJobs: 20,
+  windowSeconds: 60 * 60,
+};
+
+export class RateLimitExceededError extends Error {
+  constructor(readonly limit: RateLimit) {
+    super(
+      `Límite de ${limit.maxJobs} generaciones cada ${limit.windowSeconds} s alcanzado.`,
+    );
+  }
+}
+
 export type ProviderResolver = (providerId: string) => GenerationProvider;
 
 async function validateRequest(
@@ -65,8 +95,10 @@ async function validateRequest(
 
 /**
  * Crea un job: valida, calcula el precio, reserva los créditos y lo envía al
- * proveedor. Lanza InsufficientCreditsError si no alcanza el saldo (y no crea
- * nada). Si el envío falla, devuelve el job fallido con los créditos devueltos.
+ * proveedor. Lanza InsufficientCreditsError si no alcanza el saldo,
+ * RateLimitExceededError si la organización superó el límite y
+ * PriceChangedError si el precio no es el esperado; en esos casos no crea nada.
+ * Si el envío falla, devuelve el job fallido con los créditos devueltos.
  */
 export async function startGeneration(
   db: Database,
@@ -75,6 +107,11 @@ export async function startGeneration(
     organizationId: string;
     userId: string;
     request: GenerationRequest;
+    /** Precio que vio el cliente antes de confirmar. */
+    expectedPriceCredits?: number;
+    /** Datos del asistente pyme. */
+    ad?: { templateId: string; brief: AdBrief; inputImagePath: string | null };
+    rateLimit?: RateLimit;
     now?: Date;
   },
 ): Promise<GenerationJob> {
@@ -94,7 +131,14 @@ export async function startGeneration(
     segment: organization.segment,
     costUsd,
   });
+  if (
+    input.expectedPriceCredits !== undefined &&
+    input.expectedPriceCredits !== quote.priceCredits
+  ) {
+    throw new PriceChangedError(quote.priceCredits);
+  }
 
+  const rateLimit = input.rateLimit ?? GENERATION_RATE_LIMIT;
   const job = await db.transaction(async (tx) => {
     const [created] = await tx
       .insert(generationJobs)
@@ -105,6 +149,9 @@ export async function startGeneration(
         modelId: request.modelId,
         request,
         ...quote,
+        templateId: input.ad?.templateId,
+        brief: input.ad?.brief,
+        inputImagePath: input.ad?.inputImagePath,
       })
       .returning();
     if (!created) throw new Error("No se pudo crear el job.");
@@ -115,6 +162,24 @@ export async function startGeneration(
       credits: quote.priceCredits,
       now: input.now,
     });
+
+    // La reserva bloqueó la billetera de la organización, así que las
+    // generaciones simultáneas de la misma organización se cuentan en orden.
+    const [recent] = await tx
+      .select({ jobs: count() })
+      .from(generationJobs)
+      .where(
+        and(
+          eq(generationJobs.organizationId, input.organizationId),
+          gt(
+            generationJobs.createdAt,
+            sql`now() - make_interval(secs => ${rateLimit.windowSeconds})`,
+          ),
+        ),
+      );
+    if ((recent?.jobs ?? 0) > rateLimit.maxJobs) {
+      throw new RateLimitExceededError(rateLimit);
+    }
     return created;
   });
 
