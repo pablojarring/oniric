@@ -27,6 +27,7 @@ import { authUsers } from "drizzle-orm/supabase";
 
 import type { Locale } from "../i18n/config";
 import type { AdBrief } from "../lib/ads/types";
+import type { StoredOutput } from "../lib/generation/types";
 import type {
   Country,
   Industry,
@@ -34,10 +35,7 @@ import type {
   TeamType,
   VideoPurpose,
 } from "../lib/onboarding/options";
-import type {
-  GenerationRequest,
-  OutputFile,
-} from "../lib/providers/generation-provider";
+import type { GenerationRequest } from "../lib/providers/generation-provider";
 
 export const segmentEnum = pgEnum("segment", ["pyme", "empresa"]);
 
@@ -177,7 +175,8 @@ export const generationJobs = pgTable(
     marginBps: integer().notNull(),
     /** Precio reservado y cobrado al cliente; no cambia después del envío. */
     priceCredits: integer().notNull(),
-    outputs: jsonb().$type<OutputFile[]>(),
+    /** Resultados copiados al bucket `ad-outputs`. */
+    outputs: jsonb().$type<StoredOutput[]>(),
     error: text(),
     completedAt: timestamp({ withTimezone: true }),
     /** Plantilla del asistente pyme (`lib/templates`); null en el workspace. */
@@ -186,10 +185,17 @@ export const generationJobs = pgTable(
     brief: jsonb().$type<AdBrief>(),
     /** Foto del producto en el bucket `product-photos` de Supabase Storage. */
     inputImagePath: text(),
+    /**
+     * Token del enlace público (`/s/<token>`). Null si el anuncio no se
+     * comparte; al desactivar el enlace se borra y el anterior deja de servir.
+     */
+    shareToken: text(),
+    sharedAt: timestamp({ withTimezone: true }),
     ...timestamps,
   },
   (table) => [
     check("generation_jobs_price_positive", sql`${table.priceCredits} > 0`),
+    uniqueIndex().on(table.shareToken),
     uniqueIndex().on(table.provider, table.providerJobId),
     index().on(table.status, table.createdAt),
     index().on(table.organizationId, table.createdAt),

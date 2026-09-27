@@ -3,16 +3,21 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { generationJobs } from "@/db/schema";
 import { getBalance, grantCredits } from "@/lib/billing/wallet";
 import { MOCK_FAILURE_MARKER, MockProvider } from "@/lib/providers/mock";
-import type { PhotoStorage } from "@/lib/uploads/storage";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 import { createOrganization } from "@/test/fixtures";
+import { createMemoryStorage } from "@/test/storage";
 
 import type { AdForm } from "./schema";
-import { createAd, getOrganizationJob, quoteTemplates } from "./service";
+import {
+  createAd,
+  getOrganizationJob,
+  listOrganizationJobs,
+  quoteTemplates,
+} from "./service";
 
 let testDb: TestDatabase;
 let provider: MockProvider;
-let storage: PhotoStorage & { files: Map<string, Uint8Array> };
+let storage: ReturnType<typeof createMemoryStorage>;
 
 beforeAll(async () => {
   testDb = await createTestDatabase();
@@ -20,17 +25,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await testDb.reset();
   provider = new MockProvider({ latencyMs: 0 });
-  const files = new Map<string, Uint8Array>();
-  storage = {
-    files,
-    upload: async (path, bytes) => {
-      files.set(path, bytes);
-    },
-    remove: async (path) => {
-      files.delete(path);
-    },
-    createSignedUrl: async (path) => `https://storage.test/${path}?token=x`,
-  };
+  storage = createMemoryStorage();
 });
 afterAll(async () => {
   await testDb.close();
@@ -67,7 +62,7 @@ async function create(
 ) {
   return createAd(
     testDb.db,
-    { provider, storage },
+    { provider, photos: storage.storage },
     {
       organizationId: context.organization.id,
       userId: context.user.id,
@@ -134,9 +129,9 @@ describe("createAd", () => {
     expect(inputImagePath).toMatch(
       new RegExp(`^${context.organization.id}/[0-9a-f-]{36}\\.jpg$`),
     );
-    expect(storage.files.get(inputImagePath ?? "")).toEqual(jpegBytes);
+    expect(storage.files.get(inputImagePath ?? "")?.bytes).toEqual(jpegBytes);
     expect(request.inputImageUrl).toBe(
-      `https://storage.test/${inputImagePath}?token=x`,
+      `https://storage.test/${inputImagePath}?ttl=3600`,
     );
     expect(request.prompt).toContain("reference photo");
     expect(brief).toEqual({
@@ -244,5 +239,37 @@ describe("getOrganizationJob", () => {
         "no-es-uuid",
       ),
     ).toBeNull();
+  });
+});
+
+describe("listOrganizationJobs", () => {
+  it("lista solo los anuncios de la organización, del más nuevo al más viejo, por páginas", async () => {
+    const context = await fundedOrganization(1_000);
+    const other = await fundedOrganization(1_000);
+    const ids: string[] = [];
+    for (let index = 0; index < 3; index++) {
+      const result = await create(context);
+      if (!result.ok) throw new Error(result.error.code);
+      ids.push(result.job.id);
+    }
+    await create(other);
+
+    const first = await listOrganizationJobs(
+      testDb.db,
+      context.organization.id,
+      {
+        limit: 2,
+      },
+    );
+    const second = await listOrganizationJobs(
+      testDb.db,
+      context.organization.id,
+      { limit: 2, offset: 2 },
+    );
+
+    expect(first.jobs.map((job) => job.id)).toEqual([ids[2], ids[1]]);
+    expect(first.hasMore).toBe(true);
+    expect(second.jobs.map((job) => job.id)).toEqual([ids[0]]);
+    expect(second.hasMore).toBe(false);
   });
 });

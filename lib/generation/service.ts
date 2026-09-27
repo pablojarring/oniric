@@ -18,8 +18,11 @@ import type {
   GenerationProvider,
   GenerationRequest,
   ModelInfo,
-  OutputFile,
 } from "@/lib/providers/generation-provider";
+import type { FileStorage } from "@/lib/storage";
+
+import { storeOutputs } from "./outputs";
+import type { StoredOutput } from "./types";
 
 // Flujo de una generación (CLAUDE.md §3.2):
 // estimar → precio en créditos → reservar → enviar (pending) → webhook o
@@ -69,6 +72,13 @@ export class RateLimitExceededError extends Error {
 }
 
 export type ProviderResolver = (providerId: string) => GenerationProvider;
+
+/** Lo que necesita la sincronización: el proveedor de cada job y dónde copiar los resultados. */
+export type SyncDeps = {
+  resolveProvider: ProviderResolver;
+  /** Bucket `ad-outputs`. */
+  outputs: FileStorage;
+};
 
 async function validateRequest(
   provider: GenerationProvider,
@@ -210,15 +220,16 @@ async function lockActiveJob(tx: Database, jobId: string) {
   return activeStatuses.includes(job.status) ? job : null;
 }
 
-/** Marca el job como exitoso y cobra la reserva, en una sola transacción. */
+/**
+ * Marca el job como exitoso y cobra la reserva, en una sola transacción. Los
+ * resultados ya deben estar copiados en nuestro almacenamiento.
+ */
 async function completeJob(
   db: Database,
   jobId: string,
-  outputs: OutputFile[],
+  outputs: StoredOutput[],
   now = new Date(),
 ): Promise<GenerationJob> {
-  // TODO(fase 3): descargar los outputs a almacenamiento propio antes de
-  // cobrar (Higgsfield borra los archivos a los ~7 días).
   return db.transaction(async (tx) => {
     const job = await lockActiveJob(tx, jobId);
     if (!job) return getJobOrThrow(tx, jobId);
@@ -272,10 +283,16 @@ async function getJobOrThrow(db: Database, jobId: string) {
 /**
  * Consulta al proveedor y actualiza el job. Es idempotente: puede llamarse
  * desde el polling, un webhook o la UI sin cobrar ni reembolsar dos veces.
+ *
+ * Si la copia de los resultados falla, lanza el error y el job sigue en curso:
+ * la próxima sincronización lo reintenta.
+ *
+ * TODO(fase 3): dar el job por fallido (y reembolsar) si la copia sigue
+ * fallando cuando los archivos del proveedor están por vencer.
  */
 export async function syncJob(
   db: Database,
-  resolveProvider: ProviderResolver,
+  deps: SyncDeps,
   jobId: string,
   now: Date = new Date(),
 ): Promise<GenerationJob> {
@@ -288,7 +305,7 @@ export async function syncJob(
     return stale ? failJob(db, jobId, "submit_timeout", now) : job;
   }
 
-  const provider = resolveProvider(job.provider);
+  const provider = deps.resolveProvider(job.provider);
   const status = await provider.getStatus(job.providerJobId);
 
   switch (status.state) {
@@ -308,13 +325,15 @@ export async function syncJob(
         .returning();
       return running ?? getJobOrThrow(db, jobId);
     }
-    case "succeeded":
-      return completeJob(
-        db,
-        jobId,
-        await provider.fetchOutput(job.providerJobId),
-        now,
-      );
+    case "succeeded": {
+      const outputs = await provider.fetchOutput(job.providerJobId);
+      // Nunca se cobra una generación sin resultado.
+      if (outputs.length === 0) return failJob(db, jobId, "no_outputs", now);
+      // Primero se copia (fuera de la transacción, es tráfico de red) y
+      // después se cobra.
+      const stored = await storeOutputs(deps.outputs, job, outputs);
+      return completeJob(db, jobId, stored, now);
+    }
     case "failed":
       return failJob(db, jobId, status.error, now);
   }
@@ -323,7 +342,7 @@ export async function syncJob(
 /** Polling de respaldo: sincroniza los jobs en curso más antiguos. */
 export async function syncActiveJobs(
   db: Database,
-  resolveProvider: ProviderResolver,
+  deps: SyncDeps,
   options: { now?: Date; limit?: number } = {},
 ): Promise<{ checked: number; errors: number }> {
   const jobs = await db
@@ -336,7 +355,7 @@ export async function syncActiveJobs(
   let errors = 0;
   for (const { id } of jobs) {
     try {
-      await syncJob(db, resolveProvider, id, options.now);
+      await syncJob(db, deps, id, options.now);
     } catch (error) {
       errors += 1;
       console.error(`No se pudo sincronizar el job ${id}`, error);

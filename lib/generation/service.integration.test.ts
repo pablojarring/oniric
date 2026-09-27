@@ -11,6 +11,7 @@ import { getBalance, grantCredits } from "@/lib/billing/wallet";
 import { createOrganizationForOwner } from "@/lib/organizations/service";
 import { MockProvider } from "@/lib/providers/mock";
 import { ensureUser } from "@/lib/users/service";
+import { createMemoryStorage } from "@/test/storage";
 
 import { RateLimitExceededError, startGeneration, syncJob } from "./service";
 
@@ -19,6 +20,7 @@ import { RateLimitExceededError, startGeneration, syncJob } from "./service";
 const client = postgres(process.env.DATABASE_URL ?? "", { max: 10 });
 const db: Database = drizzle({ client, schema, casing: "snake_case" });
 const provider = new MockProvider({ latencyMs: 0 });
+const { storage } = createMemoryStorage();
 
 afterAll(async () => {
   await client.end();
@@ -96,7 +98,11 @@ describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
 
     const results = await Promise.all(
       Array.from({ length: parallel }, () =>
-        syncJob(db, () => racingProvider, job.id),
+        syncJob(
+          db,
+          { resolveProvider: () => racingProvider, outputs: storage },
+          job.id,
+        ),
       ),
     );
 

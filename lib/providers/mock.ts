@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import type {
   AspectRatio,
@@ -134,17 +136,26 @@ export class MockProvider implements GenerationProvider {
     const job = decode(providerJobId);
     const model = findModel(job.modelId);
     const ratio = job.aspectRatio.replace(":", "x");
+    const isVideo = model.mediaType === "video";
+    const mimeType = isVideo ? "video/webm" : "image/svg+xml";
 
-    // Imagen de muestra en public/mock/. TODO(paso 5): un video de muestra real.
+    // Archivos de muestra en public/mock/, entregados como URL `data:` para
+    // que la app los descargue igual que los de un proveedor real.
+    const file = await readFile(
+      path.join(
+        process.cwd(),
+        "public",
+        "mock",
+        `preview-${ratio}.${isVideo ? "webm" : "svg"}`,
+      ),
+    );
     return [
       {
-        url: `/mock/preview-${ratio}.svg`,
+        url: `data:${mimeType};base64,${file.toString("base64")}`,
         mediaType: model.mediaType,
-        mimeType: "image/svg+xml",
+        mimeType,
         ...dimensions[job.aspectRatio],
-        ...(model.mediaType === "video"
-          ? { durationSeconds: job.durationSeconds }
-          : {}),
+        ...(isVideo ? { durationSeconds: job.durationSeconds } : {}),
       },
     ];
   }

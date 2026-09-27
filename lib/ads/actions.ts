@@ -6,13 +6,21 @@ import { getDb } from "@/db";
 import type { GenerationStatus } from "@/db/schema";
 import { redirect } from "@/i18n/navigation";
 import { requireOrganization } from "@/lib/auth/session";
+import { getSyncDeps } from "@/lib/generation/runtime";
 import { syncJob } from "@/lib/generation/service";
-import { getGenerationProvider, getProviderById } from "@/lib/providers";
+import { getGenerationProvider } from "@/lib/providers";
 import { hasFeature } from "@/lib/segment";
-import { getProductPhotoStorage } from "@/lib/uploads/supabase-storage";
+import { buckets } from "@/lib/storage";
+import { getStorage } from "@/lib/storage/supabase";
 
 import { parseAdForm } from "./schema";
 import { createAd, getOrganizationJob, type CreateAdError } from "./service";
+import {
+  disableShareLink,
+  enableShareLink,
+  NotShareableError,
+  shareUrlFor,
+} from "./sharing";
 import { adFields, type AdField } from "./types";
 
 export type CreateAdState =
@@ -42,7 +50,10 @@ export async function createAdAction(
 
   const result = await createAd(
     getDb(),
-    { provider: getGenerationProvider(), storage: getProductPhotoStorage() },
+    {
+      provider: getGenerationProvider(),
+      photos: getStorage(buckets.productPhotos),
+    },
     { organizationId: organization.id, userId: user.id, form: parsed.data },
   );
   if (!result.ok) return { error: result.error };
@@ -65,5 +76,30 @@ export async function refreshAdStatus(
   if (!job) return null;
   if (job.status === "succeeded" || job.status === "failed") return job.status;
 
-  return (await syncJob(db, getProviderById, job.id)).status;
+  return (await syncJob(db, getSyncDeps(), job.id)).status;
+}
+
+export type AdSharingResult = { ok: true; url: string | null } | { ok: false };
+
+/** Activa o desactiva el enlace público de un anuncio terminado. */
+export async function setAdSharing(
+  jobId: string,
+  enabled: boolean,
+): Promise<AdSharingResult> {
+  const { organization } = await requireOrganization();
+  const input = { organizationId: organization.id, jobId };
+
+  if (!enabled) {
+    await disableShareLink(getDb(), input);
+    return { ok: true, url: null };
+  }
+  try {
+    return {
+      ok: true,
+      url: shareUrlFor(await enableShareLink(getDb(), input)),
+    };
+  } catch (error) {
+    if (error instanceof NotShareableError) return { ok: false };
+    throw error;
+  }
 }
