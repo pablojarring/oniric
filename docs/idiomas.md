@@ -21,8 +21,8 @@ En cada visita, `proxy.ts` (next-intl) resuelve el idioma en este orden:
 Cada respuesta incluye un encabezado `Link` con `hreflang` para cada idioma, así
 los buscadores indexan todas las versiones.
 
-TODO(paso 2): cuando exista auth, guardar el idioma en el perfil del usuario y
-aplicarlo al iniciar sesión.
+Con sesión, el idioma elegido también se guarda en el perfil (`users.locale`) y
+se aplica al iniciar sesión en otro dispositivo (ver [auth.md](./auth.md)).
 
 ## Activar un idioma
 
@@ -82,7 +82,8 @@ Regla: para formatear precios, fechas o cifras usa
   evita confusiones.
 - El portugués usa `pt-BR` (`US$ 1.234,50`).
 
-TODO(paso 3): crear el helper de formato cuando aparezca el primer precio.
+Los montos y las fechas se formatean con `lib/format.ts` (`formatUsd`,
+`formatDateTime`), que usa el `formatLocale` de cada idioma.
 
 ## Idioma de la interfaz e idioma del contenido
 
@@ -91,5 +92,10 @@ querer un anuncio en kichwa para sus clientes. Para marketing, generar anuncios
 en lenguas originarias probablemente diferencia más que traducir la interfaz,
 porque llega directamente a los clientes del negocio.
 
-TODO(paso 4): modelar el idioma del contenido (`contentLocale`) por separado en
-plantillas y generaciones, sin atarlo al idioma de la interfaz.
+Hoy el texto sugerido del asistente sale en el idioma de la interfaz, y el
+cliente puede reescribirlo en cualquier idioma: el prompt le pide al modelo que
+lo muestre tal cual (ver [asistente.md](./asistente.md)).
+
+TODO(producto): elegir el idioma del anuncio por separado del de la interfaz
+(p. ej. un anuncio en kichwa con la interfaz en español), con textos sugeridos
+revisados por hablantes nativos.

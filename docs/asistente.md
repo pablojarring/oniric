@@ -3,11 +3,13 @@
 El cliente pyme crea un anuncio en 3 pasos, sin elegir modelos ni parámetros
 (CLAUDE.md §4). La plantilla decide el modelo, la duración y los formatos.
 
-| Ruta        | Qué hace                                                      |
-| ----------- | ------------------------------------------------------------- |
-| `/home`     | Saldo de créditos y botón "Crear anuncio".                    |
-| `/create`   | Asistente de 3 pasos.                                         |
-| `/ads/[id]` | Estado del anuncio; consulta cada 3 s mientras está en curso. |
+| Ruta         | Qué hace                                                           |
+| ------------ | ------------------------------------------------------------------ |
+| `/home`      | Saldo, botón "Crear anuncio" y los últimos anuncios.               |
+| `/create`    | Asistente de 3 pasos.                                              |
+| `/ads`       | Galería con todos los anuncios de la organización, por páginas.    |
+| `/ads/[id]`  | Estado y resultado del anuncio, descarga y enlace público.         |
+| `/s/[token]` | Página pública de un anuncio compartido (sin sesión, no indexada). |
 
 ## Los 3 pasos
 
@@ -67,6 +69,35 @@ sugerido.
   cambió (p. ej. un admin cambió el margen), no se genera y se pide revisar.
 - El asistente solo está disponible con el feature flag `guidedWizard`.
 
+## Resultados
+
+Cuando el proveedor termina, `syncJob` descarga cada resultado y lo sube al
+bucket privado `ad-outputs` (`<organización>/<job>/<n>.<ext>`) **antes** de
+cobrar. Si la copia falla, no se cobra y el job sigue en curso hasta la próxima
+sincronización. Un "éxito" sin resultados se da por fallido y se reembolsa.
+Ver [creditos.md](./creditos.md).
+
+- La página del anuncio y la galería muestran los resultados con URLs firmadas
+  de 1 hora. Videos con `<video>`, imágenes con `<img>`.
+- **Descargar** usa otra URL firmada que fuerza la descarga con un nombre
+  legible: `oniric-pan-de-yuca-9x16.webm`.
+- El MockProvider entrega imágenes SVG y videos WebM reales de muestra
+  (`public/mock/`) como URLs `data:`, para que la copia funcione igual que con
+  un proveedor real.
+
+## Compartir
+
+Cada anuncio terminado puede tener un **enlace público** (`/s/<token>`):
+
+- El dueño lo crea desde la página del anuncio y puede copiarlo, usar el diálogo
+  de compartir del celular o desactivarlo.
+- El token es aleatorio (128 bits). Al desactivarlo se borra: el enlace anterior
+  deja de funcionar para siempre y uno nuevo tiene otro token.
+- La página pública muestra solo el resultado, el texto del anuncio y el nombre
+  del negocio, con un llamado a crear una cuenta. No muestra precio ni datos
+  internos, y pide a los buscadores no indexarla.
+- La URL no lleva idioma: quien la abre la ve en el suyo.
+
 ## Datos guardados
 
 Cada anuncio es un `generation_jobs` con:
@@ -74,6 +105,8 @@ Cada anuncio es un `generation_jobs` con:
 - `template_id`: la plantilla.
 - `brief`: producto, descripción, oferta, texto final y consentimiento.
 - `input_image_path`: ruta de la foto en Storage (o vacío).
+- `outputs`: resultados copiados a `ad-outputs` (ruta, tipo, tamaño y medidas).
+- `share_token` y `shared_at`: enlace público activo (o vacío).
 
 ## Desarrollo
 
@@ -95,6 +128,8 @@ descripción.
 - TODO(producto): revisar la lista de moderación.
 - TODO(producto): valor definitivo del límite por organización.
 - TODO(producto): créditos de bienvenida para organizaciones nuevas.
-- TODO(paso 5): galería y descarga.
+- TODO(producto): cuánto tiempo se guardan los resultados en `ad-outputs`.
+- TODO(producto): vista previa del enlace público al compartirlo (imagen
+  Open Graph), que necesita una URL que no venza.
 - TODO(paso 6 y fase 3): recarga de créditos desde el asistente.
 - TODO(fase 3): modelos de Higgsfield por plantilla y vigencia de la URL firmada.

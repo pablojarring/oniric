@@ -93,7 +93,9 @@ Flujo (CLAUDE.md §3.2), en `lib/generation/service.ts`:
    `failed` con los créditos devueltos.
 5. `syncJob` consulta al proveedor:
    - `running`: actualiza el estado.
-   - `succeeded`: guarda los outputs y cobra, en la misma transacción.
+   - `succeeded`: copia los resultados al bucket privado `ad-outputs` y
+     después, en una transacción, los guarda y cobra. Si la copia falla, no
+     cobra y el job sigue en curso para reintentar. Sin resultados, reembolsa.
    - `failed`: marca el error y reembolsa, en la misma transacción.
 
    Es idempotente, así que el polling, un webhook y la UI pueden llamarlo sin
@@ -109,8 +111,9 @@ en curso y vence los créditos.
 Pendientes:
 
 - TODO(producto): la frecuencia del cron.
-- TODO(fase 3): webhooks de Higgsfield y descarga de los outputs a
-  almacenamiento propio antes de cobrar.
+- TODO(fase 3): webhooks de Higgsfield.
+- TODO(fase 3): dar el job por fallido si la copia de los resultados sigue
+  fallando cuando los archivos del proveedor están por vencer.
 
 ## Proveedores
 

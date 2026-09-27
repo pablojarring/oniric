@@ -4,7 +4,7 @@ Plataforma SaaS para que empresas de Latinoamérica creen videos e imágenes
 publicitarias con IA. El contexto completo del producto, la arquitectura y el
 roadmap está en [CLAUDE.md](./CLAUDE.md).
 
-> Estado: Fase 1, paso 4 — plantillas pyme y asistente de 3 pasos.
+> Estado: Fase 1, paso 5 — galería, descarga y enlaces públicos.
 
 ## Stack
 
@@ -72,7 +72,8 @@ La primera vez que corras los tests e2e instala el navegador:
 app/
   [locale]/
     (auth)/          login, registro y recuperación de contraseña
-    (pyme)/          modo guiado: inicio (/home), asistente (/create) y anuncios (/ads/[id])
+    (pyme)/          modo guiado: inicio, asistente (/create), galería (/ads) y anuncios
+    s/[token]/       página pública de un anuncio compartido
     (empresa)/       workspace avanzado (inicio en /workspace)
     onboarding/      preguntas iniciales y asignación de segmento
     settings/        configuración ("Modo avanzado")
@@ -96,9 +97,10 @@ lib/
   organizations/     organizaciones y membresías
   providers/         GenerationProvider y MockProvider
   segment/           regla de segmento y feature flags
+  storage/           almacenamiento propio: buckets privados y URLs firmadas
   supabase/          clientes de Supabase (sesión y clave secreta)
   templates/         plantillas de anuncios y armado del prompt
-  uploads/           validación y almacenamiento de fotos de producto
+  uploads/           validación de las fotos de producto
   users/             perfiles e idioma preferido
 messages/            textos por idioma (es.json, pt.json)
 proxy.ts             idioma y refresco de la sesión en cada petición
