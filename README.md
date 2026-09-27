@@ -4,7 +4,7 @@ Plataforma SaaS para que empresas de Latinoamérica creen videos e imágenes
 publicitarias con IA. El contexto completo del producto, la arquitectura y el
 roadmap está en [CLAUDE.md](./CLAUDE.md).
 
-> Estado: Fase 1, paso 5 — galería, descarga y enlaces públicos.
+> Estado: Fase 1, paso 6 — panel de admin (márgenes y acreditación manual).
 
 ## Stack
 
@@ -62,6 +62,7 @@ Una organización nueva empieza sin créditos. Para probar el asistente:
 | `pnpm db:reset`         | Recrea la base local desde cero con todas las migraciones   |
 | `pnpm db:studio`        | Abre Drizzle Studio                                         |
 | `pnpm credits:grant`    | Acredita créditos de prueba (solo Supabase local)           |
+| `pnpm admin:grant`      | Da o quita el acceso al panel de admin                      |
 
 La primera vez que corras los tests e2e instala el navegador:
 `pnpm exec playwright install chromium`.
@@ -74,6 +75,7 @@ app/
     (auth)/          login, registro y recuperación de contraseña
     (pyme)/          modo guiado: inicio, asistente (/create), galería (/ads) y anuncios
     s/[token]/       página pública de un anuncio compartido
+    admin/           panel de admin: organizaciones, créditos y márgenes
     (empresa)/       workspace avanzado (inicio en /workspace)
     onboarding/      preguntas iniciales y asignación de segmento
     settings/        configuración ("Modo avanzado")
@@ -88,6 +90,7 @@ docs/                documentación de decisiones
 e2e/                 tests de Playwright
 i18n/                idiomas, routing y carga de textos (next-intl)
 lib/
+  admin/             panel de admin: márgenes, organizaciones y acciones
   ads/               asistente pyme: validación, creación del anuncio y acciones
   auth/              sesión, acciones de auth y redirecciones seguras
   billing/           precios en créditos y billetera (reservar, cobrar, reembolsar)
@@ -95,6 +98,7 @@ lib/
   moderation/        moderación básica de textos
   onboarding/        opciones y validación del onboarding
   organizations/     organizaciones y membresías
+  payments/          PaymentProvider y ManualPaymentProvider
   providers/         GenerationProvider y MockProvider
   segment/           regla de segmento y feature flags
   storage/           almacenamiento propio: buckets privados y URLs firmadas
@@ -104,7 +108,7 @@ lib/
   users/             perfiles e idioma preferido
 messages/            textos por idioma (es.json, pt.json)
 proxy.ts             idioma y refresco de la sesión en cada petición
-scripts/             scripts de desarrollo (acreditar créditos de prueba)
+scripts/             acreditar créditos de prueba y dar acceso de admin
 supabase/
   config.toml        Supabase local (auth, correos, buckets de Storage)
   migrations/        migraciones SQL generadas por drizzle-kit
@@ -129,6 +133,8 @@ test/                utilidades de tests (Postgres en memoria)
   El margen nunca se hardcodea en la UI y todo movimiento queda en el ledger.
 - **Asistente pyme:** plantillas, moderación, fotos y límites según
   [docs/asistente.md](./docs/asistente.md).
+- **Panel de admin:** acceso, márgenes y acreditación manual según
+  [docs/admin.md](./docs/admin.md).
 - **Base de datos:** los servicios reciben la base por parámetro (`Database`)
   para poder probarlos con PGlite. Las tablas tienen RLS sin políticas y solo se
   acceden desde el servidor. Ver [docs/base-de-datos.md](./docs/base-de-datos.md).
