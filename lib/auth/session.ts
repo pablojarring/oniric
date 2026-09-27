@@ -2,6 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { cache } from "react";
 
@@ -69,6 +70,16 @@ export async function requireUser(): Promise<User> {
     href: { pathname: "/login", query: next ? { next } : {} },
     locale: await getLocale(),
   });
+}
+
+/**
+ * Exige un admin de la plataforma (equipo de Oniric). A cualquier otro usuario
+ * le responde 404, para no revelar que el panel existe.
+ */
+export async function requirePlatformAdmin(): Promise<User> {
+  const user = await requireUser();
+  if (!user.isPlatformAdmin) notFound();
+  return user;
 }
 
 export type OrganizationContext = MembershipWithOrganization & { user: User };
