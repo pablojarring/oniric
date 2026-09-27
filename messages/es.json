@@ -135,7 +135,14 @@
   },
   "PymeHome": {
     "title": "¡Hola, {name}!",
-    "description": "Muy pronto podrás crear tu primer anuncio en 3 pasos."
+    "description": "Crea un anuncio para tus redes en 3 pasos.",
+    "create": "Crear anuncio",
+    "balance": {
+      "title": "Tu saldo",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}",
+      "usd": "Equivale a {usd}.",
+      "empty": "Todavía no tienes créditos. Muy pronto podrás recargarlos desde aquí."
+    }
   },
   "EmpresaHome": {
     "title": "Workspace de {name}",
@@ -179,5 +186,103 @@
         "copy": "🔥 Oferta del día en {business}: {offer} en {product}. ¡Solo por hoy!"
       }
     }
+  },
+  "AdWizard": {
+    "title": "Crea tu anuncio",
+    "description": "Solo necesitas 3 pasos.",
+    "stepOf": "Paso {current} de {total}: {name}",
+    "steps": {
+      "product": "Tu producto",
+      "template": "Plantilla",
+      "review": "Revisa y genera"
+    },
+    "back": "Atrás",
+    "next": "Siguiente",
+    "generate": "Generar anuncio",
+    "generating": "Enviando…",
+    "fields": {
+      "productName": "¿Qué quieres anunciar?",
+      "productNamePlaceholder": "Ej.: Pan de yuca, corte de cabello, clases de inglés",
+      "photo": "Foto del producto (opcional)",
+      "photoHelp": "PNG, JPG o WebP de hasta 8 MB.",
+      "photoPreview": "Vista previa de la foto",
+      "removePhoto": "Quitar foto",
+      "photoConsent": "Tengo derecho a usar esta foto y, si aparecen personas, cuento con su consentimiento.",
+      "description": "Describe tu producto o servicio",
+      "descriptionHelp": "Si no tienes foto, cuéntanos cómo es y qué lo hace especial.",
+      "template": "Elige una plantilla",
+      "format": "Formato",
+      "offer": "¿Cuál es la oferta?",
+      "offerPlaceholder": "Ej.: 2x1, 20 % de descuento",
+      "adCopy": "Texto del anuncio",
+      "adCopyHelp": "Lo sugerimos con tus datos. Puedes cambiarlo.",
+      "resetCopy": "Usar el texto sugerido"
+    },
+    "templateCard": {
+      "duration": "{seconds} s",
+      "price": "{count, plural, one {# crédito} other {# créditos}}"
+    },
+    "summary": {
+      "product": "Producto",
+      "template": "Plantilla",
+      "format": "Formato",
+      "price": "Precio",
+      "balance": "Tu saldo",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}",
+      "creditsWithUsd": "{count, plural, one {# crédito} other {# créditos}} ({usd})"
+    },
+    "insufficient": {
+      "title": "No te alcanzan los créditos",
+      "description": "Te faltan {missing, plural, one {# crédito} other {# créditos}} para este anuncio.",
+      "recharge": "Recargar créditos (muy pronto)"
+    },
+    "errors": {
+      "productName": "Escribe el nombre de tu producto o servicio (al menos 2 letras).",
+      "description": "Sube una foto o escribe una descripción.",
+      "photo": "La foto debe ser PNG, JPG o WebP de hasta 8 MB.",
+      "photoConsent": "Confirma que puedes usar esta foto.",
+      "templateId": "Elige una plantilla.",
+      "aspectRatio": "Elige un formato.",
+      "offer": "Escribe la oferta.",
+      "adCopy": "Escribe el texto del anuncio (hasta 300 caracteres).",
+      "invalid": "Revisa los datos marcados.",
+      "moderation": "Tu anuncio incluye palabras que no podemos usar. Revisa el nombre, la descripción, la oferta y el texto.",
+      "photoTooLarge": "La foto pesa más de 8 MB.",
+      "photoUnsupportedType": "La foto debe ser PNG, JPG o WebP.",
+      "insufficientCredits": "Te faltan {missing, plural, one {# crédito} other {# créditos}} para este anuncio.",
+      "rateLimited": "Creaste muchos anuncios en poco tiempo. Espera un rato e inténtalo de nuevo.",
+      "priceChanged": "El precio cambió a {count, plural, one {# crédito} other {# créditos}}. Revísalo y vuelve a generar."
+    }
+  },
+  "AdPage": {
+    "backHome": "Volver al inicio",
+    "status": {
+      "pending": "En cola",
+      "running": "Creando",
+      "succeeded": "Listo",
+      "failed": "No se pudo crear"
+    },
+    "inProgress": {
+      "title": "Estamos creando tu anuncio",
+      "description": "Puede tardar unos minutos. Puedes quedarte aquí o volver más tarde."
+    },
+    "succeeded": {
+      "title": "¡Tu anuncio está listo!"
+    },
+    "failed": {
+      "title": "No pudimos crear tu anuncio",
+      "description": "Te devolvimos {count, plural, one {el crédito} other {los # créditos}} de este anuncio. Puedes intentarlo de nuevo.",
+      "retry": "Intentar de nuevo"
+    },
+    "details": {
+      "template": "Plantilla",
+      "format": "Formato",
+      "price": "Precio",
+      "createdAt": "Creado",
+      "copy": "Texto del anuncio",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}"
+    },
+    "outputAlt": "Anuncio de {product}",
+    "createAnother": "Crear otro anuncio"
   }
 }

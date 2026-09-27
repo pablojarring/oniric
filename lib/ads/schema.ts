@@ -3,12 +3,7 @@ import { z } from "zod";
 import { aspectRatios } from "@/lib/providers/generation-provider";
 import { adTemplates, templateIds } from "@/lib/templates";
 
-export const adFieldLimits = {
-  productName: 80,
-  description: 500,
-  offer: 60,
-  adCopy: 300,
-} as const;
+import { adFieldLimits } from "./types";
 
 const adFormSchema = z
   .object({
@@ -38,7 +33,7 @@ const adFormSchema = z
 
 export type AdForm = z.infer<typeof adFormSchema>;
 
-export type AdField = Exclude<keyof AdForm, "expectedPriceCredits">;
+export type { AdField } from "./types";
 
 /** El input de archivo vacío llega como un archivo sin nombre ni bytes. */
 function photoFrom(value: FormDataEntryValue | null): Blob | null {

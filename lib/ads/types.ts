@@ -15,3 +15,22 @@ export type AdBrief = {
    */
   photoConsent: boolean;
 };
+
+/** Largo máximo de cada texto del asistente (se valida en cliente y servidor). */
+export const adFieldLimits = {
+  productName: 80,
+  description: 500,
+  offer: 60,
+  adCopy: 300,
+} as const;
+
+/** Campos del formulario del asistente. */
+export type AdField =
+  | "templateId"
+  | "aspectRatio"
+  | "productName"
+  | "description"
+  | "offer"
+  | "adCopy"
+  | "photo"
+  | "photoConsent";
