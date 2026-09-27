@@ -24,13 +24,16 @@ export const adFieldLimits = {
   adCopy: 300,
 } as const;
 
-/** Campos del formulario del asistente. */
-export type AdField =
-  | "templateId"
-  | "aspectRatio"
-  | "productName"
-  | "description"
-  | "offer"
-  | "adCopy"
-  | "photo"
-  | "photoConsent";
+/** Campos del formulario del asistente que el cliente puede corregir. */
+export const adFields = [
+  "templateId",
+  "aspectRatio",
+  "productName",
+  "description",
+  "offer",
+  "adCopy",
+  "photo",
+  "photoConsent",
+] as const;
+
+export type AdField = (typeof adFields)[number];

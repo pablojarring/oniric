@@ -11,8 +11,9 @@ import { getGenerationProvider, getProviderById } from "@/lib/providers";
 import { hasFeature } from "@/lib/segment";
 import { getProductPhotoStorage } from "@/lib/uploads/supabase-storage";
 
-import { parseAdForm, type AdField } from "./schema";
+import { parseAdForm } from "./schema";
 import { createAd, getOrganizationJob, type CreateAdError } from "./service";
+import { adFields, type AdField } from "./types";
 
 export type CreateAdState =
   | { error: { code: "invalid"; fields: AdField[] } }
@@ -31,8 +32,12 @@ export async function createAdAction(
 
   const parsed = parseAdForm(formData);
   if (!parsed.success) {
-    const fields = parsed.error.issues.map((issue) => issue.path[0] as AdField);
-    return { error: { code: "invalid", fields: [...new Set(fields)] } };
+    // Solo los campos que el cliente puede corregir; un precio esperado
+    // inválido viene de un formulario alterado y queda como error genérico.
+    const fields = adFields.filter((field) =>
+      parsed.error.issues.some((issue) => issue.path[0] === field),
+    );
+    return { error: { code: "invalid", fields } };
   }
 
   const result = await createAd(
