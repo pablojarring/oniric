@@ -151,5 +151,33 @@
       "saved": "Listo, guardamos el cambio.",
       "error": "No pudimos guardar el cambio. Inténtalo de nuevo."
     }
+  },
+  "Templates": {
+    "formats": {
+      "9:16": "Vertical 9:16 (Reels, TikTok, estados)",
+      "1:1": "Cuadrado 1:1 (publicación en el feed)",
+      "16:9": "Horizontal 16:9 (YouTube, Facebook)"
+    },
+    "mediaTypes": {
+      "video": "Video",
+      "image": "Imagen"
+    },
+    "items": {
+      "promoInstagram": {
+        "name": "Promo 15s para Instagram",
+        "description": "Video de 15 segundos para Reels o el feed, con llamado a la acción.",
+        "copy": "¿Ya conoces {product}? En {business} lo tenemos listo para ti. ¡Escríbenos y pide el tuyo hoy!"
+      },
+      "whatsappStatus": {
+        "name": "Estado de WhatsApp",
+        "description": "Video vertical de 10 segundos para compartir en tus estados.",
+        "copy": "Hoy en {business}: {product} 🙌 Escríbenos por aquí para pedirlo."
+      },
+      "dailyOffer": {
+        "name": "Oferta del día",
+        "description": "Imagen llamativa para anunciar una promoción por tiempo limitado.",
+        "copy": "🔥 Oferta del día en {business}: {offer} en {product}. ¡Solo por hoy!"
+      }
+    }
   }
 }
