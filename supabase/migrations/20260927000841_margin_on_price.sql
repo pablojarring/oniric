@@ -1,0 +1,2 @@
+ALTER TABLE "model_pricing" DROP CONSTRAINT "model_pricing_margin_non_negative";--> statement-breakpoint
+ALTER TABLE "model_pricing" ADD CONSTRAINT "model_pricing_margin_range" CHECK ("model_pricing"."margin_bps" between 0 and 9999);

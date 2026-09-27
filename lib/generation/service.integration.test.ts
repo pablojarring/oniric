@@ -91,7 +91,7 @@ describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
       "settle",
     ]);
     expect(await getBalance(db, organization.id)).toEqual({
-      available: 34,
+      available: 30,
       held: 0,
     });
   });

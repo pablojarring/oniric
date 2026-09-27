@@ -22,6 +22,13 @@
       "when": 1790466057147,
       "tag": "20260926234057_credit_ledger_immutable",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790467721285,
+      "tag": "20260927000841_margin_on_price",
+      "breakpoints": true
     }
   ]
 }

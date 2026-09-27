@@ -41,7 +41,7 @@ afterAll(async () => {
   await testDb.close();
 });
 
-// 10 s de video estándar: 0,50 USD → 66 créditos (ver pricing.test.ts).
+// 10 s de video estándar: 0,50 USD → 70 créditos (ver pricing.test.ts).
 const videoRequest: GenerationRequest = {
   modelId: "mock-video-standard",
   prompt: "Promo de pan recién horneado",
@@ -82,7 +82,7 @@ describe("startGeneration", () => {
     expect(job).toMatchObject({
       status: "pending",
       provider: "mock",
-      priceCredits: 66,
+      priceCredits: 70,
       costMicroUsd: 500_000,
       surchargeBps: 500,
       marginBps: 2_500,
@@ -90,8 +90,8 @@ describe("startGeneration", () => {
     expect(job.providerJobId).toMatch(/^mock_/);
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 34,
-        held: 66,
+        available: 30,
+        held: 70,
       },
     );
   });
@@ -179,7 +179,7 @@ describe("syncJob", () => {
     ]);
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 34,
+        available: 30,
         held: 0,
       },
     );

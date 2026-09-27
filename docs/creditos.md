@@ -5,7 +5,7 @@
 | Parámetro                       | Valor                             | Dónde                                     |
 | ------------------------------- | --------------------------------- | ----------------------------------------- |
 | Valor del crédito               | 1 crédito = US$0,01               | `lib/billing/config.ts`                   |
-| Margen por defecto              | 25 % sobre el costo con recargos  | `lib/billing/config.ts`                   |
+| Margen por defecto              | 25 % sobre el precio de venta     | `lib/billing/config.ts`                   |
 | Margen mínimo (piso)            | 25 %                              | `lib/billing/config.ts`                   |
 | Margen por modelo y segmento    | Opcional; sin fila se usa el 25 % | tabla `model_pricing` (admin, paso 6)     |
 | Precio mínimo por generación    | 1 crédito (o el del modelo)       | `lib/billing/config.ts` y `model_pricing` |
@@ -17,18 +17,21 @@
 ## Precio de una generación
 
 ```
-precio = costo del proveedor × (1 + ISD + comisiones) × (1 + margen)
+precio = costo del proveedor × (1 + ISD + comisiones) ÷ (1 − margen)
 ```
 
 - El resultado se redondea **hacia arriba** a créditos enteros y nunca es menor
   que el precio mínimo por generación.
-- "Margen" es un recargo sobre el costo: con 25 %, el precio es el costo × 1,25,
-  y la ganancia bruta sobre el precio es el 20 %.
+- "Margen" es la ganancia bruta sobre el precio de venta: con 25 %, de cada
+  crédito que paga el cliente quedan 0,25 después de pagar al proveedor y el
+  ISD. Con el ISD del 5 %, el precio es el costo × 1,4.
+- El margen debe ser menor al 100 % (la base de datos lo exige).
 - Todo se calcula en enteros: micro-dólares, puntos básicos y créditos. Así no se
   pierden fracciones de centavo.
 
 Ejemplo: un video de 10 s del modelo `mock-video-standard` cuesta US$0,50.
-0,50 × 1,05 × 1,25 = US$0,65625, que se cobra como 66 créditos.
+0,50 × 1,05 ÷ 0,75 = US$0,70, que se cobra como 70 créditos. De esos US$0,70,
+US$0,525 van al proveedor (con ISD) y US$0,175 (25 %) quedan de ganancia bruta.
 
 El precio se fija al crear el job: se reserva y se cobra exactamente esa
 cantidad, aunque el costo real del proveedor varíe. El job guarda el costo, los

@@ -33,9 +33,13 @@ function ceilDiv(numerator: bigint, denominator: bigint): bigint {
 }
 
 /**
- * precio = costo × (1 + ISD + comisiones) × (1 + margen), redondeado hacia
- * arriba a créditos enteros y nunca menor que el mínimo por generación. El
- * margen nunca baja de MIN_MARGIN_BPS. Todo en enteros para no perder centavos.
+ * precio = costo × (1 + ISD + comisiones) ÷ (1 − margen)
+ *
+ * El margen es la ganancia sobre el precio de venta: con 25 %, de cada crédito
+ * que paga el cliente quedan 0,25 después de pagar al proveedor. El resultado
+ * se redondea hacia arriba a créditos enteros y nunca es menor que el mínimo
+ * por generación. El margen nunca baja de MIN_MARGIN_BPS. Todo en enteros para
+ * no perder fracciones de centavo.
  */
 export function quotePrice(input: {
   costMicroUsd: number;
@@ -47,14 +51,16 @@ export function quotePrice(input: {
     input.surchargeBps ??
     PROVIDER_SURCHARGES_BPS.isd + PROVIDER_SURCHARGES_BPS.bankFees;
   const marginBps = Math.max(input.marginBps, MIN_MARGIN_BPS);
+  if (marginBps >= Number(BPS)) {
+    throw new Error(`El margen debe ser menor al 100 %: ${marginBps} bps`);
+  }
 
-  const priceMicroUsdScaled =
-    BigInt(input.costMicroUsd) *
-    (BPS + BigInt(surchargeBps)) *
-    (BPS + BigInt(marginBps));
+  // costo × (BPS + recargo) / BPS          → costo con recargos
+  // ... × BPS / (BPS − margen)             → precio de venta
+  // ... / valor del crédito                → créditos
   const credits = ceilDiv(
-    priceMicroUsdScaled,
-    BPS * BPS * BigInt(CREDIT_VALUE_MICRO_USD),
+    BigInt(input.costMicroUsd) * (BPS + BigInt(surchargeBps)),
+    (BPS - BigInt(marginBps)) * BigInt(CREDIT_VALUE_MICRO_USD),
   );
 
   return {

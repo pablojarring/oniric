@@ -258,14 +258,18 @@ export const modelPricing = pgTable(
     provider: text().notNull(),
     modelId: text().notNull(),
     segment: segmentEnum().notNull(),
-    /** Margen sobre el costo con recargos, en puntos básicos (2500 = 25 %). */
+    /** Margen sobre el precio de venta, en puntos básicos (2500 = 25 %). */
     marginBps: integer().notNull(),
     minPriceCredits: integer().notNull(),
     updatedAt: timestamps.updatedAt,
   },
   (table) => [
     primaryKey({ columns: [table.provider, table.modelId, table.segment] }),
-    check("model_pricing_margin_non_negative", sql`${table.marginBps} >= 0`),
+    // Menor al 100 %: el precio es costo ÷ (1 − margen).
+    check(
+      "model_pricing_margin_range",
+      sql`${table.marginBps} between 0 and 9999`,
+    ),
     check(
       "model_pricing_min_price_positive",
       sql`${table.minPriceCredits} >= 1`,

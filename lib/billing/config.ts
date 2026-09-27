@@ -18,8 +18,10 @@ export const PROVIDER_SURCHARGES_BPS = {
 } as const;
 
 /**
- * Decisión de producto: margen del 25 % sobre el costo con recargos
- * (precio = costo × 1,25), por defecto y como mínimo para cualquier modelo.
+ * Decisión de producto: margen del 25 % sobre el precio de venta (de cada
+ * crédito cobrado quedan 0,25 de ganancia bruta), por defecto y como mínimo
+ * para cualquier modelo. Con el ISD del 5 %, precio = costo × 1,05 ÷ 0,75 =
+ * costo × 1,4.
  */
 export const DEFAULT_MARGIN_BPS = 2_500;
 export const MIN_MARGIN_BPS = 2_500;
