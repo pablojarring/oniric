@@ -137,6 +137,10 @@ interface GenerationProvider {
   (candidatos para una SAS ecuatoriana: Payphone, Kushki).
   Hasta decidir, usar un `ManualPaymentProvider` que acredita desde el panel de admin.
 - Registrar cada movimiento en un ledger inmutable (`credit_transactions`), no solo el saldo.
+- Decisiones vigentes (ver `docs/creditos.md` y `lib/billing/config.ts`): **1 crédito = US$0,01**;
+  margen por defecto y mínimo del **25 % sobre el precio de venta** (precio = costo con recargos ÷ 0,75);
+  precio mínimo por generación de 1 crédito; los créditos **pyme vencen a los 12 meses**
+  (empresa: pendiente de decidir).
 
 ## 6. Modelo de datos mínimo
 

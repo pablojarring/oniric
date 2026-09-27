@@ -81,7 +81,12 @@ jobs:
             echo "DATABASE_URL=$(jq -r .DB_URL <<< "$status")"
             echo "MAILPIT_URL=$(jq -r .MAILPIT_URL <<< "$status")"
             echo "AUTH_GOOGLE_ENABLED=false"
+            echo "CRON_SECRET=$(openssl rand -hex 32)"
           } >> "$GITHUB_ENV"
+
+      # Concurrencia real de la billetera (PGlite no puede probarla).
+      - name: Tests de integración
+        run: pnpm test:integration
 
       - name: Build
         run: pnpm build
