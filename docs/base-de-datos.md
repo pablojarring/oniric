@@ -68,13 +68,18 @@ foto del producto (`input_image_path`). Ver [asistente.md](./asistente.md).
 
 ## Storage
 
-Las fotos de producto van al bucket privado `product-photos` de Supabase
-Storage (definido en `supabase/config.toml`, con el mismo límite de 8 MB y los
-mismos tipos que valida la app). Sin políticas: solo la app accede, desde el
-servidor y con la clave secreta. `pnpm supabase:start` y `pnpm db:reset` crean
-los buckets en local.
+Dos buckets privados de Supabase Storage, definidos en `supabase/config.toml`:
 
-TODO(fase 3): crear el bucket en el proyecto remoto como parte del despliegue.
+| Bucket           | Qué guarda                                              | Límite |
+| ---------------- | ------------------------------------------------------- | ------ |
+| `product-photos` | Fotos de producto del asistente (PNG, JPEG, WebP).      | 8 MB   |
+| `ad-outputs`     | Resultados de las generaciones, copiados del proveedor. | 100 MB |
+
+Sin políticas: solo la app accede, desde el servidor y con la clave secreta
+(`lib/storage`), y entrega URLs firmadas de corta duración. `pnpm
+supabase:start` y `pnpm db:reset` crean los buckets en local.
+
+TODO(fase 3): crear los buckets en el proyecto remoto como parte del despliegue.
 
 Borrar un usuario en Supabase Auth borra su perfil y sus membresías (cascada).
 Las organizaciones con movimientos de créditos no se pueden borrar: el ledger es

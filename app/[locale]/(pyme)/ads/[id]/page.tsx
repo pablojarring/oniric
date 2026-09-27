@@ -2,15 +2,20 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { AdOutput } from "@/components/ads/ad-output";
+import { AdShare } from "@/components/ads/ad-share";
 import { AdStatusPoller } from "@/components/ads/ad-status-poller";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getDb } from "@/db";
 import { Link } from "@/i18n/navigation";
+import { signOutputs } from "@/lib/ads/files";
 import { getOrganizationJob } from "@/lib/ads/service";
+import { shareUrlFor } from "@/lib/ads/sharing";
 import { requireOrganization } from "@/lib/auth/session";
 import { formatDateTime } from "@/lib/format";
+import { buckets } from "@/lib/storage";
+import { getStorage } from "@/lib/storage/supabase";
 import { isTemplateId } from "@/lib/templates";
 
 export default async function AdPage({
@@ -21,10 +26,13 @@ export default async function AdPage({
   const job = await getOrganizationJob(getDb(), organization.id, id);
   if (!job) notFound();
 
-  const [t, tTemplates, locale] = await Promise.all([
+  const [t, tTemplates, locale, outputs] = await Promise.all([
     getTranslations("AdPage"),
     getTranslations("Templates"),
     getLocale(),
+    job.status === "succeeded"
+      ? signOutputs(getStorage(buckets.adOutputs), job)
+      : [],
   ]);
   const templateName =
     job.templateId && isTemplateId(job.templateId)
@@ -37,10 +45,10 @@ export default async function AdPage({
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <Link
-          href="/home"
+          href="/ads"
           className="text-sm text-muted-foreground hover:underline"
         >
-          ← {t("backHome")}
+          ← {t("backToGallery")}
         </Link>
         <h1 className="font-heading text-3xl font-semibold tracking-tight">
           {title}
@@ -63,14 +71,29 @@ export default async function AdPage({
           <h2 className="font-heading text-xl font-semibold">
             {t("succeeded.title")}
           </h2>
-          {job.outputs?.map((output) => (
-            <AdOutput
-              key={output.url}
-              output={output}
-              alt={t("outputAlt", { product: title })}
-            />
+          {outputs.map((output) => (
+            <div key={output.path} className="flex flex-col gap-3">
+              <AdOutput
+                output={output}
+                url={output.url}
+                alt={t("outputAlt", { product: title })}
+              />
+              <a
+                href={output.downloadUrl}
+                className={buttonVariants({ className: "self-start" })}
+              >
+                {t("download")}
+              </a>
+            </div>
           ))}
         </section>
+      )}
+
+      {job.status === "succeeded" && (
+        <AdShare
+          jobId={job.id}
+          initialUrl={job.shareToken ? shareUrlFor(job.shareToken) : null}
+        />
       )}
 
       {job.status === "failed" && (
@@ -111,7 +134,10 @@ export default async function AdPage({
       {!inProgress && (
         <Link
           href="/create"
-          className={buttonVariants({ className: "self-start" })}
+          className={buttonVariants({
+            variant: "outline",
+            className: "self-start",
+          })}
         >
           {job.status === "failed" ? t("failed.retry") : t("createAnother")}
         </Link>

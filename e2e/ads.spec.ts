@@ -43,6 +43,7 @@ async function chooseTemplate(page: Page, name: RegExp) {
 test.describe("asistente de anuncios pyme", () => {
   test("crea un anuncio con foto y cobra el precio al terminar", async ({
     page,
+    request,
   }) => {
     await pymeWithCredits(page, 200);
     await expect(page.getByTestId("credit-balance")).toHaveText("200 créditos");
@@ -83,10 +84,30 @@ test.describe("asistente de anuncios pyme", () => {
     await expect(
       page.getByRole("heading", { name: "¡Tu anuncio está listo!" }),
     ).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByAltText("Anuncio de Pan de yuca")).toBeVisible();
+    // El resultado (un video del mock) se sirve desde el bucket privado.
+    await expect(page.getByLabel("Anuncio de Pan de yuca")).toBeVisible();
 
-    await page.getByRole("link", { name: "Volver al inicio" }).click();
+    // La descarga usa una URL firmada con un nombre de archivo legible.
+    const downloadUrl = await page
+      .getByRole("link", { name: "Descargar" })
+      .getAttribute("href");
+    const download = await request.get(downloadUrl ?? "");
+    expect(download.status()).toBe(200);
+    expect(download.headers()["content-type"]).toBe("video/webm");
+    expect(download.headers()["content-disposition"]).toContain(
+      "oniric-pan-de-yuca-9x16.webm",
+    );
+
+    // Se cobró al terminar y el anuncio aparece en el inicio y en la galería.
+    await page.goto("/home");
     await expect(page.getByTestId("credit-balance")).toHaveText("130 créditos");
+    await page.getByRole("link", { name: "Ver todos" }).click();
+    await expect(page).toHaveURL("/ads");
+    await expect(
+      page.getByRole("heading", { name: "Mis anuncios" }),
+    ).toBeVisible();
+    await page.getByRole("link", { name: /Pan de yuca/ }).click();
+    await expect(page).toHaveURL(/\/ads\/[0-9a-f-]{36}$/);
   });
 
   test("si la generación falla, devuelve los créditos", async ({ page }) => {
@@ -117,7 +138,7 @@ test.describe("asistente de anuncios pyme", () => {
     await expect(
       page.getByText("Te devolvimos los 3 créditos de este anuncio."),
     ).toBeVisible();
-    await page.getByRole("link", { name: "Volver al inicio" }).click();
+    await page.goto("/home");
     await expect(page.getByTestId("credit-balance")).toHaveText("10 créditos");
   });
 
@@ -180,5 +201,61 @@ test.describe("asistente de anuncios pyme", () => {
       page.getByText(/Tu anuncio incluye palabras que no podemos usar/),
     ).toBeVisible();
     await expect(page).toHaveURL("/create");
+  });
+
+  test("comparte un anuncio con un enlace público que se puede desactivar", async ({
+    page,
+    browser,
+  }) => {
+    await pymeWithCredits(page, 10);
+    await openWizard(page);
+    await page.getByLabel("¿Qué quieres anunciar?").fill("Humitas");
+    await page
+      .getByLabel("Describe tu producto o servicio")
+      .fill("Humitas de choclo con queso");
+    await next(page);
+    await chooseTemplate(page, /Oferta del día/);
+    await page.getByLabel("¿Cuál es la oferta?").fill("2x1");
+    await next(page);
+    await page.getByRole("button", { name: "Generar anuncio" }).click();
+    await expect(
+      page.getByRole("heading", { name: "¡Tu anuncio está listo!" }),
+    ).toBeVisible({ timeout: 30_000 });
+
+    await page.getByRole("button", { name: "Crear enlace público" }).click();
+    const link = page.getByLabel("Enlace público");
+    await expect(link).toHaveValue(/\/s\/[A-Za-z0-9_-]{22}$/);
+    const shareUrl = await link.inputValue();
+
+    // Cualquiera lo abre sin sesión, y no se indexa en buscadores.
+    const visitor = await browser.newContext({ locale: "es-EC" });
+    const publicPage = await visitor.newPage();
+    await publicPage.goto(shareUrl);
+    await expect(
+      publicPage.getByRole("heading", {
+        name: "Anuncio de Panadería La Esquina",
+      }),
+    ).toBeVisible();
+    await expect(
+      publicPage.getByAltText("Anuncio de Panadería La Esquina"),
+    ).toBeVisible();
+    await expect(
+      publicPage.getByText(
+        "🔥 Oferta del día en Panadería La Esquina: 2x1 en Humitas. ¡Solo por hoy!",
+      ),
+    ).toBeVisible();
+    await expect(publicPage.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      "noindex, nofollow",
+    );
+
+    // Al desactivarlo, el enlace deja de funcionar.
+    await page.getByRole("button", { name: "Desactivar enlace" }).click();
+    await expect(
+      page.getByRole("button", { name: "Crear enlace público" }),
+    ).toBeVisible();
+    const response = await publicPage.goto(shareUrl);
+    expect(response?.status()).toBe(404);
+    await visitor.close();
   });
 });

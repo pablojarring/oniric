@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { generationJobs, type GenerationJob, type Segment } from "@/db/schema";
@@ -26,10 +26,7 @@ import {
   type TemplateId,
 } from "@/lib/templates";
 import { validateImage } from "@/lib/uploads/images";
-import {
-  INPUT_IMAGE_URL_TTL_SECONDS,
-  type PhotoStorage,
-} from "@/lib/uploads/storage";
+import { INPUT_IMAGE_URL_TTL_SECONDS, type FileStorage } from "@/lib/storage";
 
 import type { AdForm } from "./schema";
 import type { AdBrief } from "./types";
@@ -102,7 +99,7 @@ export type CreateAdResult =
  */
 export async function createAd(
   db: Database,
-  deps: { provider: GenerationProvider; storage: PhotoStorage },
+  deps: { provider: GenerationProvider; photos: FileStorage },
   input: {
     organizationId: string;
     userId: string;
@@ -155,8 +152,8 @@ export async function createAd(
 
   let inputImageUrl: string | undefined;
   if (photo) {
-    await deps.storage.upload(photo.path, photo.bytes, photo.mimeType);
-    inputImageUrl = await deps.storage.createSignedUrl(
+    await deps.photos.upload(photo.path, photo.bytes, photo.mimeType);
+    inputImageUrl = await deps.photos.createSignedUrl(
       photo.path,
       INPUT_IMAGE_URL_TTL_SECONDS,
     );
@@ -184,7 +181,7 @@ export async function createAd(
     return { ok: true, job };
   } catch (error) {
     if (photo) {
-      await deps.storage.remove(photo.path).catch((cleanupError: unknown) => {
+      await deps.photos.remove(photo.path).catch((cleanupError: unknown) => {
         console.error(`No se pudo borrar la foto ${photo.path}`, cleanupError);
       });
     }
@@ -228,4 +225,20 @@ export async function getOrganizationJob(
       ),
     );
   return job ?? null;
+}
+
+/** Anuncios de la organización, del más nuevo al más viejo. */
+export async function listOrganizationJobs(
+  db: Database,
+  organizationId: string,
+  { limit, offset = 0 }: { limit: number; offset?: number },
+): Promise<{ jobs: GenerationJob[]; hasMore: boolean }> {
+  const rows = await db
+    .select()
+    .from(generationJobs)
+    .where(eq(generationJobs.organizationId, organizationId))
+    .orderBy(desc(generationJobs.createdAt), desc(generationJobs.id))
+    .limit(limit + 1)
+    .offset(offset);
+  return { jobs: rows.slice(0, limit), hasMore: rows.length > limit };
 }

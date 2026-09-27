@@ -51,15 +51,38 @@ describe("MockProvider", () => {
     expect(await provider.getStatus(providerJobId)).toEqual({
       state: "succeeded",
     });
-    expect(await provider.fetchOutput(providerJobId)).toEqual([
-      expect.objectContaining({
-        url: "/mock/preview-9x16.svg",
-        mediaType: "video",
-        width: 1080,
-        height: 1920,
-        durationSeconds: 10,
-      }),
-    ]);
+    const [output] = await provider.fetchOutput(providerJobId);
+    expect(output).toMatchObject({
+      mediaType: "video",
+      mimeType: "video/webm",
+      width: 1080,
+      height: 1920,
+      durationSeconds: 10,
+    });
+    // Un video WebM real, descargable como el de un proveedor.
+    const bytes = new Uint8Array(
+      await (await fetch(output?.url ?? "")).arrayBuffer(),
+    );
+    expect([...bytes.slice(0, 4)]).toEqual([0x1a, 0x45, 0xdf, 0xa3]);
+  });
+
+  it("las imágenes son SVG del formato pedido", async () => {
+    const provider = new MockProvider();
+    const { providerJobId } = await provider.submit({
+      modelId: "mock-image",
+      prompt: "x",
+      aspectRatio: "16:9",
+    });
+
+    const [output] = await provider.fetchOutput(providerJobId);
+    expect(output).toMatchObject({
+      mediaType: "image",
+      mimeType: "image/svg+xml",
+      width: 1920,
+      height: 1080,
+    });
+    const svg = await (await fetch(output?.url ?? "")).text();
+    expect(svg).toContain('viewBox="0 0 1920 1080"');
   });
 
   it("falla si el prompt tiene el marcador de falla", async () => {

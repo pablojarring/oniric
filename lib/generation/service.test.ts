@@ -14,6 +14,7 @@ import type {
 import { MOCK_FAILURE_MARKER, MockProvider } from "@/lib/providers/mock";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 import { createOrganization } from "@/test/fixtures";
+import { createMemoryStorage } from "@/test/storage";
 
 import {
   InvalidGenerationRequestError,
@@ -23,12 +24,14 @@ import {
   SUBMIT_TIMEOUT_MS,
   syncActiveJobs,
   syncJob,
+  type SyncDeps,
 } from "./service";
 
 let testDb: TestDatabase;
 let clock: number;
 let provider: MockProvider;
-const resolve = () => provider;
+let outputs: ReturnType<typeof createMemoryStorage>;
+let deps: SyncDeps;
 const now = () => new Date(clock);
 
 beforeAll(async () => {
@@ -38,6 +41,8 @@ beforeEach(async () => {
   await testDb.reset();
   clock = Date.parse("2026-03-01T10:00:00Z");
   provider = new MockProvider({ latencyMs: 5_000, now: () => clock });
+  outputs = createMemoryStorage();
+  deps = { resolveProvider: () => provider, outputs: outputs.storage };
 });
 afterAll(async () => {
   await testDb.close();
@@ -257,30 +262,90 @@ describe("syncJob", () => {
     const job = await start(context);
 
     clock += 1_000;
-    const synced = await syncJob(testDb.db, resolve, job.id, now());
+    const synced = await syncJob(testDb.db, deps, job.id, now());
 
     expect(synced.status).toBe("running");
   });
 
-  it("al terminar guarda los outputs y cobra la reserva", async () => {
+  it("al terminar copia los resultados a nuestro almacenamiento y cobra", async () => {
     const context = await fundedOrganization();
     const job = await start(context);
 
     clock += 5_000;
-    const synced = await syncJob(testDb.db, resolve, job.id, now());
+    const synced = await syncJob(testDb.db, deps, job.id, now());
 
     expect(synced).toMatchObject({ status: "succeeded", completedAt: now() });
+    const path = `${context.organization.id}/${job.id}/0.webm`;
     expect(synced.outputs).toEqual([
-      expect.objectContaining({
-        url: "/mock/preview-9x16.svg",
+      {
+        path,
+        size: outputs.files.get(path)?.bytes.length,
         mediaType: "video",
-      }),
+        mimeType: "video/webm",
+        width: 1080,
+        height: 1920,
+        durationSeconds: 10,
+      },
     ]);
+    expect(outputs.files.get(path)?.mimeType).toBe("video/webm");
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
         available: 30,
         held: 0,
       },
+    );
+  });
+
+  it("si la copia falla, no cobra y el job queda en curso para reintentar", async () => {
+    const context = await fundedOrganization();
+    const job = await start(context);
+    const failingDeps: SyncDeps = {
+      ...deps,
+      outputs: {
+        ...outputs.storage,
+        upload: async () => {
+          throw new Error("storage caído");
+        },
+      },
+    };
+
+    clock += 5_000;
+    await expect(
+      syncJob(testDb.db, failingDeps, job.id, now()),
+    ).rejects.toThrow("storage caído");
+
+    const [stillRunning] = await testDb.db
+      .select()
+      .from(generationJobs)
+      .where(eq(generationJobs.id, job.id));
+    expect(stillRunning?.status).toBe("pending");
+    expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
+      { available: 30, held: 70 },
+    );
+
+    // El reintento con el almacenamiento sano termina el job.
+    const synced = await syncJob(testDb.db, deps, job.id, now());
+    expect(synced.status).toBe("succeeded");
+  });
+
+  it("un éxito sin resultados se da por fallido y se reembolsa", async () => {
+    const context = await fundedOrganization();
+    const job = await start(context);
+    const empty = Object.assign(Object.create(provider), {
+      fetchOutput: async () => [],
+    }) as MockProvider;
+
+    clock += 5_000;
+    const synced = await syncJob(
+      testDb.db,
+      { ...deps, resolveProvider: () => empty },
+      job.id,
+      now(),
+    );
+
+    expect(synced).toMatchObject({ status: "failed", error: "no_outputs" });
+    expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
+      { available: 100, held: 0 },
     );
   });
 
@@ -292,7 +357,7 @@ describe("syncJob", () => {
     });
 
     clock += 5_000;
-    const synced = await syncJob(testDb.db, resolve, job.id, now());
+    const synced = await syncJob(testDb.db, deps, job.id, now());
 
     expect(synced).toMatchObject({ status: "failed", error: "mock_failure" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
@@ -308,8 +373,8 @@ describe("syncJob", () => {
     const job = await start(context);
     clock += 5_000;
 
-    await syncJob(testDb.db, resolve, job.id, now());
-    await syncJob(testDb.db, resolve, job.id, now());
+    await syncJob(testDb.db, deps, job.id, now());
+    await syncJob(testDb.db, deps, job.id, now());
 
     const settles = await testDb.db
       .select()
@@ -327,12 +392,12 @@ describe("syncJob", () => {
       .where(eq(generationJobs.id, job.id));
 
     clock += SUBMIT_TIMEOUT_MS - 1_000;
-    expect((await syncJob(testDb.db, resolve, job.id, now())).status).toBe(
+    expect((await syncJob(testDb.db, deps, job.id, now())).status).toBe(
       "pending",
     );
 
     clock += 2_000;
-    const synced = await syncJob(testDb.db, resolve, job.id, now());
+    const synced = await syncJob(testDb.db, deps, job.id, now());
     expect(synced).toMatchObject({ status: "failed", error: "submit_timeout" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
@@ -358,7 +423,7 @@ describe("syncActiveJobs", () => {
       .where(eq(generationJobs.id, broken.id));
 
     clock += 5_000;
-    const result = await syncActiveJobs(testDb.db, resolve, { now: now() });
+    const result = await syncActiveJobs(testDb.db, deps, { now: now() });
 
     expect(result).toEqual({ checked: 3, errors: 1 });
     const statuses = Object.fromEntries(

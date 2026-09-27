@@ -34,8 +34,9 @@ No construir un "playground" genérico de modelos.
   `supabase/migrations` y aplicadas con la CLI de Supabase; RLS sin políticas en todas las tablas.
   Ver `docs/base-de-datos.md`.
 - **Auth:** Supabase Auth (email + Google)
-- **Almacenamiento de outputs:** Supabase Storage o Cloudflare R2
-  (Higgsfield borra los archivos después de ~7 días; siempre descargar a almacenamiento propio)
+- **Almacenamiento de outputs:** Supabase Storage, buckets privados con URLs firmadas
+  (Higgsfield borra los archivos después de ~7 días; siempre descargar a almacenamiento propio).
+  `lib/storage` permite cambiar a Cloudflare R2 sin tocar el resto.
 - **Jobs asíncronos:** webhooks de Higgsfield + tabla de jobs con polling de respaldo
 - **Pagos:** interfaz `PaymentProvider` desacoplada (ver §5). No asumir Stripe.
 - **Tests:** Vitest (unit) + Playwright (e2e de flujos principales)

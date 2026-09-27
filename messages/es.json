@@ -142,6 +142,11 @@
       "credits": "{count, plural, one {# crédito} other {# créditos}}",
       "usd": "Equivale a {usd}.",
       "empty": "Todavía no tienes créditos. Muy pronto podrás recargarlos desde aquí."
+    },
+    "recent": {
+      "title": "Tus anuncios recientes",
+      "viewAll": "Ver todos",
+      "empty": "Todavía no creaste anuncios. ¡Crea el primero!"
     }
   },
   "EmpresaHome": {
@@ -255,7 +260,6 @@
     }
   },
   "AdPage": {
-    "backHome": "Volver al inicio",
     "status": {
       "pending": "En cola",
       "running": "Creando",
@@ -283,6 +287,34 @@
       "credits": "{count, plural, one {# crédito} other {# créditos}}"
     },
     "outputAlt": "Anuncio de {product}",
-    "createAnother": "Crear otro anuncio"
+    "createAnother": "Crear otro anuncio",
+    "backToGallery": "Mis anuncios",
+    "download": "Descargar",
+    "share": {
+      "title": "Compartir",
+      "description": "Crea un enlace para que cualquiera vea este anuncio sin iniciar sesión. Puedes desactivarlo cuando quieras.",
+      "enable": "Crear enlace público",
+      "link": "Enlace público",
+      "copy": "Copiar enlace",
+      "copied": "¡Copiado!",
+      "native": "Compartir…",
+      "disable": "Desactivar enlace",
+      "error": "No pudimos actualizar el enlace. Inténtalo de nuevo."
+    }
+  },
+  "AdGallery": {
+    "title": "Mis anuncios",
+    "description": "Todos los anuncios de {name}.",
+    "empty": "Todavía no creaste anuncios.",
+    "create": "Crear anuncio",
+    "newer": "Más recientes",
+    "older": "Más antiguos",
+    "shared": "Enlace público activo",
+    "thumbnailAlt": "Anuncio de {product}"
+  },
+  "SharedAd": {
+    "title": "Anuncio de {business}",
+    "madeWith": "Creado con Oniric",
+    "cta": "Crea anuncios para tu negocio"
   }
 }
