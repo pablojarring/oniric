@@ -499,7 +499,7 @@ export function AdWizard({
             <AlertDescription>
               {t("insufficient.description", { missing: missingCredits })}
             </AlertDescription>
-            {/* TODO(paso 6 y fase 3): recarga de créditos. */}
+            {/* TODO(fase 3): recarga en línea; hoy un admin acredita los pagos a mano. */}
             <Button
               type="button"
               variant="outline"

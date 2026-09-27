@@ -131,5 +131,6 @@ descripción.
 - TODO(producto): cuánto tiempo se guardan los resultados en `ad-outputs`.
 - TODO(producto): vista previa del enlace público al compartirlo (imagen
   Open Graph), que necesita una URL que no venza.
-- TODO(paso 6 y fase 3): recarga de créditos desde el asistente.
+- TODO(fase 3): recarga de créditos desde el asistente (hoy la acredita un
+  admin desde `/admin`).
 - TODO(fase 3): modelos de Higgsfield por plantilla y vigencia de la URL firmada.

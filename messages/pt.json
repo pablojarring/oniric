@@ -21,7 +21,8 @@
     "login": "Entrar",
     "signup": "Criar conta",
     "settings": "Configurações",
-    "logout": "Sair"
+    "logout": "Sair",
+    "admin": "Admin"
   },
   "Auth": {
     "email": "E-mail",
@@ -316,5 +317,91 @@
     "title": "Anúncio de {business}",
     "madeWith": "Criado com Oniric",
     "cta": "Crie anúncios para o seu negócio"
+  },
+  "Admin": {
+    "nav": {
+      "title": "Painel de admin",
+      "organizations": "Organizações",
+      "pricing": "Margens"
+    },
+    "segments": {
+      "pyme": "PME",
+      "empresa": "Empresa"
+    },
+    "credits": "{count, plural, one {# crédito} other {# créditos}}",
+    "organizations": {
+      "title": "Organizações",
+      "description": "Busque uma organização para ver o saldo e creditar créditos.",
+      "search": "Nome do negócio ou e-mail de um membro",
+      "searchButton": "Buscar",
+      "empty": "Não encontramos organizações.",
+      "columns": {
+        "name": "Nome",
+        "segment": "Segmento",
+        "country": "País",
+        "createdAt": "Criada"
+      }
+    },
+    "organization": {
+      "back": "Organizações",
+      "members": "Membros",
+      "balance": "Saldo",
+      "available": "Disponível",
+      "held": "Reservado em gerações em andamento",
+      "lots": "Lotes com saldo",
+      "lotRemaining": "Restam {remaining} de {granted}",
+      "expires": "vence em {date}",
+      "expired": "venceu em {date}",
+      "noExpiry": "não vence",
+      "noLots": "Sem lotes com saldo.",
+      "transactions": "Últimos movimentos",
+      "noTransactions": "Ainda não há movimentos.",
+      "types": {
+        "grant": "Crédito",
+        "reserve": "Reserva",
+        "settle": "Cobrança",
+        "refund": "Reembolso",
+        "expire": "Vencimento"
+      },
+      "by": "por {email}"
+    },
+    "credit": {
+      "title": "Creditar créditos",
+      "description": "Para pagamentos por transferência ou créditos de cortesia. Fica registrado no ledger com o seu usuário e a referência.",
+      "credits": "Créditos",
+      "equivalent": "Equivale a {usd}.",
+      "reference": "Referência do pagamento ou motivo",
+      "referencePlaceholder": "Ex.: Transferência Banco do Brasil #123",
+      "submit": "Creditar",
+      "submitting": "Creditando…",
+      "success": "Pronto: creditamos {count, plural, one {# crédito} other {# créditos}}.",
+      "errors": {
+        "credits": "Informe um número inteiro entre 1 e 1.000.000.",
+        "reference": "Escreva a referência do pagamento ou o motivo (até 200 caracteres)."
+      }
+    },
+    "pricing": {
+      "title": "Margens por modelo",
+      "description": "Margem sobre o preço de venda, por modelo e segmento, entre 25% e 90%. As mudanças só afetam as novas gerações.",
+      "columns": {
+        "model": "Modelo",
+        "segment": "Segmento",
+        "margin": "Margem (%)",
+        "minPrice": "Preço mínimo (créditos)",
+        "example": "Preço de referência"
+      },
+      "default": "Padrão",
+      "custom": "Personalizado",
+      "exampleVideo": "{seconds} s: {count, plural, one {# crédito} other {# créditos}}",
+      "exampleImage": "1 imagem: {count, plural, one {# crédito} other {# créditos}}",
+      "save": "Salvar",
+      "reset": "Restaurar",
+      "saved": "Salvo.",
+      "errors": {
+        "marginBps": "A margem deve estar entre 25% e 90%, com até 2 casas decimais.",
+        "minPriceCredits": "O mínimo deve ser um inteiro entre 1 e 100.000.",
+        "model": "Modelo desconhecido."
+      }
+    }
   }
 }

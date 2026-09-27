@@ -63,7 +63,7 @@ export default async function PymeHomePage() {
             ? t("balance.usd", {
                 usd: formatUsd(creditsToUsd(balance.available), locale),
               })
-            : // TODO(paso 6): recarga manual desde el panel de admin.
+            : // TODO(fase 3): recarga en línea; hoy un admin acredita los pagos a mano.
               t("balance.empty")}
         </CardContent>
       </Card>

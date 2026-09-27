@@ -1,4 +1,4 @@
-import { LogOutIcon, SettingsIcon } from "lucide-react";
+import { LogOutIcon, SettingsIcon, ShieldIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -11,7 +11,13 @@ import { signOut } from "@/lib/auth/actions";
  * Encabezado de las páginas con sesión. Sin `homePath` (onboarding) no muestra
  * la navegación, porque todavía no hay organización.
  */
-export function AppHeader({ homePath }: { homePath?: string }) {
+export function AppHeader({
+  homePath,
+  isPlatformAdmin = false,
+}: {
+  homePath?: string;
+  isPlatformAdmin?: boolean;
+}) {
   const t = useTranslations("Nav");
   const brandClassName = "font-heading text-lg font-semibold";
 
@@ -26,6 +32,18 @@ export function AppHeader({ homePath }: { homePath?: string }) {
       )}
       <nav className="flex items-center gap-2">
         <LocaleSwitcher />
+        {isPlatformAdmin && (
+          <Link
+            href="/admin"
+            className={buttonVariants({
+              variant: "ghost",
+              size: "sm",
+              className: navIconOnlyClassName,
+            })}
+          >
+            <NavLabel icon={ShieldIcon}>{t("admin")}</NavLabel>
+          </Link>
+        )}
         {homePath && (
           <Link
             href="/settings"

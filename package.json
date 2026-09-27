@@ -24,7 +24,8 @@
     "db:migrate": "supabase migration up",
     "db:reset": "supabase db reset",
     "db:studio": "drizzle-kit studio",
-    "credits:grant": "tsx scripts/grant-credits.ts"
+    "credits:grant": "tsx scripts/grant-credits.ts",
+    "admin:grant": "tsx scripts/admin-grant.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -7,7 +7,7 @@
 | Valor del crédito               | 1 crédito = US$0,01               | `lib/billing/config.ts`                   |
 | Margen por defecto              | 25 % sobre el precio de venta     | `lib/billing/config.ts`                   |
 | Margen mínimo (piso)            | 25 %                              | `lib/billing/config.ts`                   |
-| Margen por modelo y segmento    | Opcional; sin fila se usa el 25 % | tabla `model_pricing` (admin, paso 6)     |
+| Margen por modelo y segmento    | Opcional; sin fila se usa el 25 % | `model_pricing`, desde `/admin/pricing`   |
 | Precio mínimo por generación    | 1 crédito (o el del modelo)       | `lib/billing/config.ts` y `model_pricing` |
 | ISD sobre pagos al proveedor    | 5 %                               | `lib/billing/config.ts`                   |
 | Comisión bancaria               | 0 % — TODO(producto)              | `lib/billing/config.ts`                   |
@@ -37,8 +37,9 @@ El precio se fija al crear el job: se reserva y se cobra exactamente esa
 cantidad, aunque el costo real del proveedor varíe. El job guarda el costo, los
 recargos, el margen y el precio aplicados.
 
-El IVA de Ecuador no entra aquí: se aplica al vender paquetes de créditos (pagos,
-paso 6 y fase 3).
+El IVA de Ecuador no entra aquí: se aplicará al vender paquetes de créditos
+(fase 3). Mientras no haya pasarela, un admin acredita los pagos a mano desde
+`/admin` (ver [admin.md](./admin.md)).
 
 ## Billetera
 

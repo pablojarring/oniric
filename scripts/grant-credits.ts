@@ -3,7 +3,8 @@
 //
 //   pnpm credits:grant <email> <créditos>
 //
-// TODO(paso 6): la acreditación manual real va en el panel de admin.
+// Para acreditar pagos reales está el panel de admin (/admin, ver
+// docs/admin.md); este script queda para desarrollo y tests.
 
 import { loadEnvConfig } from "@next/env";
 import { eq } from "drizzle-orm";

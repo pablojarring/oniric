@@ -45,22 +45,22 @@ explícitas en ese momento.
 
 ## Tablas
 
-| Tabla           | Qué guarda                                                               |
-| --------------- | ------------------------------------------------------------------------ |
-| `users`         | Perfil de cada usuario de Supabase Auth (mismo `id`) e idioma preferido. |
-| `organizations` | Negocio del onboarding: segmento, país, industria, equipo y usos.        |
-| `memberships`   | Usuario ↔ organización con rol (`admin`, `editor`, `revisor`).           |
+| Tabla           | Qué guarda                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| `users`         | Perfil de cada usuario de Supabase Auth (mismo `id`), idioma preferido y si es admin de la plataforma. |
+| `organizations` | Negocio del onboarding: segmento, país, industria, equipo y usos.                                      |
+| `memberships`   | Usuario ↔ organización con rol (`admin`, `editor`, `revisor`).                                         |
 
 Créditos y generaciones (detalle en [creditos.md](./creditos.md)):
 
-| Tabla                 | Qué guarda                                                         |
-| --------------------- | ------------------------------------------------------------------ |
-| `credit_wallets`      | Billetera de cada organización (su fila serializa movimientos).    |
-| `credit_lots`         | Cada acreditación, con lo que queda y su vencimiento.              |
-| `credit_transactions` | Ledger inmutable de todos los movimientos.                         |
-| `credit_allocations`  | De qué lotes salieron los créditos reservados de cada job.         |
-| `model_pricing`       | Margen y precio mínimo por proveedor, modelo y segmento.           |
-| `generation_jobs`     | Cada generación: estado, proveedor, costo, precio, outputs, error. |
+| Tabla                 | Qué guarda                                                                           |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| `credit_wallets`      | Billetera de cada organización (su fila serializa movimientos).                      |
+| `credit_lots`         | Cada acreditación, con lo que queda y su vencimiento.                                |
+| `credit_transactions` | Ledger inmutable de todos los movimientos.                                           |
+| `credit_allocations`  | De qué lotes salieron los créditos reservados de cada job.                           |
+| `model_pricing`       | Margen y precio mínimo por proveedor, modelo y segmento, con el admin que lo cambió. |
+| `generation_jobs`     | Cada generación: estado, proveedor, costo, precio, outputs, error.                   |
 
 Los anuncios del asistente pyme guardan además en `generation_jobs` la
 plantilla (`template_id`), lo que completó el cliente (`brief`) y la ruta de la

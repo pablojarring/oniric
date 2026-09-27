@@ -10,6 +10,7 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   char,
   check,
   index,
@@ -61,6 +62,12 @@ export const users = pgTable("users", {
   email: text().notNull(),
   /** Idioma preferido de la interfaz (ver i18n/config.ts). */
   locale: text().$type<Locale>().notNull().default("es"),
+  /**
+   * Equipo de Oniric: entra al panel de admin (márgenes y acreditación manual).
+   * No tiene que ver con el rol dentro de una organización. Se asigna con
+   * `pnpm admin:grant` (ver docs/admin.md).
+   */
+  isPlatformAdmin: boolean().notNull().default(false),
   ...timestamps,
 }).enableRLS();
 
@@ -275,6 +282,8 @@ export const modelPricing = pgTable(
     marginBps: integer().notNull(),
     minPriceCredits: integer().notNull(),
     updatedAt: timestamps.updatedAt,
+    /** Admin que hizo el último cambio. Sin FK, como el ledger. */
+    updatedBy: uuid(),
   },
   (table) => [
     primaryKey({ columns: [table.provider, table.modelId, table.segment] }),
