@@ -1,33 +1,43 @@
 import Image from "next/image";
 
-import type { OutputFile } from "@/lib/providers/generation-provider";
+import type { StoredOutput } from "@/lib/generation/types";
 
 /** Vista previa de un resultado: video o imagen según su tipo MIME. */
-export function AdOutput({ output, alt }: { output: OutputFile; alt: string }) {
+export function AdOutput({
+  output,
+  url,
+  alt,
+  className = "max-h-[70vh] w-auto self-start rounded-lg border",
+}: {
+  output: Pick<StoredOutput, "mimeType" | "width" | "height">;
+  /** URL firmada del bucket privado. */
+  url: string;
+  alt: string;
+  /** Por defecto, self-start: en un flex en columna, estirarlo deformaría la vista previa. */
+  className?: string;
+}) {
   const width = output.width ?? 1080;
   const height = output.height ?? 1080;
-  // self-start: dentro de un flex en columna, el estiramiento ignoraría el
-  // alto máximo y deformaría la vista previa.
-  const className = "max-h-[70vh] w-auto self-start rounded-lg border";
 
   if (output.mimeType.startsWith("video/")) {
     return (
       <video
-        src={output.url}
+        src={url}
         width={width}
         height={height}
         controls
         playsInline
+        preload="metadata"
         aria-label={alt}
         className={className}
       />
     );
   }
-  // Los outputs vienen del proveedor (y en la fase 3, del almacenamiento
-  // propio): se muestran tal cual, sin el optimizador de imágenes.
+  // Las URLs firmadas vencen: se muestran tal cual, sin el optimizador de
+  // imágenes de Next.js.
   return (
     <Image
-      src={output.url}
+      src={url}
       alt={alt}
       width={width}
       height={height}
