@@ -18,12 +18,13 @@
     "test:watch": "vitest --project unit --project dom",
     "test:integration": "vitest run --project integration",
     "test:e2e": "playwright test",
-    "supabase:start": "supabase start",
+    "supabase:start": "supabase start && supabase seed buckets --local",
     "supabase:stop": "supabase stop",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "supabase migration up",
     "db:reset": "supabase db reset",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "credits:grant": "tsx scripts/grant-credits.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -64,6 +65,7 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "supabase": "^2.118.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vite": "^8.3.1",
     "vitest": "^5.0.2"
