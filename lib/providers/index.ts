@@ -32,3 +32,9 @@ export function getProviderById(id: string): GenerationProvider {
   if (id === "mock") return getMockProvider();
   throw new Error(`Proveedor desconocido: ${id}`);
 }
+
+/** Proveedores cuyos modelos se pueden cobrar (panel de márgenes). */
+export function listProviders(): GenerationProvider[] {
+  // TODO(fase 3): agregar HiggsfieldProvider.
+  return [getMockProvider()];
+}

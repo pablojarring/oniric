@@ -7,11 +7,14 @@ import { requireOrganization } from "@/lib/auth/session";
 import { isAdvancedMode, segmentConfig } from "@/lib/segment";
 
 export default async function SettingsPage() {
-  const { organization, membership } = await requireOrganization();
+  const { organization, membership, user } = await requireOrganization();
   const t = await getTranslations("Settings");
 
   return (
-    <AppShell homePath={segmentConfig[organization.segment].homePath}>
+    <AppShell
+      homePath={segmentConfig[organization.segment].homePath}
+      isPlatformAdmin={user.isPlatformAdmin}
+    >
       <div className="flex flex-col gap-2">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">
           {t("title")}

@@ -6,8 +6,13 @@ import { segmentConfig } from "@/lib/segment";
 export default async function EmpresaLayout({
   children,
 }: LayoutProps<"/[locale]">) {
-  await requireSegmentArea("empresa");
+  const { user } = await requireSegmentArea("empresa");
   return (
-    <AppShell homePath={segmentConfig.empresa.homePath}>{children}</AppShell>
+    <AppShell
+      homePath={segmentConfig.empresa.homePath}
+      isPlatformAdmin={user.isPlatformAdmin}
+    >
+      {children}
+    </AppShell>
   );
 }

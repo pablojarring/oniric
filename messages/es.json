@@ -21,7 +21,8 @@
     "login": "Iniciar sesión",
     "signup": "Crear cuenta",
     "settings": "Configuración",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "admin": "Admin"
   },
   "Auth": {
     "email": "Correo electrónico",
@@ -316,5 +317,91 @@
     "title": "Anuncio de {business}",
     "madeWith": "Creado con Oniric",
     "cta": "Crea anuncios para tu negocio"
+  },
+  "Admin": {
+    "nav": {
+      "title": "Panel de admin",
+      "organizations": "Organizaciones",
+      "pricing": "Márgenes"
+    },
+    "segments": {
+      "pyme": "Pyme",
+      "empresa": "Empresa"
+    },
+    "credits": "{count, plural, one {# crédito} other {# créditos}}",
+    "organizations": {
+      "title": "Organizaciones",
+      "description": "Busca una organización para ver su saldo y acreditar créditos.",
+      "search": "Nombre del negocio o correo de un miembro",
+      "searchButton": "Buscar",
+      "empty": "No encontramos organizaciones.",
+      "columns": {
+        "name": "Nombre",
+        "segment": "Segmento",
+        "country": "País",
+        "createdAt": "Creada"
+      }
+    },
+    "organization": {
+      "back": "Organizaciones",
+      "members": "Miembros",
+      "balance": "Saldo",
+      "available": "Disponible",
+      "held": "Reservado en generaciones en curso",
+      "lots": "Lotes con saldo",
+      "lotRemaining": "Quedan {remaining} de {granted}",
+      "expires": "vence el {date}",
+      "expired": "vencido el {date}",
+      "noExpiry": "no vence",
+      "noLots": "Sin lotes con saldo.",
+      "transactions": "Últimos movimientos",
+      "noTransactions": "Todavía no hay movimientos.",
+      "types": {
+        "grant": "Acreditación",
+        "reserve": "Reserva",
+        "settle": "Cobro",
+        "refund": "Reembolso",
+        "expire": "Vencimiento"
+      },
+      "by": "por {email}"
+    },
+    "credit": {
+      "title": "Acreditar créditos",
+      "description": "Para pagos por transferencia o créditos de cortesía. Queda registrado en el ledger con tu usuario y la referencia.",
+      "credits": "Créditos",
+      "equivalent": "Equivale a {usd}.",
+      "reference": "Referencia del pago o motivo",
+      "referencePlaceholder": "Ej.: Transferencia Banco Pichincha #123",
+      "submit": "Acreditar",
+      "submitting": "Acreditando…",
+      "success": "Listo: acreditamos {count, plural, one {# crédito} other {# créditos}}.",
+      "errors": {
+        "credits": "Ingresa un número entero entre 1 y 1.000.000.",
+        "reference": "Escribe la referencia del pago o el motivo (hasta 200 caracteres)."
+      }
+    },
+    "pricing": {
+      "title": "Márgenes por modelo",
+      "description": "Margen sobre el precio de venta, por modelo y segmento, entre 25 % y 90 %. Los cambios solo afectan a las generaciones nuevas.",
+      "columns": {
+        "model": "Modelo",
+        "segment": "Segmento",
+        "margin": "Margen (%)",
+        "minPrice": "Precio mínimo (créditos)",
+        "example": "Precio de referencia"
+      },
+      "default": "Por defecto",
+      "custom": "Personalizado",
+      "exampleVideo": "{seconds} s: {count, plural, one {# crédito} other {# créditos}}",
+      "exampleImage": "1 imagen: {count, plural, one {# crédito} other {# créditos}}",
+      "save": "Guardar",
+      "reset": "Restablecer",
+      "saved": "Guardado.",
+      "errors": {
+        "marginBps": "El margen debe estar entre 25 % y 90 %, con hasta 2 decimales.",
+        "minPriceCredits": "El mínimo debe ser un entero entre 1 y 100.000.",
+        "model": "Modelo desconocido."
+      }
+    }
   }
 }

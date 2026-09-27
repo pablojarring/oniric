@@ -6,6 +6,13 @@ import { segmentConfig } from "@/lib/segment";
 export default async function PymeLayout({
   children,
 }: LayoutProps<"/[locale]">) {
-  await requireSegmentArea("pyme");
-  return <AppShell homePath={segmentConfig.pyme.homePath}>{children}</AppShell>;
+  const { user } = await requireSegmentArea("pyme");
+  return (
+    <AppShell
+      homePath={segmentConfig.pyme.homePath}
+      isPlatformAdmin={user.isPlatformAdmin}
+    >
+      {children}
+    </AppShell>
+  );
 }
