@@ -112,9 +112,17 @@ port = 54324
 # sender_name = "Admin"
 
 [storage]
-enabled = false
+enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
+
+# Fotos de producto que suben las pymes en el asistente (paso 1). Privado: la
+# app sube y lee con la clave secreta desde el servidor y entrega al proveedor
+# URLs firmadas de corta duración. Mismo límite que lib/uploads/images.ts.
+[storage.buckets.product-photos]
+public = false
+file_size_limit = "8MiB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/webp"]
 
 # Uncomment to configure local storage buckets
 # [storage.buckets.images]
@@ -125,7 +133,7 @@ file_size_limit = "50MiB"
 
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]
-enabled = true
+enabled = false
 
 # Image transformation API is available to Supabase Pro plan.
 # [storage.image_transformation]
@@ -144,7 +152,7 @@ max_catalogs = 2
 
 # Store vector embeddings in S3 for large and durable datasets
 [storage.vector]
-enabled = true
+enabled = false
 max_buckets = 10
 max_indexes = 5
 

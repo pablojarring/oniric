@@ -26,6 +26,7 @@ import {
 import { authUsers } from "drizzle-orm/supabase";
 
 import type { Locale } from "../i18n/config";
+import type { AdBrief } from "../lib/ads/types";
 import type {
   Country,
   Industry,
@@ -179,6 +180,12 @@ export const generationJobs = pgTable(
     outputs: jsonb().$type<OutputFile[]>(),
     error: text(),
     completedAt: timestamp({ withTimezone: true }),
+    /** Plantilla del asistente pyme (`lib/templates`); null en el workspace. */
+    templateId: text(),
+    /** Lo que el cliente completó en el asistente. */
+    brief: jsonb().$type<AdBrief>(),
+    /** Foto del producto en el bucket `product-photos` de Supabase Storage. */
+    inputImagePath: text(),
     ...timestamps,
   },
   (table) => [

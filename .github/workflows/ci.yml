@@ -66,9 +66,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Postgres, Auth y Mailpit en Docker; aplica supabase/migrations al iniciar.
+      # Postgres, Auth, Storage y Mailpit en Docker; aplica supabase/migrations
+      # al iniciar y crea los buckets de supabase/config.toml.
       - name: Levantar Supabase local
-        run: pnpm exec supabase start -x studio,postgres-meta
+        run: |
+          pnpm exec supabase start -x studio,postgres-meta
+          pnpm exec supabase seed buckets --local
 
       - name: Variables de entorno de Supabase local
         run: |
@@ -82,6 +85,7 @@ jobs:
             echo "MAILPIT_URL=$(jq -r .MAILPIT_URL <<< "$status")"
             echo "AUTH_GOOGLE_ENABLED=false"
             echo "CRON_SECRET=$(openssl rand -hex 32)"
+            echo "MOCK_PROVIDER_LATENCY_MS=2000"
           } >> "$GITHUB_ENV"
 
       # Concurrencia real de la billetera (PGlite no puede probarla).

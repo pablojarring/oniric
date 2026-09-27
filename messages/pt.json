@@ -135,7 +135,14 @@
   },
   "PymeHome": {
     "title": "Olá, {name}!",
-    "description": "Em breve você vai poder criar seu primeiro anúncio em 3 passos."
+    "description": "Crie um anúncio para suas redes em 3 passos.",
+    "create": "Criar anúncio",
+    "balance": {
+      "title": "Seu saldo",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}",
+      "usd": "Equivale a {usd}.",
+      "empty": "Você ainda não tem créditos. Em breve poderá recarregá-los por aqui."
+    }
   },
   "EmpresaHome": {
     "title": "Workspace de {name}",
@@ -151,5 +158,131 @@
       "saved": "Pronto, salvamos a alteração.",
       "error": "Não conseguimos salvar a alteração. Tente de novo."
     }
+  },
+  "Templates": {
+    "formats": {
+      "9:16": "Vertical 9:16 (Reels, TikTok, status)",
+      "1:1": "Quadrado 1:1 (post no feed)",
+      "16:9": "Horizontal 16:9 (YouTube, Facebook)"
+    },
+    "mediaTypes": {
+      "video": "Vídeo",
+      "image": "Imagem"
+    },
+    "items": {
+      "promoInstagram": {
+        "name": "Promo 15s para Instagram",
+        "description": "Vídeo de 15 segundos para Reels ou o feed, com chamada para ação.",
+        "copy": "Já conhece {product}? Temos pronto para você em {business}. Fale com a gente e peça o seu hoje!"
+      },
+      "whatsappStatus": {
+        "name": "Status do WhatsApp",
+        "description": "Vídeo vertical de 10 segundos para compartilhar no seu status.",
+        "copy": "Hoje em {business}: {product} 🙌 Mande uma mensagem por aqui para pedir."
+      },
+      "dailyOffer": {
+        "name": "Oferta do dia",
+        "description": "Imagem chamativa para anunciar uma promoção por tempo limitado.",
+        "copy": "🔥 Oferta do dia em {business}: {offer} em {product}. Só hoje!"
+      }
+    }
+  },
+  "AdWizard": {
+    "title": "Crie seu anúncio",
+    "description": "São só 3 passos.",
+    "stepOf": "Passo {current} de {total}: {name}",
+    "steps": {
+      "product": "Seu produto",
+      "template": "Modelo",
+      "review": "Revise e gere"
+    },
+    "back": "Voltar",
+    "next": "Próximo",
+    "generate": "Gerar anúncio",
+    "generating": "Enviando…",
+    "fields": {
+      "productName": "O que você quer anunciar?",
+      "productNamePlaceholder": "Ex.: Pão de queijo, corte de cabelo, aulas de inglês",
+      "photo": "Foto do produto (opcional)",
+      "photoHelp": "PNG, JPG ou WebP de até 8 MB.",
+      "photoPreview": "Pré-visualização da foto",
+      "removePhoto": "Remover foto",
+      "photoConsent": "Tenho direito de usar esta foto e, se aparecem pessoas, tenho o consentimento delas.",
+      "description": "Descreva seu produto ou serviço",
+      "descriptionHelp": "Se você não tem foto, conte como ele é e o que o torna especial.",
+      "template": "Escolha um modelo",
+      "format": "Formato",
+      "offer": "Qual é a oferta?",
+      "offerPlaceholder": "Ex.: Leve 2, pague 1; 20% de desconto",
+      "adCopy": "Texto do anúncio",
+      "adCopyHelp": "Sugerimos com os seus dados. Você pode alterá-lo.",
+      "resetCopy": "Usar o texto sugerido"
+    },
+    "templateCard": {
+      "duration": "{seconds} s",
+      "price": "{count, plural, one {# crédito} other {# créditos}}"
+    },
+    "summary": {
+      "product": "Produto",
+      "template": "Modelo",
+      "format": "Formato",
+      "price": "Preço",
+      "balance": "Seu saldo",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}",
+      "creditsWithUsd": "{count, plural, one {# crédito} other {# créditos}} ({usd})"
+    },
+    "insufficient": {
+      "title": "Seus créditos não são suficientes",
+      "description": "Faltam {missing, plural, one {# crédito} other {# créditos}} para este anúncio.",
+      "recharge": "Recarregar créditos (em breve)"
+    },
+    "errors": {
+      "productName": "Escreva o nome do seu produto ou serviço (pelo menos 2 letras).",
+      "description": "Envie uma foto ou escreva uma descrição.",
+      "photo": "A foto deve ser PNG, JPG ou WebP de até 8 MB.",
+      "photoConsent": "Confirme que você pode usar esta foto.",
+      "templateId": "Escolha um modelo.",
+      "aspectRatio": "Escolha um formato.",
+      "offer": "Escreva a oferta.",
+      "adCopy": "Escreva o texto do anúncio (até 300 caracteres).",
+      "invalid": "Revise os dados marcados.",
+      "moderation": "Seu anúncio tem palavras que não podemos usar. Revise o nome, a descrição, a oferta e o texto.",
+      "photoTooLarge": "A foto tem mais de 8 MB.",
+      "photoUnsupportedType": "A foto deve ser PNG, JPG ou WebP.",
+      "insufficientCredits": "Faltam {missing, plural, one {# crédito} other {# créditos}} para este anúncio.",
+      "rateLimited": "Você criou muitos anúncios em pouco tempo. Espere um pouco e tente de novo.",
+      "priceChanged": "O preço mudou para {count, plural, one {# crédito} other {# créditos}}. Revise e gere novamente."
+    }
+  },
+  "AdPage": {
+    "backHome": "Voltar ao início",
+    "status": {
+      "pending": "Na fila",
+      "running": "Criando",
+      "succeeded": "Pronto",
+      "failed": "Não foi possível criar"
+    },
+    "inProgress": {
+      "title": "Estamos criando seu anúncio",
+      "description": "Pode levar alguns minutos. Você pode ficar aqui ou voltar mais tarde."
+    },
+    "succeeded": {
+      "title": "Seu anúncio está pronto!"
+    },
+    "failed": {
+      "title": "Não conseguimos criar seu anúncio",
+      "description": "Devolvemos {count, plural, one {o crédito} other {os # créditos}} deste anúncio. Você pode tentar de novo.",
+      "retry": "Tentar de novo"
+    },
+    "details": {
+      "template": "Modelo",
+      "format": "Formato",
+      "price": "Preço",
+      "createdAt": "Criado",
+      "copy": "Texto do anúncio",
+      "credits": "{count, plural, one {# crédito} other {# créditos}}"
+    },
+    "outputAlt": "Anúncio de {product}",
+    "createAnother": "Criar outro anúncio"
   }
 }

@@ -82,9 +82,13 @@ Reglas:
 Flujo (CLAUDE.md §3.2), en `lib/generation/service.ts`:
 
 1. `startGeneration` valida la solicitud contra los modelos del proveedor.
-2. Estima el costo y calcula el precio.
+2. Estima el costo y calcula el precio. Si el cliente confirmó otro precio
+   (`expectedPriceCredits`), lanza `PriceChangedError` y no crea nada.
 3. En una transacción, crea el job y reserva los créditos. Sin saldo suficiente
-   lanza `InsufficientCreditsError` y no crea nada.
+   lanza `InsufficientCreditsError` y no crea nada. Con la billetera ya
+   bloqueada, cuenta las generaciones de la última hora de la organización: si
+   supera el límite (20, TODO(producto)), lanza `RateLimitExceededError` y
+   deshace todo.
 4. Envía el job al proveedor. El job queda `pending`; si el envío falla, queda
    `failed` con los créditos devueltos.
 5. `syncJob` consulta al proveedor:

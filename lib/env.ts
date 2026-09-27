@@ -32,3 +32,11 @@ export function getSiteUrl(): string {
 export function isGoogleAuthEnabled(): boolean {
   return process.env.AUTH_GOOGLE_ENABLED === "true";
 }
+
+/**
+ * Clave secreta de Supabase (sb_secret_...). Solo en el servidor: da acceso
+ * total al proyecto, sin RLS. Se usa para Storage.
+ */
+export function getSupabaseSecretKey(): string {
+  return required("SUPABASE_SECRET_KEY", process.env.SUPABASE_SECRET_KEY);
+}

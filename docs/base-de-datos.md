@@ -62,6 +62,20 @@ Créditos y generaciones (detalle en [creditos.md](./creditos.md)):
 | `model_pricing`       | Margen y precio mínimo por proveedor, modelo y segmento.           |
 | `generation_jobs`     | Cada generación: estado, proveedor, costo, precio, outputs, error. |
 
+Los anuncios del asistente pyme guardan además en `generation_jobs` la
+plantilla (`template_id`), lo que completó el cliente (`brief`) y la ruta de la
+foto del producto (`input_image_path`). Ver [asistente.md](./asistente.md).
+
+## Storage
+
+Las fotos de producto van al bucket privado `product-photos` de Supabase
+Storage (definido en `supabase/config.toml`, con el mismo límite de 8 MB y los
+mismos tipos que valida la app). Sin políticas: solo la app accede, desde el
+servidor y con la clave secreta. `pnpm supabase:start` y `pnpm db:reset` crean
+los buckets en local.
+
+TODO(fase 3): crear el bucket en el proyecto remoto como parte del despliegue.
+
 Borrar un usuario en Supabase Auth borra su perfil y sus membresías (cascada).
 Las organizaciones con movimientos de créditos no se pueden borrar: el ledger es
 inmutable y es registro contable.
