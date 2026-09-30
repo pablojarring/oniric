@@ -1,7 +1,8 @@
 # Panel de admin
 
 Herramientas internas del equipo de Oniric (CLAUDE.md §9, Fase 1 paso 6), en
-`/admin`: márgenes por modelo y acreditación manual de créditos.
+`/admin`: márgenes por modelo, acreditación manual de créditos y compras con la
+pasarela (`/admin/purchases`, para facturar; ver [pagos.md](./pagos.md)).
 
 ## Quién entra
 

@@ -31,9 +31,9 @@ en `messages/*.json` (namespace `Templates`).
 
 | Plantilla                | Tipo   | Duración | Formatos        | Modelo (mock)         | Precio pyme  |
 | ------------------------ | ------ | -------- | --------------- | --------------------- | ------------ |
-| Promo 15s para Instagram | Video  | 15 s     | 9:16, 1:1, 16:9 | `mock-video-standard` | 105 créditos |
-| Estado de WhatsApp       | Video  | 10 s     | 9:16            | `mock-video-standard` | 70 créditos  |
-| Oferta del día           | Imagen | —        | 1:1, 9:16, 16:9 | `mock-image`          | 3 créditos   |
+| Promo 15s para Instagram | Video  | 15 s     | 9:16, 1:1, 16:9 | `mock-video-standard` | 244 créditos |
+| Estado de WhatsApp       | Video  | 10 s     | 9:16            | `mock-video-standard` | 163 créditos |
+| Oferta del día           | Imagen | —        | 1:1, 9:16, 16:9 | `mock-image`          | 17 créditos  |
 
 - Cada plantilla define su modelo por proveedor (`models`). Agregar un proveedor
   es agregar su modelo en cada plantilla, sin tocar la UI.
@@ -132,6 +132,6 @@ descripción.
 - TODO(producto): cuánto tiempo se guardan los resultados en `ad-outputs`.
 - TODO(producto): vista previa del enlace público al compartirlo (imagen
   Open Graph), que necesita una URL que no venza.
-- TODO(fase 3): recarga de créditos desde el asistente (hoy la acredita un
-  admin desde `/admin`).
+- Si no alcanzan los créditos, el paso 3 lleva a la recarga (`/credits`, ver
+  [pagos.md](./pagos.md)).
 - TODO(fase 3): modelos de Higgsfield por plantilla y vigencia de la URL firmada.
