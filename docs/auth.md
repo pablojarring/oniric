@@ -67,8 +67,12 @@ En el proyecto de Supabase:
   - Site URL: la URL pública de la app.
   - Redirect URLs: `https://<dominio>/**`.
 - **Correos:** las plantillas de `supabase/templates/` y los asuntos de
-  `supabase/config.toml` se suben con `supabase config push`. Los enlaces usan
-  `token_hash`, así funcionan aunque se abran en otro dispositivo.
+  `supabase/config.toml` se pegan a mano en Authentication → Emails →
+  Templates ("Confirm signup" y "Reset password"). Los enlaces usan
+  `token_hash`, así funcionan aunque se abran en otro dispositivo. En el plan
+  Free, el panel solo deja editarlas con un SMTP propio configurado. No uses
+  `supabase config push` contra producción: también sube el `site_url` y las
+  URLs de localhost de `config.toml`.
 - **Google:** crea credenciales OAuth en Google Cloud con la redirect URI
   `https://<project-ref>.supabase.co/auth/v1/callback`. Actívalas en
   Authentication → Sign In / Providers y define `AUTH_GOOGLE_ENABLED=true` en la
@@ -76,5 +80,17 @@ En el proyecto de Supabase:
 - **Contraseñas:** mínimo 8 caracteres, igual que `minimum_password_length` en
   `supabase/config.toml` y `MIN_PASSWORD_LENGTH` en `lib/auth/schema.ts`.
 
-TODO(fase 3): configurar un SMTP propio. El SMTP incluido en Supabase tiene un
-límite muy bajo de correos por hora y no sirve para producción.
+### Sin SMTP propio
+
+Mientras no haya SMTP propio rigen el servidor y las plantillas por defecto de
+Supabase (en inglés):
+
+- Solo llegan correos a los miembros del equipo del proyecto en Supabase, con un
+  límite muy bajo por hora.
+- El enlace de confirmación pasa por `/auth/v1/verify` y termina en
+  `/onboarding` sin sesión: el usuario inicia sesión a mano y sigue.
+- "Olvidé mi contraseña" no funciona: `/update-password` necesita la sesión que
+  abre `/api/auth/confirm` con el `token_hash` de nuestras plantillas.
+
+TODO(fase 3): configurar un SMTP propio y pegar las plantillas. Ver
+[despliegue.md](./despliegue.md).

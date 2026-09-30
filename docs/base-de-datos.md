@@ -21,10 +21,13 @@ Para cambiar el esquema:
 
 CI falla si `db/schema.ts` cambió y la migración no se generó.
 
-Para aplicar las migraciones a un proyecto remoto:
+Para aplicar las migraciones a un proyecto remoto, primero revisa qué se va a
+aplicar y después aplícalo:
 
 ```bash
+pnpm exec supabase db push --dry-run --db-url "$DATABASE_URL_DIRECT"
 pnpm exec supabase db push --db-url "$DATABASE_URL_DIRECT"
+pnpm exec supabase migration list --db-url "$DATABASE_URL_DIRECT"
 ```
 
 TODO(fase 3): automatizar las migraciones de producción en el despliegue.
@@ -73,13 +76,23 @@ Dos buckets privados de Supabase Storage, definidos en `supabase/config.toml`:
 | Bucket           | Qué guarda                                              | Límite |
 | ---------------- | ------------------------------------------------------- | ------ |
 | `product-photos` | Fotos de producto del asistente (PNG, JPEG, WebP).      | 8 MB   |
-| `ad-outputs`     | Resultados de las generaciones, copiados del proveedor. | 100 MB |
+| `ad-outputs`     | Resultados de las generaciones, copiados del proveedor. | 50 MB  |
 
 Sin políticas: solo la app accede, desde el servidor y con la clave secreta
 (`lib/storage`), y entrega URLs firmadas de corta duración. `pnpm
 supabase:start` y `pnpm db:reset` crean los buckets en local.
 
-TODO(fase 3): crear los buckets en el proyecto remoto como parte del despliegue.
+En un proyecto remoto se crean con la CLI enlazada al proyecto:
+
+```bash
+pnpm exec supabase link --project-ref <project-ref>
+pnpm exec supabase seed buckets --linked
+```
+
+El límite de `ad-outputs` (50 MB) es el máximo de subida del plan Free de
+Supabase; con un valor mayor, `seed buckets` falla con `413 EntityTooLarge`.
+
+TODO(producto): subir `ad-outputs` a 100 MB si se pasa a Supabase Pro.
 
 Borrar un usuario en Supabase Auth borra su perfil y sus membresías (cascada).
 Las organizaciones con movimientos de créditos no se pueden borrar: el ledger es
