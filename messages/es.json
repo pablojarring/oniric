@@ -422,8 +422,15 @@
       "statuses": {
         "pending": "Pendiente",
         "paid": "Pagada",
-        "failed": "No completada"
+        "failed": "No completada",
+        "abandoned": "Abandonada"
       },
+      "reasons": {
+        "canceled": "Rechazado por Payphone o el banco",
+        "amount_mismatch": "Monto pagado distinto: revisar a mano",
+        "prepare_failed": "Payphone no inició el pago"
+      },
+      "gatewayMessage": "Payphone: {message}",
       "payerDocument": "CI/RUC {document}",
       "authorization": "Aut. {code}",
       "more": "Ver más"
@@ -691,9 +698,13 @@
         "title": "El pago no se completó",
         "description": "No se hizo ningún cobro. Puedes intentarlo de nuevo."
       },
+      "declined": {
+        "title": "El pago no fue aprobado",
+        "description": "Payphone o tu banco rechazaron el pago. No se hizo ningún cobro. Prueba con otra tarjeta o escríbenos con el código {code}."
+      },
       "canceled": {
-        "title": "Cancelaste el pago",
-        "description": "No se hizo ningún cobro."
+        "title": "No completaste el pago",
+        "description": "Volviste sin pagar. No se hizo ningún cobro."
       },
       "pending": {
         "title": "Estamos confirmando tu pago",

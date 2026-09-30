@@ -4,6 +4,7 @@ import {
   CircleXIcon,
   ClockIcon,
   GiftIcon,
+  InfoIcon,
   LockIcon,
   ReceiptTextIcon,
   SparklesIcon,
@@ -44,7 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
 const resultIcons: Record<PurchaseResult, typeof CircleCheckIcon> = {
   paid: CircleCheckIcon,
   failed: CircleXIcon,
-  canceled: CircleXIcon,
+  declined: CircleXIcon,
+  canceled: InfoIcon,
   pending: ClockIcon,
 };
 
@@ -115,7 +117,7 @@ export default async function CreditsPage({
       {result && ResultIcon && (
         <Alert
           variant={
-            result === "failed" || result === "canceled"
+            result === "failed" || result === "declined"
               ? "destructive"
               : "default"
           }
