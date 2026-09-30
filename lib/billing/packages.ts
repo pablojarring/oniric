@@ -90,3 +90,13 @@ export function pricePerCreditMicroUsd(pkg: CreditPackage): number {
 export function paidCredits(pkg: CreditPackage): number {
   return (pkg.totalCents * 10_000) / CREDIT_VALUE_MICRO_USD;
 }
+
+/**
+ * Cuánto se ahorra, en porcentaje entero (hacia abajo), frente a pagar cada
+ * crédito a US$0,01: el regalo de los paquetes grandes.
+ */
+export function savingsPercent(pkg: CreditPackage): number {
+  const listPrice = pkg.credits * CREDIT_VALUE_MICRO_USD;
+  const paid = pkg.totalCents * 10_000;
+  return Math.floor(((listPrice - paid) * 100) / listPrice);
+}
