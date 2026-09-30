@@ -1,8 +1,11 @@
 "use client";
 
+import { cn } from "cn";
+import { ArrowRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 
+import { appPrimaryClassName } from "@/components/app/ui";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -31,6 +34,14 @@ import {
 import type { OnboardingField } from "@/lib/onboarding/schema";
 
 export type CountryOption = { value: string; label: string };
+
+/** Selector del mismo alto que los demás campos del formulario. */
+const tallSelectClassName =
+  "w-full *:data-[slot=native-select]:h-11 *:data-[slot=native-select]:rounded-xl *:data-[slot=native-select]:pl-3.5";
+
+/** Opción elegible como tarjeta: la etiqueta entera se puede tocar. */
+const choiceCardClassName =
+  "rounded-xl! has-data-checked:border-violet-500 *:data-[slot=field]:p-3!";
 
 // Los campos son controlados para que conserven lo elegido si el servidor
 // devuelve errores (React reinicia los formularios no controlados).
@@ -62,7 +73,7 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
 
   return (
     <form action={formAction}>
-      <FieldGroup>
+      <FieldGroup className="gap-7">
         <Field data-invalid={hasError("businessName")}>
           <FieldLabel htmlFor="businessName">
             {t("fields.businessName")}
@@ -72,6 +83,7 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
             name="businessName"
             autoComplete="organization"
             required
+            className="h-11 rounded-xl px-3.5"
             value={businessName}
             onChange={(event) => setBusinessName(event.target.value)}
             aria-invalid={hasError("businessName")}
@@ -86,7 +98,7 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
               id="country"
               name="country"
               required
-              className="w-full"
+              className={tallSelectClassName}
               value={country}
               onChange={(event) => setCountry(event.target.value)}
               aria-invalid={hasError("country")}
@@ -109,7 +121,7 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
               id="industry"
               name="industry"
               required
-              className="w-full"
+              className={tallSelectClassName}
               value={industry}
               onChange={(event) => setIndustry(event.target.value)}
               aria-invalid={hasError("industry")}
@@ -139,15 +151,18 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
             className="grid-cols-2 sm:grid-cols-3"
           >
             {teamSizeValues.map((value) => (
-              <Field key={value} orientation="horizontal">
-                <RadioGroupItem id={`teamSize-${value}`} value={value} />
-                <FieldLabel
-                  htmlFor={`teamSize-${value}`}
-                  className="font-normal"
-                >
-                  {t(`options.teamSizes.${value}`)}
-                </FieldLabel>
-              </Field>
+              <FieldLabel
+                key={value}
+                htmlFor={`teamSize-${value}`}
+                className={choiceCardClassName}
+              >
+                <Field orientation="horizontal">
+                  <RadioGroupItem id={`teamSize-${value}`} value={value} />
+                  <span className="font-medium">
+                    {t(`options.teamSizes.${value}`)}
+                  </span>
+                </Field>
+              </FieldLabel>
             ))}
           </RadioGroup>
           {errorFor("teamSize")}
@@ -164,15 +179,18 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
             aria-labelledby="teamType-legend"
           >
             {teamTypes.map((value) => (
-              <Field key={value} orientation="horizontal">
-                <RadioGroupItem id={`teamType-${value}`} value={value} />
-                <FieldLabel
-                  htmlFor={`teamType-${value}`}
-                  className="font-normal"
-                >
-                  {t(`options.teamTypes.${value}`)}
-                </FieldLabel>
-              </Field>
+              <FieldLabel
+                key={value}
+                htmlFor={`teamType-${value}`}
+                className={choiceCardClassName}
+              >
+                <Field orientation="horizontal">
+                  <RadioGroupItem id={`teamType-${value}`} value={value} />
+                  <span className="font-medium">
+                    {t(`options.teamTypes.${value}`)}
+                  </span>
+                </Field>
+              </FieldLabel>
             ))}
           </RadioGroup>
           {errorFor("teamType")}
@@ -181,30 +199,38 @@ export function OnboardingForm({ countries }: { countries: CountryOption[] }) {
         <FieldSet data-invalid={hasError("videoPurposes")}>
           <FieldLegend variant="label">{t("fields.videoPurposes")}</FieldLegend>
           <FieldDescription>{t("fields.videoPurposesHint")}</FieldDescription>
-          <FieldGroup className="gap-3">
+          <div className="grid gap-2 sm:grid-cols-2">
             {videoPurposes.map((value) => (
-              <Field key={value} orientation="horizontal">
-                <Checkbox
-                  id={`videoPurposes-${value}`}
-                  name="videoPurposes"
-                  value={value}
-                  checked={purposes.includes(value)}
-                  onCheckedChange={(checked) => togglePurpose(value, checked)}
-                />
-                <FieldLabel
-                  htmlFor={`videoPurposes-${value}`}
-                  className="font-normal"
-                >
-                  {t(`options.videoPurposes.${value}`)}
-                </FieldLabel>
-              </Field>
+              <FieldLabel
+                key={value}
+                htmlFor={`videoPurposes-${value}`}
+                className={choiceCardClassName}
+              >
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id={`videoPurposes-${value}`}
+                    name="videoPurposes"
+                    value={value}
+                    checked={purposes.includes(value)}
+                    onCheckedChange={(checked) => togglePurpose(value, checked)}
+                  />
+                  <span className="font-medium">
+                    {t(`options.videoPurposes.${value}`)}
+                  </span>
+                </Field>
+              </FieldLabel>
             ))}
-          </FieldGroup>
+          </div>
           {errorFor("videoPurposes")}
         </FieldSet>
 
-        <Button type="submit" size="lg" disabled={pending}>
+        <Button
+          type="submit"
+          disabled={pending}
+          className={cn(appPrimaryClassName, "w-full sm:w-auto sm:self-end")}
+        >
           {t("submit")}
+          <ArrowRightIcon aria-hidden />
         </Button>
       </FieldGroup>
     </form>
