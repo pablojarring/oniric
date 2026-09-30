@@ -33,7 +33,7 @@ afterAll(async () => {
 
 const jpegBytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
 
-// Estado de WhatsApp: video de 10 s → 70 créditos.
+// Estado de WhatsApp: video de 10 s → 163 créditos.
 const baseForm: AdForm = {
   templateId: "whatsappStatus",
   aspectRatio: "9:16",
@@ -43,10 +43,10 @@ const baseForm: AdForm = {
   adCopy: "Hoy en La Esquina: pan de yuca 🙌",
   photo: null,
   photoConsent: false,
-  expectedPriceCredits: 70,
+  expectedPriceCredits: 163,
 };
 
-async function fundedOrganization(credits = 100) {
+async function fundedOrganization(credits = 200) {
   const context = await createOrganization(testDb);
   await grantCredits(testDb.db, {
     organizationId: context.organization.id,
@@ -74,11 +74,11 @@ async function create(
 describe("quoteTemplates", () => {
   it("cotiza cada plantilla y formato con el margen de la organización", async () => {
     expect(await quoteTemplates(testDb.db, provider, "pyme")).toEqual({
-      // 15 s × 0,05 = 0,75 USD → 105 créditos.
-      promoInstagram: { "9:16": 105, "1:1": 105, "16:9": 105 },
-      whatsappStatus: { "9:16": 70 },
-      // 0,02 USD → 3 créditos.
-      dailyOffer: { "1:1": 3, "9:16": 3, "16:9": 3 },
+      // 15 s × 0,08 = 1,20 USD → 244 créditos.
+      promoInstagram: { "9:16": 244, "1:1": 244, "16:9": 244 },
+      whatsappStatus: { "9:16": 163 },
+      // 0,08 USD → 17 créditos.
+      dailyOffer: { "1:1": 17, "9:16": 17, "16:9": 17 },
     });
   });
 });
@@ -94,7 +94,7 @@ describe("createAd", () => {
     expect(job).toMatchObject({
       status: "pending",
       modelId: "mock-video-standard",
-      priceCredits: 70,
+      priceCredits: 163,
       templateId: "whatsappStatus",
       inputImagePath: null,
       brief: {
@@ -110,8 +110,8 @@ describe("createAd", () => {
     );
     expect(job?.request.inputImageUrl).toBeUndefined();
     expect(await getBalance(testDb.db, context.organization.id)).toEqual({
-      available: 30,
-      held: 70,
+      available: 37,
+      held: 163,
     });
   });
 
@@ -189,7 +189,7 @@ describe("createAd", () => {
 
     expect(result).toEqual({
       ok: false,
-      error: { code: "insufficientCredits", required: 70, available: 50 },
+      error: { code: "insufficientCredits", required: 163, available: 50 },
     });
     expect(storage.files.size).toBe(0);
     expect(await testDb.db.select().from(generationJobs)).toEqual([]);
@@ -202,7 +202,7 @@ describe("createAd", () => {
 
     expect(result).toEqual({
       ok: false,
-      error: { code: "priceChanged", priceCredits: 70 },
+      error: { code: "priceChanged", priceCredits: 163 },
     });
   });
 

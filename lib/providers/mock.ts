@@ -42,11 +42,16 @@ const models: ModelInfo[] = [
   },
 ];
 
-/** Costo simulado del proveedor, en USD. */
+/**
+ * Costo simulado del proveedor, en USD. Son estimaciones conservadoras de
+ * Higgsfield en 2026 (un video tipo Kling a 720p ronda US$0,08 por segundo con
+ * recargas de créditos; una imagen, hasta US$0,08), para que los precios del
+ * entorno de prueba se parezcan a los reales. Ver docs/creditos.md.
+ */
 const costs: Record<string, { perSecond?: number; perOutput?: number }> = {
-  "mock-video-standard": { perSecond: 0.05 },
-  "mock-video-pro": { perSecond: 0.12 },
-  "mock-image": { perOutput: 0.02 },
+  "mock-video-standard": { perSecond: 0.08 },
+  "mock-video-pro": { perSecond: 0.2 },
+  "mock-image": { perOutput: 0.08 },
 };
 
 const dimensions: Record<AspectRatio, { width: number; height: number }> = {

@@ -28,14 +28,14 @@ describe("MockProvider", () => {
   it("estima el costo del video por segundo y de la imagen por unidad", async () => {
     const provider = new MockProvider();
 
-    expect(await provider.estimate(request)).toEqual({ costUsd: 0.5 });
+    expect(await provider.estimate(request)).toEqual({ costUsd: 0.8 });
     expect(
       await provider.estimate({
         modelId: "mock-image",
         prompt: "x",
         aspectRatio: "1:1",
       }),
-    ).toEqual({ costUsd: 0.02 });
+    ).toEqual({ costUsd: 0.08 });
   });
 
   it("procesa durante la latencia y luego termina con salidas", async () => {

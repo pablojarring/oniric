@@ -49,11 +49,11 @@ describe("listEffectivePricing", () => {
       modelName: "Video estándar (mock)",
       mediaType: "video",
       segment: "pyme",
-      marginBps: 2_500,
+      marginBps: 3_500,
       minPriceCredits: 1,
       isDefault: true,
-      // 5 s × 0,05 = 0,25 USD → 35 créditos.
-      example: { durationSeconds: 5, priceCredits: 35 },
+      // 5 s × 0,08 = 0,40 USD → 82 créditos.
+      example: { durationSeconds: 5, priceCredits: 82 },
     });
   });
 });
@@ -65,35 +65,34 @@ describe("setModelPricing", () => {
     await setModelPricing(testDb.db, providers, {
       ...promo,
       marginBps: 4_000,
-      minPriceCredits: 50,
+      minPriceCredits: 100,
       actorUserId,
     });
 
     const [stored] = await testDb.db.select().from(modelPricing);
     expect(stored).toMatchObject({ marginBps: 4_000, updatedBy: actorUserId });
-    // 0,50 × 1,05 ÷ 0,60 = 0,875 USD → 88 créditos.
+    // 1,00 × 1,07 ÷ 0,60 ÷ 0,00812 = 219,6 → 220 créditos.
     expect(
-      (await priceGeneration(testDb.db, { ...promo, costUsd: 0.5 }))
-        .priceCredits,
-    ).toBe(88);
+      (await priceGeneration(testDb.db, { ...promo, costUsd: 1 })).priceCredits,
+    ).toBe(220);
     // El otro segmento sigue con el valor por defecto.
     expect(
       (
         await priceGeneration(testDb.db, {
           ...promo,
           segment: "empresa",
-          costUsd: 0.5,
+          costUsd: 1,
         })
       ).priceCredits,
-    ).toBe(70);
+    ).toBe(203);
 
     const rows = await listEffectivePricing(testDb.db, providers);
     expect(rows[0]).toMatchObject({
       marginBps: 4_000,
-      minPriceCredits: 50,
+      minPriceCredits: 100,
       isDefault: false,
-      // 5 s: 0,25 × 1,05 ÷ 0,60 = 0,4375 → 44, pero el mínimo es 50.
-      example: { priceCredits: 50 },
+      // 5 s: 0,40 × 1,07 ÷ 0,60 ÷ 0,00812 = 87,8 → 88, pero el mínimo es 100.
+      example: { priceCredits: 100 },
     });
   });
 
@@ -143,7 +142,7 @@ describe("setModelPricing", () => {
     await resetModelPricing(testDb.db, promo);
 
     const [row] = await listEffectivePricing(testDb.db, providers);
-    expect(row).toMatchObject({ marginBps: 2_500, isDefault: true });
+    expect(row).toMatchObject({ marginBps: 3_500, isDefault: true });
   });
 });
 

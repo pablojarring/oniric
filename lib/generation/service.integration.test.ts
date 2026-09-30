@@ -26,7 +26,7 @@ afterAll(async () => {
   await client.end();
 });
 
-// 10 s de video estándar: 70 créditos.
+// 10 s de video estándar: 163 créditos.
 const request = {
   modelId: "mock-video-standard",
   prompt: "Promo",
@@ -80,7 +80,7 @@ function barrier<Args extends unknown[], Result>(
 
 describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
   it("sincronizar el mismo job en paralelo cobra una sola vez", async () => {
-    const { user, organization } = await fundedOrganization(100);
+    const { user, organization } = await fundedOrganization(200);
 
     const job = await startGeneration(db, provider, {
       organizationId: organization.id,
@@ -116,7 +116,7 @@ describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
       "settle",
     ]);
     expect(await getBalance(db, organization.id)).toEqual({
-      available: 30,
+      available: 37,
       held: 0,
     });
   });
@@ -148,8 +148,8 @@ describe.skipIf(!process.env.DATABASE_URL)("jobs con concurrencia real", () => {
       }
     }
     expect(await getBalance(db, organization.id)).toEqual({
-      available: 860,
-      held: 140,
+      available: 674,
+      held: 326,
     });
   });
 });
