@@ -6,8 +6,14 @@ import type { StoredOutput } from "./types";
 // Copia de los resultados del proveedor a nuestro almacenamiento antes de
 // cobrar (CLAUDE.md §3.2, paso 6).
 
-/** Tamaño máximo de un resultado; el bucket `ad-outputs` tiene el mismo límite. */
-export const MAX_OUTPUT_BYTES = 100 * 1024 * 1024;
+/**
+ * Tamaño máximo de un resultado; el bucket `ad-outputs` tiene el mismo límite.
+ * Es el máximo de subida del plan Free de Supabase (50 MB).
+ *
+ * TODO(producto): subir a 100 MiB si se pasa a Supabase Pro (también en
+ * supabase/config.toml y en el bucket remoto).
+ */
+export const MAX_OUTPUT_BYTES = 50 * 1024 * 1024;
 
 const DOWNLOAD_TIMEOUT_MS = 2 * 60 * 1000;
 
@@ -24,6 +30,20 @@ export const outputTypes: Record<string, string> = {
 export class OutputStorageError extends Error {}
 
 /**
+ * El resultado nunca se va a poder guardar (tipo no soportado o demasiado
+ * grande): reintentar no sirve, así que la generación se da por fallida.
+ */
+export class OutputRejectedError extends OutputStorageError {
+  constructor(readonly reason: "unsupported_output" | "output_too_large") {
+    super(
+      reason === "output_too_large"
+        ? "El resultado supera el tamaño máximo."
+        : "Tipo de resultado no soportado.",
+    );
+  }
+}
+
+/**
  * Descarga cada resultado y lo sube al almacenamiento propio, en una ruta fija
  * por job. Si dos sincronizaciones lo hacen a la vez, la segunda reemplaza el
  * mismo archivo con el mismo contenido.
@@ -37,9 +57,7 @@ export async function storeOutputs(
   const stored: StoredOutput[] = [];
   for (const [index, { url, ...output }] of outputs.entries()) {
     const extension = outputTypes[output.mimeType];
-    if (!extension) {
-      throw new OutputStorageError(`Tipo no soportado: ${output.mimeType}`);
-    }
+    if (!extension) throw new OutputRejectedError("unsupported_output");
 
     const response = await fetchFile(url, {
       signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
@@ -52,11 +70,11 @@ export async function storeOutputs(
     if (
       Number(response.headers.get("content-length") ?? 0) > MAX_OUTPUT_BYTES
     ) {
-      throw new OutputStorageError("El resultado supera el tamaño máximo.");
+      throw new OutputRejectedError("output_too_large");
     }
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes.length > MAX_OUTPUT_BYTES) {
-      throw new OutputStorageError("El resultado supera el tamaño máximo.");
+      throw new OutputRejectedError("output_too_large");
     }
 
     const path = `${job.organizationId}/${job.id}/${index}.${extension}`;

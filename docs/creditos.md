@@ -96,7 +96,9 @@ Flujo (CLAUDE.md §3.2), en `lib/generation/service.ts`:
    - `running`: actualiza el estado.
    - `succeeded`: copia los resultados al bucket privado `ad-outputs` y
      después, en una transacción, los guarda y cobra. Si la copia falla, no
-     cobra y el job sigue en curso para reintentar. Sin resultados, reembolsa.
+     cobra y el job sigue en curso para reintentar. Si un resultado nunca se va
+     a poder guardar (más de 50 MB o un tipo no soportado), el job falla y se
+     reembolsa. Sin resultados, también reembolsa.
    - `failed`: marca el error y reembolsa, en la misma transacción.
 
    Es idempotente, así que el polling, un webhook y la UI pueden llamarlo sin
@@ -107,11 +109,13 @@ Flujo (CLAUDE.md §3.2), en `lib/generation/service.ts`:
 
 La tarea programada `GET /api/cron/generation` (con
 `Authorization: Bearer <CRON_SECRET>`) hace el polling de respaldo de los jobs
-en curso y vence los créditos.
+en curso y vence los créditos. En Vercel corre una vez al día a las 05:00 UTC
+(`vercel.json`), el máximo del plan Hobby. Mientras el cliente tiene abierta la
+página del anuncio, la UI sincroniza su job sin esperar al cron.
 
 Pendientes:
 
-- TODO(producto): la frecuencia del cron.
+- TODO(producto): la frecuencia del cron cuando se pase a Vercel Pro.
 - TODO(fase 3): webhooks de Higgsfield.
 - TODO(fase 3): dar el job por fallido si la copia de los resultados sigue
   fallando cuando los archivos del proveedor están por vencer.

@@ -21,7 +21,7 @@ import type {
 } from "@/lib/providers/generation-provider";
 import type { FileStorage } from "@/lib/storage";
 
-import { storeOutputs } from "./outputs";
+import { OutputRejectedError, storeOutputs } from "./outputs";
 import type { StoredOutput } from "./types";
 
 // Flujo de una generación (CLAUDE.md §3.2):
@@ -285,7 +285,9 @@ async function getJobOrThrow(db: Database, jobId: string) {
  * desde el polling, un webhook o la UI sin cobrar ni reembolsar dos veces.
  *
  * Si la copia de los resultados falla, lanza el error y el job sigue en curso:
- * la próxima sincronización lo reintenta.
+ * la próxima sincronización lo reintenta. Si un resultado nunca se va a poder
+ * guardar (demasiado grande o de un tipo no soportado), el job falla y se
+ * reembolsa.
  *
  * TODO(fase 3): dar el job por fallido (y reembolsar) si la copia sigue
  * fallando cuando los archivos del proveedor están por vencer.
@@ -331,8 +333,15 @@ export async function syncJob(
       if (outputs.length === 0) return failJob(db, jobId, "no_outputs", now);
       // Primero se copia (fuera de la transacción, es tráfico de red) y
       // después se cobra.
-      const stored = await storeOutputs(deps.outputs, job, outputs);
-      return completeJob(db, jobId, stored, now);
+      try {
+        const stored = await storeOutputs(deps.outputs, job, outputs);
+        return completeJob(db, jobId, stored, now);
+      } catch (error) {
+        if (error instanceof OutputRejectedError) {
+          return failJob(db, jobId, error.reason, now);
+        }
+        throw error;
+      }
     }
     case "failed":
       return failJob(db, jobId, status.error, now);

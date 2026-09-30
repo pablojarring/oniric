@@ -8,7 +8,8 @@ import { syncActiveJobs } from "@/lib/generation/service";
 
 // Tarea programada: polling de respaldo de los jobs en curso (los webhooks de
 // Higgsfield llegan en la fase 3) y vencimiento de créditos.
-// TODO(producto): definir la frecuencia al configurar el despliegue.
+// Frecuencia en vercel.json: diaria, el máximo del plan Hobby.
+// TODO(producto): definir la frecuencia al pasar a Vercel Pro.
 export async function GET(request: NextRequest) {
   if (
     !isAuthorizedCronRequest(

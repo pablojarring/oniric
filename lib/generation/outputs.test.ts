@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { createMemoryStorage } from "@/test/storage";
 
-import { MAX_OUTPUT_BYTES, OutputStorageError, storeOutputs } from "./outputs";
+import {
+  MAX_OUTPUT_BYTES,
+  OutputRejectedError,
+  OutputStorageError,
+  storeOutputs,
+} from "./outputs";
 
 const job = { id: "job-1", organizationId: "org-1" };
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
@@ -77,33 +82,68 @@ describe("storeOutputs", () => {
   });
 
   it.each([
-    ["un tipo no soportado", { mimeType: "application/zip" }, fakeFetch(png)],
-    ["una respuesta con error", {}, fakeFetch(null, { status: 404 })],
+    [
+      "un tipo no soportado",
+      { mimeType: "application/zip" },
+      fakeFetch(png),
+      OutputRejectedError,
+    ],
+    [
+      "una respuesta con error",
+      {},
+      fakeFetch(null, { status: 404 }),
+      OutputStorageError,
+    ],
     [
       "un archivo más grande que el máximo",
       {},
       fakeFetch(null, {
         headers: { "content-length": String(MAX_OUTPUT_BYTES + 1) },
       }),
+      OutputRejectedError,
     ],
-  ])("rechaza %s sin subir nada", async (_case, override, fetchFile) => {
-    const { storage, files } = createMemoryStorage();
+  ])(
+    "rechaza %s sin subir nada",
+    async (_case, override, fetchFile, errorClass) => {
+      const { storage, files } = createMemoryStorage();
 
+      await expect(
+        storeOutputs(
+          storage,
+          job,
+          [
+            {
+              url: "https://proveedor.test/a.png",
+              mediaType: "image",
+              mimeType: "image/png",
+              ...override,
+            },
+          ],
+          fetchFile,
+        ),
+      ).rejects.toBeInstanceOf(errorClass);
+      expect(files.size).toBe(0);
+    },
+  );
+
+  it("solo los errores que no se arreglan reintentando son definitivos", async () => {
+    const { storage } = createMemoryStorage();
+    const output = {
+      url: "https://proveedor.test/a.png",
+      mediaType: "image" as const,
+      mimeType: "image/png",
+    };
+
+    await expect(
+      storeOutputs(storage, job, [output], fakeFetch(null, { status: 503 })),
+    ).rejects.not.toBeInstanceOf(OutputRejectedError);
     await expect(
       storeOutputs(
         storage,
         job,
-        [
-          {
-            url: "https://proveedor.test/a.png",
-            mediaType: "image",
-            mimeType: "image/png",
-            ...override,
-          },
-        ],
-        fetchFile,
+        [output],
+        fakeFetch(new Uint8Array(MAX_OUTPUT_BYTES + 1)),
       ),
-    ).rejects.toBeInstanceOf(OutputStorageError);
-    expect(files.size).toBe(0);
+    ).rejects.toMatchObject({ reason: "output_too_large" });
   });
 });
