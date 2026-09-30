@@ -62,6 +62,19 @@ describe("segmentConfig", () => {
     expect(hasFeature("empresa", "modelSelector")).toBe(true);
     expect(hasFeature("empresa", "batchGeneration")).toBe(true);
   });
+
+  it("el menú solo lleva a secciones que el segmento puede usar", () => {
+    const { navigation } = segmentConfig.pyme;
+    expect(navigation[0]).toBe("home");
+    if (navigation.includes("create")) {
+      expect(hasFeature("pyme", "guidedWizard")).toBe(true);
+    }
+    if (navigation.includes("credits")) {
+      expect(hasFeature("pyme", "buyCredits")).toBe(true);
+    }
+    expect(segmentConfig.empresa.navigation).not.toContain("create");
+    expect(segmentConfig.empresa.navigation).not.toContain("credits");
+  });
 });
 
 describe("segmentForAdvancedMode", () => {

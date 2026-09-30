@@ -50,10 +50,15 @@ export type Feature =
   | "brandKit"
   | "usageAnalytics";
 
+/** Secciones de la navegación principal de la app. */
+export type AppSection = "home" | "create" | "ads" | "credits";
+
 type SegmentConfig = {
   /** Página de inicio del segmento, sin prefijo de idioma. */
   homePath: string;
   features: ReadonlySet<Feature>;
+  /** Secciones del menú, en orden. Sin secciones no se muestra el menú. */
+  navigation: readonly AppSection[];
 };
 
 // Capacidades por segmento según CLAUDE.md §1. Las de empresa se construyen en
@@ -63,6 +68,7 @@ export const segmentConfig: Record<Segment, SegmentConfig> = {
     homePath: "/home",
     // TODO(producto): compra de créditos para empresa (facturación mensual).
     features: new Set(["guidedWizard", "templates", "buyCredits"]),
+    navigation: ["home", "create", "ads", "credits"],
   },
   empresa: {
     homePath: "/workspace",
@@ -75,6 +81,8 @@ export const segmentConfig: Record<Segment, SegmentConfig> = {
       "brandKit",
       "usageAnalytics",
     ]),
+    // TODO(fase 2): secciones del workspace empresa.
+    navigation: [],
   },
 };
 

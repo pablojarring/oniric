@@ -56,14 +56,24 @@ test.describe("encabezado en el celular", () => {
     await expectHeaderFits(page);
   });
 
-  test("con sesión, las acciones quedan como íconos con nombre accesible", async ({
+  test("con sesión, el menú va en la barra de abajo y el saldo arriba", async ({
     page,
   }) => {
     await signInWithOrganization(page, { teamSize: "2-5", teamType: "owner" });
     await expect(page).toHaveURL("/home");
     await expectHeaderFits(page);
+    await expect(page.getByTestId("header-balance")).toHaveAccessibleName(
+      "Tu saldo: 0 créditos",
+    );
 
-    await page.getByRole("link", { name: "Configuración" }).click();
+    const tabBar = page.getByRole("navigation", { name: "Menú principal" });
+    await tabBar.getByRole("link", { name: "Anuncios" }).click();
+    await expect(page).toHaveURL("/ads");
+    await expect(
+      tabBar.getByRole("link", { name: "Anuncios" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await tabBar.getByRole("link", { name: "Ajustes" }).click();
     await expect(page).toHaveURL("/settings");
     await expectHeaderFits(page);
 
