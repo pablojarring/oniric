@@ -74,7 +74,8 @@ sugerido.
 Cuando el proveedor termina, `syncJob` descarga cada resultado y lo sube al
 bucket privado `ad-outputs` (`<organización>/<job>/<n>.<ext>`) **antes** de
 cobrar. Si la copia falla, no se cobra y el job sigue en curso hasta la próxima
-sincronización. Un "éxito" sin resultados se da por fallido y se reembolsa.
+sincronización. Un resultado de más de 50 MB o de un tipo no soportado, o un
+"éxito" sin resultados, da la generación por fallida y se reembolsa.
 Ver [creditos.md](./creditos.md).
 
 - La página del anuncio y la galería muestran los resultados con URLs firmadas

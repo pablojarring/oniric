@@ -328,6 +328,37 @@ describe("syncJob", () => {
     expect(synced.status).toBe("succeeded");
   });
 
+  it("un resultado que no se puede guardar da el job por fallido y reembolsa", async () => {
+    const context = await fundedOrganization();
+    const job = await start(context);
+    const unsupported = Object.assign(Object.create(provider), {
+      fetchOutput: async () => [
+        {
+          url: "https://proveedor.test/a.zip",
+          mediaType: "video",
+          mimeType: "application/zip",
+        },
+      ],
+    }) as MockProvider;
+
+    clock += 5_000;
+    const synced = await syncJob(
+      testDb.db,
+      { ...deps, resolveProvider: () => unsupported },
+      job.id,
+      now(),
+    );
+
+    expect(synced).toMatchObject({
+      status: "failed",
+      error: "unsupported_output",
+    });
+    expect(outputs.files.size).toBe(0);
+    expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
+      { available: 100, held: 0 },
+    );
+  });
+
   it("un éxito sin resultados se da por fallido y se reembolsa", async () => {
     const context = await fundedOrganization();
     const job = await start(context);
