@@ -58,13 +58,18 @@ export default async function PymeHomePage() {
             {t("balance.credits", { count: balance.available })}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
+        <CardContent className="flex flex-col items-start gap-3 text-sm text-muted-foreground">
           {balance.available > 0
             ? t("balance.usd", {
                 usd: formatUsd(creditsToUsd(balance.available), locale),
               })
-            : // TODO(fase 3): recarga en línea; hoy un admin acredita los pagos a mano.
-              t("balance.empty")}
+            : t("balance.empty")}
+          <Link
+            href="/credits"
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            {t("balance.recharge")}
+          </Link>
         </CardContent>
       </Card>
 

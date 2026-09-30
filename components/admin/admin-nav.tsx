@@ -8,6 +8,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 const items = [
   { href: "/admin/organizations", key: "organizations" },
   { href: "/admin/pricing", key: "pricing" },
+  { href: "/admin/purchases", key: "purchases" },
 ] as const;
 
 export function AdminNav() {

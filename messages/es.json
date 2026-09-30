@@ -137,7 +137,8 @@
       "title": "Tu saldo",
       "credits": "{count, plural, one {# crédito} other {# créditos}}",
       "usd": "Equivale a {usd}.",
-      "empty": "Todavía no tienes créditos. Muy pronto podrás recargarlos desde aquí."
+      "empty": "Todavía no tienes créditos. Recarga para crear tu primer anuncio.",
+      "recharge": "Recargar créditos"
     },
     "recent": {
       "title": "Tus anuncios recientes",
@@ -235,7 +236,7 @@
     "insufficient": {
       "title": "No te alcanzan los créditos",
       "description": "Te faltan {missing, plural, one {# crédito} other {# créditos}} para este anuncio.",
-      "recharge": "Recargar créditos (muy pronto)"
+      "recharge": "Recargar créditos"
     },
     "errors": {
       "productName": "Escribe el nombre de tu producto o servicio (al menos 2 letras).",
@@ -317,7 +318,8 @@
     "nav": {
       "title": "Panel de admin",
       "organizations": "Organizaciones",
-      "pricing": "Márgenes"
+      "pricing": "Márgenes",
+      "purchases": "Compras"
     },
     "segments": {
       "pyme": "Pyme",
@@ -397,6 +399,34 @@
         "minPriceCredits": "El mínimo debe ser un entero entre 1 y 100.000.",
         "model": "Modelo desconocido."
       }
+    },
+    "purchases": {
+      "title": "Compras de créditos",
+      "description": "Pagos con la pasarela. Usa estos datos para emitir la factura electrónica de cada compra pagada.",
+      "filters": {
+        "paid": "Pagadas",
+        "all": "Todas"
+      },
+      "empty": "Todavía no hay compras.",
+      "columns": {
+        "date": "Fecha",
+        "organization": "Negocio",
+        "package": "Paquete",
+        "base": "Subtotal",
+        "tax": "IVA",
+        "total": "Total",
+        "payer": "Pagador",
+        "status": "Estado",
+        "transaction": "Transacción"
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "paid": "Pagada",
+        "failed": "No completada"
+      },
+      "payerDocument": "CI/RUC {document}",
+      "authorization": "Aut. {code}",
+      "more": "Ver más"
     }
   },
   "Landing": {
@@ -554,7 +584,7 @@
       "description": "Compras créditos cuando los necesitas y los usas en los anuncios que quieras.",
       "creditPrice": "US$0,01",
       "creditUnit": "por crédito",
-      "creditNote": "Precios en dólares, con IVA aparte.",
+      "creditNote": "Precios en dólares con IVA incluido. Paquetes desde US$5.",
       "points": {
         "preview": "Ves el precio de cada anuncio antes de generarlo.",
         "refund": "Si la generación falla, te devolvemos todos los créditos.",
@@ -588,7 +618,7 @@
         },
         "cost": {
           "question": "¿Cuánto cuesta?",
-          "answer": "Pagas con créditos prepagados (1 crédito = US$0,01). Cada anuncio muestra su precio antes de generarlo y no hay mensualidades."
+          "answer": "Compras paquetes de créditos desde US$5 con IVA incluido (1 crédito = US$0,01). Cada anuncio muestra su precio antes de generarlo y no hay mensualidades."
         },
         "fail": {
           "question": "¿Qué pasa si la generación falla?",
@@ -616,6 +646,65 @@
       "product": "Producto",
       "account": "Cuenta",
       "legal": "© {year} ONIRIASOLUTIONS S.A.S. Hecho en Ecuador."
+    }
+  },
+  "Credits": {
+    "metaTitle": "Recargar créditos",
+    "title": "Recarga créditos",
+    "description": "Elige un paquete y paga con tarjeta de crédito o débito a través de Payphone. Los créditos se acreditan al instante.",
+    "balance": "Tu saldo: {count, plural, one {# crédito} other {# créditos}}",
+    "packages": {
+      "starter": "Inicial",
+      "entrepreneur": "Emprendedor",
+      "business": "Negocio",
+      "pro": "Pro"
+    },
+    "credits": "{count, plural, one {# crédito} other {# créditos}}",
+    "bonus": "+{count} de regalo",
+    "featured": "Más elegido",
+    "ivaIncluded": "IVA incluido",
+    "breakdown": "Subtotal {base} + IVA {tax}",
+    "yield": "Te alcanza para {whatsapp}, {promo} o {images}.",
+    "yieldItems": {
+      "whatsapp": "{count, plural, one {# estado de WhatsApp} other {# estados de WhatsApp}}",
+      "promo": "{count, plural, one {# promo de 15 s} other {# promos de 15 s}}",
+      "images": "{count, plural, one {# imagen} other {# imágenes}}"
+    },
+    "buy": "Comprar",
+    "buying": "Te llevamos a pagar…",
+    "reference": "Oniric · {count} créditos",
+    "notes": {
+      "secure": "Pago seguro con Payphone. Aceptamos tarjetas de crédito y débito.",
+      "invoice": "Tu factura electrónica llega al correo que ingreses al pagar.",
+      "expiry": "Tus créditos duran {months} meses desde la compra."
+    },
+    "unavailable": {
+      "title": "Las compras en línea no están disponibles por ahora",
+      "description": "Escríbenos y te ayudamos a recargar tus créditos."
+    },
+    "result": {
+      "paid": {
+        "title": "¡Pago recibido!",
+        "description": "Acreditamos {count, plural, one {# crédito} other {# créditos}} a tu cuenta."
+      },
+      "failed": {
+        "title": "El pago no se completó",
+        "description": "No se hizo ningún cobro. Puedes intentarlo de nuevo."
+      },
+      "canceled": {
+        "title": "Cancelaste el pago",
+        "description": "No se hizo ningún cobro."
+      },
+      "pending": {
+        "title": "Estamos confirmando tu pago",
+        "description": "Recarga esta página en un momento. Si no ves tus créditos, escríbenos con el código {code}."
+      }
+    },
+    "errors": {
+      "unavailable": "Las compras en línea no están disponibles por ahora.",
+      "invalid": "Elige un paquete.",
+      "rateLimit": "Iniciaste muchas compras en poco tiempo. Espera un rato e inténtalo de nuevo.",
+      "gateway": "No pudimos conectar con Payphone. Inténtalo de nuevo en unos minutos."
     }
   }
 }

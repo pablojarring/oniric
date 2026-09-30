@@ -42,6 +42,7 @@ export function assignSegment(answers: {
 export type Feature =
   | "guidedWizard"
   | "templates"
+  | "buyCredits"
   | "modelSelector"
   | "advancedParameters"
   | "batchGeneration"
@@ -60,7 +61,8 @@ type SegmentConfig = {
 export const segmentConfig: Record<Segment, SegmentConfig> = {
   pyme: {
     homePath: "/home",
-    features: new Set(["guidedWizard", "templates"]),
+    // TODO(producto): compra de créditos para empresa (facturación mensual).
+    features: new Set(["guidedWizard", "templates", "buyCredits"]),
   },
   empresa: {
     homePath: "/workspace",

@@ -64,7 +64,7 @@ export async function fillOnboarding(
 /** Usuario confirmado, con sesión iniciada y onboarding completo. */
 export async function signInWithOrganization(
   page: Page,
-  answers: { teamSize: TeamSize; teamType: TeamType },
+  answers: { teamSize: TeamSize; teamType: TeamType; businessName?: string },
 ) {
   const user = await createConfirmedUser();
   await login(page, user.email, user.password);
