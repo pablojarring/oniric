@@ -86,6 +86,7 @@ jobs:
             echo "AUTH_GOOGLE_ENABLED=false"
             echo "CRON_SECRET=$(openssl rand -hex 32)"
             echo "MOCK_PROVIDER_LATENCY_MS=2000"
+            echo "PAYMENT_GATEWAY=mock"
           } >> "$GITHUB_ENV"
 
       # Concurrencia real de la billetera (PGlite no puede probarla).

@@ -73,7 +73,7 @@ test.describe("asistente de anuncios pyme", () => {
       "Hoy en Panadería La Esquina: Pan de yuca 🙌 Escríbenos por aquí para pedirlo.",
     );
     await page.getByLabel("Texto del anuncio").fill("¡Pan de yuca calientito!");
-    await expect(page.getByText(/^70 créditos/)).toBeVisible();
+    await expect(page.getByText(/^163 créditos/)).toBeVisible();
     await page.getByRole("button", { name: "Generar anuncio" }).click();
 
     await expect(page).toHaveURL(/\/ads\/[0-9a-f-]{36}$/);
@@ -100,7 +100,7 @@ test.describe("asistente de anuncios pyme", () => {
 
     // Se cobró al terminar y el anuncio aparece en el inicio y en la galería.
     await page.goto("/home");
-    await expect(page.getByTestId("credit-balance")).toHaveText("130 créditos");
+    await expect(page.getByTestId("credit-balance")).toHaveText("37 créditos");
     await page.getByRole("link", { name: "Ver todos" }).click();
     await expect(page).toHaveURL("/ads");
     await expect(
@@ -111,7 +111,7 @@ test.describe("asistente de anuncios pyme", () => {
   });
 
   test("si la generación falla, devuelve los créditos", async ({ page }) => {
-    await pymeWithCredits(page, 10);
+    await pymeWithCredits(page, 20);
     await openWizard(page);
 
     await page.getByLabel("¿Qué quieres anunciar?").fill("Empanadas");
@@ -136,10 +136,10 @@ test.describe("asistente de anuncios pyme", () => {
       timeout: 30_000,
     });
     await expect(
-      page.getByText("Te devolvimos los 3 créditos de este anuncio."),
+      page.getByText("Te devolvimos los 17 créditos de este anuncio."),
     ).toBeVisible();
     await page.goto("/home");
-    await expect(page.getByTestId("credit-balance")).toHaveText("10 créditos");
+    await expect(page.getByTestId("credit-balance")).toHaveText("20 créditos");
   });
 
   test("valida cada paso y no deja generar sin saldo", async ({ page }) => {
@@ -169,8 +169,11 @@ test.describe("asistente de anuncios pyme", () => {
 
     await expect(page.getByText("No te alcanzan los créditos")).toBeVisible();
     await expect(
-      page.getByText("Te faltan 105 créditos para este anuncio."),
+      page.getByText("Te faltan 244 créditos para este anuncio."),
     ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Recargar créditos" }),
+    ).toHaveAttribute("href", "/credits");
     await expect(
       page.getByRole("button", { name: "Generar anuncio" }),
     ).toBeDisabled();
@@ -184,7 +187,7 @@ test.describe("asistente de anuncios pyme", () => {
   });
 
   test("bloquea textos que no pasan la moderación", async ({ page }) => {
-    await pymeWithCredits(page, 10);
+    await pymeWithCredits(page, 20);
     await openWizard(page);
 
     await page.getByLabel("¿Qué quieres anunciar?").fill("Fiesta");
@@ -207,7 +210,7 @@ test.describe("asistente de anuncios pyme", () => {
     page,
     browser,
   }) => {
-    await pymeWithCredits(page, 10);
+    await pymeWithCredits(page, 20);
     await openWizard(page);
     await page.getByLabel("¿Qué quieres anunciar?").fill("Humitas");
     await page

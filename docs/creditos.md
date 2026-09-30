@@ -2,44 +2,114 @@
 
 ## Decisiones vigentes
 
-| Parámetro                       | Valor                             | Dónde                                     |
-| ------------------------------- | --------------------------------- | ----------------------------------------- |
-| Valor del crédito               | 1 crédito = US$0,01               | `lib/billing/config.ts`                   |
-| Margen por defecto              | 25 % sobre el precio de venta     | `lib/billing/config.ts`                   |
-| Margen mínimo (piso)            | 25 %                              | `lib/billing/config.ts`                   |
-| Margen por modelo y segmento    | Opcional; sin fila se usa el 25 % | `model_pricing`, desde `/admin/pricing`   |
-| Precio mínimo por generación    | 1 crédito (o el del modelo)       | `lib/billing/config.ts` y `model_pricing` |
-| ISD sobre pagos al proveedor    | 5 %                               | `lib/billing/config.ts`                   |
-| Comisión bancaria               | 0 % — TODO(producto)              | `lib/billing/config.ts`                   |
-| Vencimiento de créditos pyme    | 12 meses                          | `lib/billing/config.ts`                   |
-| Vencimiento de créditos empresa | No vencen — TODO(producto)        | `lib/billing/config.ts`                   |
+| Parámetro                         | Valor                                      | Dónde                                     |
+| --------------------------------- | ------------------------------------------ | ----------------------------------------- |
+| Valor del crédito para el cliente | 1 crédito = US$0,01 con IVA incluido       | `lib/billing/config.ts`                   |
+| Paquetes                          | US$5, 15, 30 y 50 (ver abajo)              | `lib/billing/packages.ts`                 |
+| IVA                               | 15 %, incluido en el precio                | `lib/billing/config.ts`                   |
+| Comisión de la pasarela           | 5,75 % del total (Payphone 5 % + IVA)      | `lib/billing/config.ts`                   |
+| Valor neto del crédito            | US$0,00812 (sin IVA ni comisión)           | `lib/billing/config.ts` (calculado)       |
+| ISD sobre pagos al proveedor      | 5 %                                        | `lib/billing/config.ts`                   |
+| Comisión bancaria al exterior     | 2 % (estimada) — TODO(producto): confirmar | `lib/billing/config.ts`                   |
+| Margen por defecto                | 35 % del ingreso neto                      | `lib/billing/config.ts`                   |
+| Margen mínimo (piso)              | 25 % del ingreso neto                      | `lib/billing/config.ts`                   |
+| Margen por modelo y segmento      | Opcional; sin fila se usa el 35 %          | `model_pricing`, desde `/admin/pricing`   |
+| Precio mínimo por generación      | 1 crédito (o el del modelo)                | `lib/billing/config.ts` y `model_pricing` |
+| Vencimiento de créditos pyme      | 12 meses                                   | `lib/billing/config.ts`                   |
+| Vencimiento de créditos empresa   | No vencen — TODO(producto)                 | `lib/billing/config.ts`                   |
 
 ## Precio de una generación
 
 ```
-precio = costo del proveedor × (1 + ISD + comisiones) ÷ (1 − margen)
+créditos = costo del proveedor × (1 + ISD + comisiones) ÷ (1 − margen) ÷ valor neto del crédito
 ```
 
+- **Valor neto del crédito:** de cada crédito que el cliente paga a US$0,01 con
+  IVA, quedan US$0,00812: US$0,008695 sin el IVA (÷ 1,15) menos US$0,000575 de
+  comisión de Payphone (5 % + IVA sobre el total).
+- **Margen:** la ganancia bruta sobre ese ingreso neto, después de pagar al
+  proveedor con ISD y comisiones bancarias. Cubre los costos fijos (hosting,
+  dominio, correo), el impuesto a la renta y los créditos de regalo de los
+  paquetes grandes.
 - El resultado se redondea **hacia arriba** a créditos enteros y nunca es menor
-  que el precio mínimo por generación.
-- "Margen" es la ganancia bruta sobre el precio de venta: con 25 %, de cada
-  crédito que paga el cliente quedan 0,25 después de pagar al proveedor y el
-  ISD. Con el ISD del 5 %, el precio es el costo × 1,4.
-- El margen debe ser menor al 100 % (la base de datos lo exige).
-- Todo se calcula en enteros: micro-dólares, puntos básicos y créditos. Así no se
-  pierden fracciones de centavo.
+  que el precio mínimo por generación. El margen debe ser menor al 100 % y nunca
+  baja del piso.
+- Todo se calcula en enteros: micro-dólares, puntos básicos y créditos.
 
-Ejemplo: un video de 10 s del modelo `mock-video-standard` cuesta US$0,50.
-0,50 × 1,05 ÷ 0,75 = US$0,70, que se cobra como 70 créditos. De esos US$0,70,
-US$0,525 van al proveedor (con ISD) y US$0,175 (25 %) quedan de ganancia bruta.
+Ejemplo: un estado de WhatsApp (video de 10 s) con un costo estimado de US$0,80:
+0,80 × 1,07 ÷ 0,65 = US$1,317 netos ÷ 0,00812 = 162,2 → **163 créditos**
+(US$1,63 para el cliente).
 
 El precio se fija al crear el job: se reserva y se cobra exactamente esa
 cantidad, aunque el costo real del proveedor varíe. El job guarda el costo, los
 recargos, el margen y el precio aplicados.
 
-El IVA de Ecuador no entra aquí: se aplicará al vender paquetes de créditos
-(fase 3). Mientras no haya pasarela, un admin acredita los pagos a mano desde
-`/admin` (ver [admin.md](./admin.md)).
+## Paquetes
+
+| Paquete     | Precio (IVA incl.) | Base + IVA   | Créditos | Regalo | Margen con todo gastado |
+| ----------- | ------------------ | ------------ | -------- | ------ | ----------------------- |
+| Inicial     | US$5               | 4,35 + 0,65  | 500      | —      | 35,0 %                  |
+| Emprendedor | US$15              | 13,04 + 1,96 | 1.575    | +5 %   | 31,7 %                  |
+| Negocio     | US$30              | 26,09 + 3,91 | 3.300    | +10 %  | 28,5 %                  |
+| Pro         | US$50              | 43,48 + 6,52 | 5.750    | +15 %  | 25,3 %                  |
+
+Por qué así:
+
+- **Entrada baja:** US$5 es un gasto que una pyme de la región prueba sin pensarlo
+  mucho. 500 créditos por US$5 es la regla "1 crédito = 1 centavo".
+- **Regalo en créditos, no descuento en el precio:** premia las recargas grandes
+  (sube el ticket promedio) sin tocar el precio de cada anuncio. Aun con el regalo
+  más grande, el margen queda sobre el piso del 25 % (lo prueba
+  `packages.test.ts`).
+- **Todos hasta US$50:** es el máximo que se puede facturar a consumidor final;
+  arriba de eso la factura necesita los datos del comprador.
+- **Precios redondos cuyo IVA cuadra al centavo** con la factura (base × 15 %
+  redondeado = IVA). Por eso no hay un paquete de US$10: con IVA incluido, su
+  desglose no cuadra.
+
+### Cuánto rinde cada paquete
+
+Con los costos estimados de Higgsfield en 2026 (un video tipo Kling a 720p ronda
+US$0,08 por segundo con recargas de créditos; una imagen, hasta US$0,08), que son
+también los del `MockProvider`:
+
+| Plantilla                 | Costo estimado | Precio       |
+| ------------------------- | -------------- | ------------ |
+| Estado de WhatsApp (10 s) | US$0,80        | 163 créditos |
+| Promo 15s para Instagram  | US$1,20        | 244 créditos |
+| Oferta del día (imagen)   | US$0,08        | 17 créditos  |
+
+El paquete Inicial alcanza para 3 estados de WhatsApp, 2 promos o 29 imágenes.
+La página de recarga lo calcula en vivo con los precios reales de las plantillas.
+
+### Números del paquete de US$5
+
+| Concepto                                   | US$   |
+| ------------------------------------------ | ----- |
+| Paga el cliente                            | 5,00  |
+| IVA (al SRI)                               | −0,65 |
+| Comisión de Payphone (5 % + IVA)           | −0,29 |
+| **Ingreso neto**                           | 4,06  |
+| 3 estados de WhatsApp: costo + ISD + banco | −2,57 |
+| **Ganancia bruta**                         | 1,49  |
+
+Con unos US$50 al mes de costos fijos al lanzar (Vercel Pro, Supabase Pro,
+dominio), el punto de equilibrio está cerca de 34 paquetes de US$5 al mes (o su
+equivalente en paquetes más grandes). El impuesto a la renta se paga sobre la
+utilidad después de esos costos.
+
+Pendientes:
+
+- TODO(producto): confirmar con el contador el tratamiento del IVA de la
+  comisión de Payphone y de los servicios digitales del exterior (hoy se toman
+  como costo, que es lo conservador).
+- TODO(producto): confirmar con el banco la comisión real de los pagos al
+  exterior (hoy 2 %).
+- TODO(fase 3): recalcular los costos con los modelos reales de Higgsfield por
+  plantilla. Si cambian, el precio en créditos se ajusta solo; el margen no.
+
+La compra de paquetes con Payphone está en [pagos.md](./pagos.md). Un admin
+también puede acreditar pagos a mano desde `/admin` (ver [admin.md](./admin.md)).
 
 ## Billetera
 

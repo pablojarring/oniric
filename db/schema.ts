@@ -299,6 +299,77 @@ export const modelPricing = pgTable(
   ],
 ).enableRLS();
 
+// --- Compras de créditos ---------------------------------------------------
+
+export const creditPurchaseStatusEnum = pgEnum("credit_purchase_status", [
+  "pending",
+  "paid",
+  "failed",
+]);
+
+/**
+ * Compra de un paquete de créditos por la pasarela (docs/pagos.md). Guarda el
+ * desglose de IVA y los datos del pagador que devuelve la pasarela, para la
+ * factura. Es registro contable: la organización no se puede borrar si tiene
+ * compras.
+ */
+export const creditPurchases = pgTable(
+  "credit_purchases",
+  {
+    /** También es el `clientTransactionId` que se envía a la pasarela. */
+    id: uuid().primaryKey().defaultRandom(),
+    organizationId: uuid()
+      .notNull()
+      .references(() => organizations.id, { onDelete: "restrict" }),
+    /** Quién compró. Sin FK, como el ledger: la compra no se borra con el usuario. */
+    userId: uuid().notNull(),
+    packageId: text().notNull(),
+    credits: integer().notNull(),
+    /** Base imponible, IVA y total, en centavos de dólar. */
+    baseCents: integer().notNull(),
+    taxCents: integer().notNull(),
+    totalCents: integer().notNull(),
+    currency: char({ length: 3 }).notNull().default("USD"),
+    /** `payphone`, o `mock` en desarrollo y tests. */
+    gateway: text().notNull(),
+    status: creditPurchaseStatusEnum().notNull().default("pending"),
+    /** Id de la transacción en la pasarela, al confirmar. */
+    gatewayTransactionId: text(),
+    authorizationCode: text(),
+    /** Datos que el pagador ingresó en la pasarela, para la factura. */
+    payerName: text(),
+    payerEmail: text(),
+    payerPhone: text(),
+    payerDocument: text(),
+    cardBrand: text(),
+    cardLastDigits: text(),
+    /** Motivo de un pago no aprobado: `canceled`, `amount_mismatch`, etc. */
+    failureReason: text(),
+    /** Respuesta completa de la confirmación, para auditoría. */
+    confirmation: jsonb(),
+    /** Lote donde se acreditaron los créditos. */
+    lotId: uuid().references(() => creditLots.id, { onDelete: "restrict" }),
+    createdAt: timestamps.createdAt,
+    paidAt: timestamp({ withTimezone: true }),
+  },
+  (table) => [
+    uniqueIndex("credit_purchases_gateway_transaction")
+      .on(table.gateway, table.gatewayTransactionId)
+      .where(sql`${table.gatewayTransactionId} is not null`),
+    index().on(table.organizationId, table.createdAt),
+    index().on(table.status, table.paidAt),
+    check(
+      "credit_purchases_amounts",
+      sql`${table.credits} > 0 and ${table.baseCents} >= 0 and ${table.taxCents} >= 0
+        and ${table.totalCents} = ${table.baseCents} + ${table.taxCents}`,
+    ),
+    check(
+      "credit_purchases_paid",
+      sql`${table.status} <> 'paid' or (${table.paidAt} is not null and ${table.lotId} is not null)`,
+    ),
+  ],
+).enableRLS();
+
 export type Segment = (typeof segmentEnum.enumValues)[number];
 export type MembershipRole = (typeof membershipRoleEnum.enumValues)[number];
 export type User = typeof users.$inferSelect;
@@ -309,3 +380,6 @@ export type GenerationJob = typeof generationJobs.$inferSelect;
 export type CreditLot = typeof creditLots.$inferSelect;
 export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type ModelPricing = typeof modelPricing.$inferSelect;
+export type CreditPurchase = typeof creditPurchases.$inferSelect;
+export type CreditPurchaseStatus =
+  (typeof creditPurchaseStatusEnum.enumValues)[number];

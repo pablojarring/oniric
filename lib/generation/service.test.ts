@@ -48,7 +48,7 @@ afterAll(async () => {
   await testDb.close();
 });
 
-// 10 s de video estándar: 0,50 USD → 70 créditos (ver pricing.test.ts).
+// 10 s de video estándar: 0,80 USD → 163 créditos (ver pricing.test.ts).
 const videoRequest: GenerationRequest = {
   modelId: "mock-video-standard",
   prompt: "Promo de pan recién horneado",
@@ -56,7 +56,7 @@ const videoRequest: GenerationRequest = {
   durationSeconds: 10,
 };
 
-async function fundedOrganization(credits = 100) {
+async function fundedOrganization(credits = 200) {
   const context = await createOrganization(testDb);
   await grantCredits(testDb.db, {
     organizationId: context.organization.id,
@@ -89,16 +89,16 @@ describe("startGeneration", () => {
     expect(job).toMatchObject({
       status: "pending",
       provider: "mock",
-      priceCredits: 70,
-      costMicroUsd: 500_000,
-      surchargeBps: 500,
-      marginBps: 2_500,
+      priceCredits: 163,
+      costMicroUsd: 800_000,
+      surchargeBps: 700,
+      marginBps: 3_500,
     });
     expect(job.providerJobId).toMatch(/^mock_/);
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 30,
-        held: 70,
+        available: 37,
+        held: 163,
       },
     );
   });
@@ -174,7 +174,7 @@ describe("startGeneration", () => {
 
     await expect(attempt).rejects.toMatchObject({
       constructor: PriceChangedError,
-      priceCredits: 70,
+      priceCredits: 163,
     });
     expect(await testDb.db.select().from(generationJobs)).toEqual([]);
   });
@@ -204,8 +204,8 @@ describe("startGeneration", () => {
     expect(jobs).toHaveLength(2);
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 860,
-        held: 140,
+        available: 674,
+        held: 326,
       },
     );
     await expect(startLimited(other)).resolves.toMatchObject({
@@ -249,7 +249,7 @@ describe("startGeneration", () => {
     expect(job).toMatchObject({ status: "failed", error: "submit_failed" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 100,
+        available: 200,
         held: 0,
       },
     );
@@ -290,7 +290,7 @@ describe("syncJob", () => {
     expect(outputs.files.get(path)?.mimeType).toBe("video/webm");
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 30,
+        available: 37,
         held: 0,
       },
     );
@@ -320,7 +320,7 @@ describe("syncJob", () => {
       .where(eq(generationJobs.id, job.id));
     expect(stillRunning?.status).toBe("pending");
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
-      { available: 30, held: 70 },
+      { available: 37, held: 163 },
     );
 
     // El reintento con el almacenamiento sano termina el job.
@@ -355,7 +355,7 @@ describe("syncJob", () => {
     });
     expect(outputs.files.size).toBe(0);
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
-      { available: 100, held: 0 },
+      { available: 200, held: 0 },
     );
   });
 
@@ -376,7 +376,7 @@ describe("syncJob", () => {
 
     expect(synced).toMatchObject({ status: "failed", error: "no_outputs" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
-      { available: 100, held: 0 },
+      { available: 200, held: 0 },
     );
   });
 
@@ -393,7 +393,7 @@ describe("syncJob", () => {
     expect(synced).toMatchObject({ status: "failed", error: "mock_failure" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 100,
+        available: 200,
         held: 0,
       },
     );
@@ -432,7 +432,7 @@ describe("syncJob", () => {
     expect(synced).toMatchObject({ status: "failed", error: "submit_timeout" });
     expect(await getBalance(testDb.db, context.organization.id, now())).toEqual(
       {
-        available: 100,
+        available: 200,
         held: 0,
       },
     );

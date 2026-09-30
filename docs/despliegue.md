@@ -49,9 +49,12 @@ marcadas como sensibles.
 | `DATABASE_URL`                         | Supabase → Connect → Transaction pooler (6543). Secreta. |
 | `CRON_SECRET`                          | `openssl rand -hex 32`. Secreta.                         |
 | `AUTH_GOOGLE_ENABLED`                  | `false` hasta configurar Google.                         |
+| `PAYPHONE_TOKEN`                       | Payphone Developer → Credenciales. Secreta.              |
+| `PAYPHONE_STORE_ID`                    | Payphone Developer → Solicitud de compañía.              |
 
 No van en Vercel: `HIGGSFIELD_API_KEY` (con la integración actual hace fallar
-las generaciones a propósito), `DATABASE_URL_DIRECT` ni `MAILPIT_URL`.
+las generaciones a propósito), `PAYMENT_GATEWAY`, `DATABASE_URL_DIRECT` ni
+`MAILPIT_URL`. Ver [pagos.md](./pagos.md).
 
 Despliega siempre desde Git (push a `main` o Deployments → Redeploy), no con la
 CLI de Vercel desde una carpeta local: podría subir archivos `.env` locales.
@@ -75,5 +78,5 @@ la variable existe; sin ella, la tarea responde 401 y no hace nada. Ver
 
 - TODO(fase 3): SMTP propio y plantillas de correo.
 - TODO(fase 3): dominio propio (hoy `*.vercel.app`).
-- TODO(fase 3): Payphone, Higgsfield y facturación electrónica.
+- TODO(fase 3): Higgsfield y facturación electrónica automática.
 - TODO(producto): cuándo pasar a Vercel Pro y Supabase Pro.

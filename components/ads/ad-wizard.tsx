@@ -14,7 +14,7 @@ import {
 import { cn } from "cn";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
@@ -30,7 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { createAdAction, type CreateAdState } from "@/lib/ads/actions";
 import type { TemplatePrices } from "@/lib/ads/service";
 import { adFieldLimits, type AdField } from "@/lib/ads/types";
@@ -499,16 +499,16 @@ export function AdWizard({
             <AlertDescription>
               {t("insufficient.description", { missing: missingCredits })}
             </AlertDescription>
-            {/* TODO(fase 3): recarga en línea; hoy un admin acredita los pagos a mano. */}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled
-              className="mt-2 justify-self-start"
+            <Link
+              href="/credits"
+              className={buttonVariants({
+                variant: "outline",
+                size: "sm",
+                className: "mt-2 justify-self-start",
+              })}
             >
               {t("insufficient.recharge")}
-            </Button>
+            </Link>
           </Alert>
         )}
       </FieldGroup>

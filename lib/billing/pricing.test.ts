@@ -3,43 +3,57 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { modelPricing } from "@/db/schema";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 
-import { DEFAULT_MARGIN_BPS, MIN_MARGIN_BPS } from "./config";
+import {
+  DEFAULT_MARGIN_BPS,
+  MIN_MARGIN_BPS,
+  NET_CREDIT_VALUE_MICRO_USD,
+} from "./config";
 import { priceGeneration, quotePrice, usdToMicroUsd } from "./pricing";
 
 const defaults = { marginBps: DEFAULT_MARGIN_BPS, minPriceCredits: 1 };
 
+describe("NET_CREDIT_VALUE_MICRO_USD", () => {
+  it("es el crédito sin IVA (15 %) y sin la comisión de Payphone (5,75 %)", () => {
+    // 10.000 ÷ 1,15 = 8.695 − 575 = 8.120 micro-dólares
+    expect(NET_CREDIT_VALUE_MICRO_USD).toBe(8_120);
+  });
+});
+
 describe("quotePrice", () => {
-  it("aplica ISD (5 %) y un margen del 25 % sobre el precio de venta", () => {
-    // 0,50 × 1,05 ÷ 0,75 = 0,70 USD → 70 créditos
+  it("aplica ISD y comisiones (7 %) y un margen del 35 % sobre el ingreso neto", () => {
+    // 0,50 × 1,07 ÷ 0,65 = 0,823 USD netos ÷ 0,00812 = 101,4 → 102 créditos
     expect(quotePrice({ costMicroUsd: 500_000, ...defaults })).toEqual({
       costMicroUsd: 500_000,
-      surchargeBps: 500,
-      marginBps: 2_500,
-      priceCredits: 70,
+      surchargeBps: 700,
+      marginBps: 3_500,
+      priceCredits: 102,
     });
   });
 
-  it("el margen es la ganancia sobre lo que paga el cliente", () => {
+  it("el margen es la ganancia sobre lo que de verdad queda de cada crédito", () => {
     const costMicroUsd = 500_000;
     const { priceCredits } = quotePrice({ costMicroUsd, ...defaults });
 
-    const priceMicroUsd = priceCredits * 10_000;
-    const costWithIsd = costMicroUsd * 1.05;
-    expect((priceMicroUsd - costWithIsd) / priceMicroUsd).toBeCloseTo(0.25);
+    const netMicroUsd = priceCredits * NET_CREDIT_VALUE_MICRO_USD;
+    const costWithSurcharges = costMicroUsd * 1.07;
+    const margin = (netMicroUsd - costWithSurcharges) / netMicroUsd;
+    // Al redondear hacia arriba, el margen real nunca es menor.
+    expect(margin).toBeGreaterThanOrEqual(0.35);
+    expect(margin).toBeLessThan(0.36);
   });
 
   it("redondea hacia arriba a créditos enteros", () => {
-    // 0,02 × 1,05 ÷ 0,75 = 0,028 USD → 2,8 créditos → 3
+    // 0,02 × 1,07 ÷ 0,65 ÷ 0,00812 = 4,05 → 5 créditos
     expect(quotePrice({ costMicroUsd: 20_000, ...defaults }).priceCredits).toBe(
-      3,
+      5,
     );
   });
 
   it("no suma un crédito cuando el precio es exacto", () => {
-    // 0,25 × 1,05 ÷ 0,75 = 0,35 USD → 35 créditos exactos
+    // 0,5278 × 1,07 ÷ 0,65 ÷ 0,00812 = 107 créditos exactos
     expect(
-      quotePrice({ costMicroUsd: 250_000, ...defaults }).priceCredits,
-    ).toBe(35);
+      quotePrice({ costMicroUsd: 527_800, ...defaults }).priceCredits,
+    ).toBe(107);
   });
 
   it("respeta el precio mínimo por generación", () => {
@@ -61,18 +75,18 @@ describe("quotePrice", () => {
     });
 
     expect(quote.marginBps).toBe(MIN_MARGIN_BPS);
-    expect(quote.priceCredits).toBe(70);
+    expect(quote.priceCredits).toBe(88);
   });
 
   it("usa un margen mayor si el modelo lo tiene", () => {
-    // 0,50 × 1,05 ÷ 0,60 = 0,875 USD → 87,5 créditos → 88
+    // 0,50 × 1,07 ÷ 0,60 ÷ 0,00812 = 109,8 → 110 créditos
     expect(
       quotePrice({
         costMicroUsd: 500_000,
         marginBps: 4_000,
         minPriceCredits: 1,
       }).priceCredits,
-    ).toBe(88);
+    ).toBe(110);
   });
 
   it("rechaza un margen del 100 % o más", () => {
@@ -86,11 +100,11 @@ describe("quotePrice", () => {
   });
 
   it("es exacto con costos grandes", () => {
-    // 10.000 USD × 1,05 ÷ 0,75 = 14.000 USD → 1.400.000 créditos
+    // 10.000 USD × 1,07 ÷ 0,65 ÷ 0,00812 = 2.027.283,06 → 2.027.284 créditos
     expect(
       quotePrice({ costMicroUsd: usdToMicroUsd(10_000), ...defaults })
         .priceCredits,
-    ).toBe(1_400_000);
+    ).toBe(2_027_284);
   });
 });
 
@@ -129,7 +143,7 @@ describe("priceGeneration", () => {
       segment: "pyme",
     });
 
-    expect(quote.priceCredits).toBe(70);
+    expect(quote.priceCredits).toBe(102);
   });
 
   it("usa el margen del modelo para el segmento", async () => {
@@ -150,7 +164,7 @@ describe("priceGeneration", () => {
       segment: "pyme",
     });
 
-    expect(empresa.priceCredits).toBe(88);
-    expect(pyme.priceCredits).toBe(70);
+    expect(empresa.priceCredits).toBe(110);
+    expect(pyme.priceCredits).toBe(102);
   });
 });

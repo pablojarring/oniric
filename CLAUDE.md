@@ -2,6 +2,8 @@
 
 > Este archivo es el contexto permanente del proyecto para Claude Code.
 > Léelo completo antes de cada tarea. Si algo aquí contradice una instrucción puntual, pregunta.
+> El estado actual del proyecto (qué está hecho, entornos, decisiones y pendientes) está en
+> `docs/estado.md`: léelo también y actualízalo al terminar cada tarea.
 
 ## 1. Qué es el producto
 
@@ -134,14 +136,15 @@ interface GenerationProvider {
 - `pricing.ts`: `precioCliente = costoProveedor * margenModelo`, con margen configurable
   por modelo y segmento en la base de datos, más un mínimo por generación.
   Nunca hardcodear el margen en la UI.
-- `PaymentProvider` con una implementación inicial pendiente de decidir
-  (candidatos para una SAS ecuatoriana: Payphone, Kushki).
-  Hasta decidir, usar un `ManualPaymentProvider` que acredita desde el panel de admin.
+- Pasarela elegida: **Payphone** (`lib/payments/payphone.ts`, ver `docs/pagos.md`). El
+  `ManualPaymentProvider` sigue para acreditar desde el panel de admin (transferencias, cortesías).
 - Registrar cada movimiento en un ledger inmutable (`credit_transactions`), no solo el saldo.
-- Decisiones vigentes (ver `docs/creditos.md` y `lib/billing/config.ts`): **1 crédito = US$0,01**;
-  margen por defecto y mínimo del **25 % sobre el precio de venta** (precio = costo con recargos ÷ 0,75);
-  precio mínimo por generación de 1 crédito; los créditos **pyme vencen a los 12 meses**
-  (empresa: pendiente de decidir).
+- Decisiones vigentes (ver `docs/creditos.md`, `docs/pagos.md` y `lib/billing/`): **1 crédito = US$0,01
+  con IVA incluido**; paquetes de **US$5 (500), 15 (1.575), 30 (3.300) y 50 (5.750)**, IVA incluido y
+  desglosado a Payphone y a la factura; el precio de cada generación se calcula sobre el ingreso neto
+  del crédito (sin IVA 15 % ni comisión de Payphone 5,75 %) con ISD 5 % + banco 2 % y **margen del 35 %
+  por defecto, mínimo 25 %**; precio mínimo por generación de 1 crédito; los créditos **pyme vencen a
+  los 12 meses** (empresa: pendiente de decidir). Pasarela: **Payphone** (botón por redirección).
 
 ## 6. Modelo de datos mínimo
 

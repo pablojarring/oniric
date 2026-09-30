@@ -4,10 +4,10 @@ import { modelPricing, type Segment } from "@/db/schema";
 import type { Database } from "@/db/types";
 
 import {
-  CREDIT_VALUE_MICRO_USD,
   DEFAULT_MARGIN_BPS,
   DEFAULT_MIN_PRICE_CREDITS,
   MIN_MARGIN_BPS,
+  NET_CREDIT_VALUE_MICRO_USD,
   PROVIDER_SURCHARGES_BPS,
 } from "./config";
 
@@ -33,13 +33,15 @@ function ceilDiv(numerator: bigint, denominator: bigint): bigint {
 }
 
 /**
- * precio = costo × (1 + ISD + comisiones) ÷ (1 − margen)
+ * créditos = costo × (1 + ISD + comisiones) ÷ (1 − margen) ÷ valor neto del crédito
  *
- * El margen es la ganancia sobre el precio de venta: con 25 %, de cada crédito
- * que paga el cliente quedan 0,25 después de pagar al proveedor. El resultado
- * se redondea hacia arriba a créditos enteros y nunca es menor que el mínimo
- * por generación. El margen nunca baja de MIN_MARGIN_BPS. Todo en enteros para
- * no perder fracciones de centavo.
+ * El valor neto del crédito es lo que queda de cada crédito vendido sin IVA y
+ * sin la comisión de la pasarela (NET_CREDIT_VALUE_MICRO_USD). El margen es la
+ * ganancia sobre ese ingreso neto: con 35 %, de cada dólar neto quedan 0,35
+ * después de pagar al proveedor con sus recargos. El resultado se redondea
+ * hacia arriba a créditos enteros y nunca es menor que el mínimo por
+ * generación. El margen nunca baja de MIN_MARGIN_BPS. Todo en enteros para no
+ * perder fracciones de centavo.
  */
 export function quotePrice(input: {
   costMicroUsd: number;
@@ -56,11 +58,11 @@ export function quotePrice(input: {
   }
 
   // costo × (BPS + recargo) / BPS          → costo con recargos
-  // ... × BPS / (BPS − margen)             → precio de venta
-  // ... / valor del crédito                → créditos
+  // ... × BPS / (BPS − margen)             → ingreso neto necesario
+  // ... / valor neto del crédito          → créditos
   const credits = ceilDiv(
     BigInt(input.costMicroUsd) * (BPS + BigInt(surchargeBps)),
-    (BPS - BigInt(marginBps)) * BigInt(CREDIT_VALUE_MICRO_USD),
+    (BPS - BigInt(marginBps)) * BigInt(NET_CREDIT_VALUE_MICRO_USD),
   );
 
   return {

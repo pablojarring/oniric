@@ -22,7 +22,12 @@ test.describe("panel de admin", () => {
     await expect(page).toHaveURL("/home");
     await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
 
-    for (const path of ["/admin", "/admin/organizations", "/admin/pricing"]) {
+    for (const path of [
+      "/admin",
+      "/admin/organizations",
+      "/admin/pricing",
+      "/admin/purchases",
+    ]) {
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(404);
     }
@@ -96,8 +101,10 @@ test.describe("panel de admin", () => {
       has: page.getByRole("form", { name: "Video pro (mock), Pyme" }),
     });
     const form = row.getByRole("form", { name: "Video pro (mock), Pyme" });
-    // 5 s × 0,12 = 0,60 USD → 84 créditos con el 25 % por defecto.
-    await expect(row.getByText("Por defecto · 5 s: 84 créditos")).toBeVisible();
+    // 5 s × 0,20 = 1,00 USD → 203 créditos con el 35 % por defecto.
+    await expect(
+      row.getByText("Por defecto · 5 s: 203 créditos"),
+    ).toBeVisible();
 
     await form.getByLabel("Margen (%)").fill("20");
     await form.getByRole("button", { name: "Guardar" }).click();
@@ -107,15 +114,17 @@ test.describe("panel de admin", () => {
 
     await form.getByLabel("Margen (%)").fill("40");
     await form.getByRole("button", { name: "Guardar" }).click();
-    // 0,60 × 1,05 ÷ 0,60 = 1,05 USD → 105 créditos.
+    // 1,00 × 1,07 ÷ 0,60 ÷ 0,00812 = 219,6 → 220 créditos.
     await expect(
-      row.getByText("Personalizado · 5 s: 105 créditos"),
+      row.getByText("Personalizado · 5 s: 220 créditos"),
     ).toBeVisible();
 
     await row
       .getByRole("button", { name: "Restablecer: Video pro (mock), Pyme" })
       .click();
-    await expect(row.getByText("Por defecto · 5 s: 84 créditos")).toBeVisible();
+    await expect(
+      row.getByText("Por defecto · 5 s: 203 créditos"),
+    ).toBeVisible();
 
     await admin.context.close();
   });
