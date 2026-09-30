@@ -4,5 +4,7 @@ import { execFileSync } from "node:child_process";
 export function grantPlatformAdmin(email: string) {
   execFileSync("pnpm", ["exec", "tsx", "scripts/admin-grant.ts", email], {
     stdio: "pipe",
+    // En Windows `pnpm` es un .cmd y solo se ejecuta a través de la shell.
+    shell: process.platform === "win32",
   });
 }
