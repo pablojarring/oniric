@@ -8,8 +8,21 @@ import { Link } from "@/i18n/navigation";
 import { requirePlatformAdmin } from "@/lib/auth/session";
 import { formatDateTime, formatUsd } from "@/lib/format";
 import { listPurchases } from "@/lib/payments/purchases";
+import { gatewayMessage, isAbandoned } from "@/lib/payments/result";
 
 const PAGE_SIZE = 50;
+
+const knownFailureReasons = [
+  "canceled",
+  "amount_mismatch",
+  "prepare_failed",
+] as const;
+
+function isKnownFailureReason(
+  reason: string,
+): reason is (typeof knownFailureReasons)[number] {
+  return (knownFailureReasons as readonly string[]).includes(reason);
+}
 
 /** Compras de créditos con el desglose para emitir las facturas (docs/pagos.md). */
 export default async function AdminPurchasesPage({
@@ -32,6 +45,12 @@ export default async function AdminPurchasesPage({
   ]);
   const hasMore = purchases.length > PAGE_SIZE;
   const usd = (cents: number) => formatUsd(cents / 100, locale);
+  const now = new Date();
+  const rows = purchases.slice(0, PAGE_SIZE).map((purchase) => ({
+    ...purchase,
+    abandoned: isAbandoned(purchase, now),
+    gatewayMessage: gatewayMessage(purchase.confirmation),
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -86,7 +105,7 @@ export default async function AdminPurchasesPage({
               </tr>
             </thead>
             <tbody className="divide-y">
-              {purchases.slice(0, PAGE_SIZE).map((purchase) => (
+              {rows.map((purchase) => (
                 <tr key={purchase.id} data-testid="purchase-row">
                   <td className="p-3 whitespace-nowrap">
                     {formatDateTime(
@@ -133,14 +152,32 @@ export default async function AdminPurchasesPage({
                     </div>
                   </td>
                   <td className="p-3">
-                    <span
-                      className={cn(
-                        purchase.status === "paid" && "text-emerald-700",
-                        purchase.status === "failed" && "text-destructive",
+                    <div className="flex flex-col">
+                      <span
+                        className={cn(
+                          purchase.status === "paid" && "text-emerald-700",
+                          purchase.status === "failed" && "text-destructive",
+                        )}
+                      >
+                        {purchase.abandoned
+                          ? t("statuses.abandoned")
+                          : t(`statuses.${purchase.status}`)}
+                      </span>
+                      {purchase.failureReason && (
+                        <span className="text-muted-foreground">
+                          {isKnownFailureReason(purchase.failureReason)
+                            ? t(`reasons.${purchase.failureReason}`)
+                            : purchase.failureReason}
+                        </span>
                       )}
-                    >
-                      {t(`statuses.${purchase.status}`)}
-                    </span>
+                      {purchase.gatewayMessage && (
+                        <span className="text-muted-foreground">
+                          {t("gatewayMessage", {
+                            message: purchase.gatewayMessage,
+                          })}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="p-3 text-muted-foreground">
                     <div className="flex flex-col">

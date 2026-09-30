@@ -92,5 +92,6 @@ Supabase (en inglés):
 - "Olvidé mi contraseña" no funciona: `/update-password` necesita la sesión que
   abre `/api/auth/confirm` con el `token_hash` de nuestras plantillas.
 
-TODO(fase 3): configurar un SMTP propio y pegar las plantillas. Ver
-[despliegue.md](./despliegue.md).
+La producción de prueba ya usa el SMTP de Google Workspace
+(`smtp.gmail.com:587`, remitente `no-reply@oniriasolutions.com`) con las
+plantillas pegadas. Ver [estado.md](./estado.md).

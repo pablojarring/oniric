@@ -81,4 +81,47 @@ test.describe("recarga de créditos", () => {
     await expect(page).toHaveURL("/credits?payment=error");
     await expect(page.getByText("El pago no se completó")).toBeVisible();
   });
+
+  test("si el cliente cancela en la pasarela, no acredita y el admin ve la compra pendiente", async ({
+    page,
+  }) => {
+    const businessName = `Tienda ${randomUUID().slice(0, 8)}`;
+    const user = await signInWithOrganization(page, {
+      teamSize: "2-5",
+      teamType: "owner",
+      businessName,
+    });
+    await expect(page).toHaveURL("/home");
+
+    // En vez de volver a la ruta de vuelta, la pasarela manda al cliente a la
+    // URL de cancelación, como Payphone cuando el cliente cancela.
+    await page.route(/\/api\/payments\/payphone\/return\?/, (route) => {
+      const purchaseId = new URL(route.request().url()).searchParams.get(
+        "clientTransactionId",
+      );
+      return route.fulfill({
+        status: 303,
+        headers: { location: `/credits?purchase=${purchaseId}&canceled=1` },
+      });
+    });
+    await page.goto("/credits");
+    await page
+      .getByTestId("package-starter")
+      .getByRole("button", { name: "Comprar" })
+      .click();
+
+    await expect(page).toHaveURL(
+      /\/credits\?purchase=[0-9a-f-]{36}&canceled=1$/,
+    );
+    await expect(page.getByText("No completaste el pago")).toBeVisible();
+    await expect(page.getByTestId("credits-balance")).toHaveText(
+      "Tu saldo: 0 créditos",
+    );
+
+    grantPlatformAdmin(user.email);
+    await page.goto("/admin/purchases?status=all");
+    await expect(
+      page.getByTestId("purchase-row").filter({ hasText: businessName }),
+    ).toContainText("Pendiente");
+  });
 });
