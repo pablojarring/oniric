@@ -17,14 +17,20 @@ Payphone (botón de pago por redirección). Los precios y paquetes están en
    - **Aprobado** y el monto coincide: en una transacción, bloquea la compra,
      acredita los créditos (un lote nuevo, que vence según el segmento) y la
      marca `paid` con los datos del pagador.
-   - **Cancelado:** la marca `failed` (`canceled`). No se cobró.
+   - **No aprobado:** la marca `failed` (`canceled`) y guarda la respuesta.
+     Payphone responde `Canceled` también cuando el banco rechaza la tarjeta,
+     así que el cliente ve "El pago no fue aprobado" y el admin, el motivo que
+     dio Payphone (`message`). No se cobró.
    - **Monto distinto:** `failed` (`amount_mismatch`), sin acreditar; queda para
      revisar a mano.
    - **Payphone no responde:** sigue `pending`. Al recargar la página de vuelta
      se reintenta.
 6. Redirige a `/credits?purchase=<id>`, que muestra el resultado.
 
-Si el cliente cancela en Payphone, vuelve a `/credits?purchase=<id>&canceled=1`.
+Si el cliente cancela en Payphone, vuelve a `/credits?purchase=<id>&canceled=1`
+y ve "No completaste el pago". La compra sigue `pending` (no hubo transacción):
+si igual se pagó, la vuelta normal todavía puede confirmarla. Después de 10
+minutos, `/admin/purchases` la muestra como "Abandonada".
 
 ### Garantías
 
@@ -52,9 +58,17 @@ Si el cliente cancela en Payphone, vuelve a `/credits?purchase=<id>&canceled=1`.
 - En la aplicación de Payphone Developer: tipo **Web**, los dominios de la app
   en **Dominio web** y `https://<dominio>/api/payments/payphone/return` como
   **URL de respuesta**.
-- **Modo de pruebas de Payphone:** mientras la aplicación esté en pruebas, los
-  pagos se aprueban sin mover dinero. Para pagar con la app de Payphone hace
-  falta invitar un probador (Probadores → Clientes).
+- **Ambiente de la aplicación** (etiqueta en Payphone Developer, se elige al
+  configurarla):
+  - **Pruebas:** todos los pagos se aprueban y no pasan por el banco, con
+    tarjetas reales o datos ficticios. Salen en Probadores → Transacciones.
+    Para pagar con la app de Payphone hay que invitar al probador (Probadores →
+    Clientes).
+  - **Producción:** los cobros son reales y salen en Payphone Business →
+    Ventas, no en las transacciones de prueba. Una tarjeta ficticia la rechaza
+    el banco (el cliente ve "El pago no fue aprobado").
+  - Si la aplicación no deja cambiar el ambiente, se crea otra en Pruebas y se
+    cambian `PAYPHONE_TOKEN` y `PAYPHONE_STORE_ID` en Vercel (y Redeploy).
 
 ### Pasarela de prueba
 
@@ -81,7 +95,7 @@ facturar a consumidor final si el comprador no da sus datos.
   compra.
 - TODO(producto): pedir los datos de facturación (RUC, razón social) antes de
   pagar, para quien necesita factura con sus datos.
-- TODO(fase 3): antes de cobrar de verdad, pasar la aplicación de Payphone a
+- TODO(fase 3): antes de cobrar de verdad, dejar la aplicación de Payphone en
   producción, regenerar el token y pasar a Vercel Pro (el plan Hobby no permite
   uso comercial).
 - TODO(producto): Payphone solo tiene la página de pago en español e inglés.

@@ -76,7 +76,5 @@ la variable existe; sin ella, la tarea responde 401 y no hace nada. Ver
 
 ## Pendientes
 
-- TODO(fase 3): SMTP propio y plantillas de correo.
-- TODO(fase 3): dominio propio (hoy `*.vercel.app`).
 - TODO(fase 3): Higgsfield y facturación electrónica automática.
 - TODO(producto): cuándo pasar a Vercel Pro y Supabase Pro.

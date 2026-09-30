@@ -25,6 +25,7 @@ al terminar cada tarea.** Última actualización: 30 de septiembre de 2026.
 | #9    | Portada de venta en español y portugués.                                                |
 | #10   | Entorno de prueba en planes gratis: límite de 50 MB, cron diario, `docs/despliegue.md`. |
 | #11   | Paquetes de créditos con IVA incluido, nueva fórmula de precios y pagos con Payphone.   |
+| #12   | Mensajes de pago no aprobado o cancelado y motivo de Payphone en el admin.              |
 
 ## Entornos
 
@@ -41,9 +42,10 @@ al terminar cada tarea.** Última actualización: 30 de septiembre de 2026.
 Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 
 - **Vercel** (plan Hobby): proyecto `oniric`, despliega `main` automáticamente.
-  URL: `https://oniric-jade.vercel.app`. Dominio propio en configuración:
-  `oniric.oniriasolutions.com` (DNS en Cloudflare, CNAME sin proxy; la landing
-  de la empresa sigue en `oniriasolutions.com`).
+  Dominio: **`https://oniric.oniriasolutions.com`** (DNS en Cloudflare, CNAME
+  sin proxy; la landing de la empresa sigue en `oniriasolutions.com`). Ya está
+  en `NEXT_PUBLIC_SITE_URL`, en la URL Configuration de Supabase y en la
+  aplicación de Payphone. `oniric-jade.vercel.app` sigue respondiendo.
 - **Supabase** `oniric-prod` (plan Free, región São Paulo): migraciones y
   buckets aplicados. `ad-outputs` con 50 MB (máximo del plan Free).
 - **Correo:** SMTP de Google Workspace de `oniriasolutions.com`
@@ -51,8 +53,12 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   `no-reply@oniriasolutions.com`. Plantillas de `supabase/templates/` pegadas a
   mano en Supabase.
 - **Generación:** `MockProvider` (no hay `HIGGSFIELD_API_KEY` a propósito).
-- **Pagos:** Payphone con la aplicación "Oniric" aprobada y en **modo de
-  pruebas** (los pagos no mueven dinero). Token y StoreId cargados en Vercel.
+- **Pagos:** Payphone con la aplicación "Oniric" aprobada. Token y StoreId
+  cargados en Vercel. **Ojo: la aplicación quedó en ambiente Producción**, no en
+  Pruebas: los cobros son reales. El 30 de septiembre de 2026 la página de pago
+  cargó bien (Prepare, dominio y credenciales funcionan), pero los intentos con
+  tarjetas ficticias volvieron como no aprobados (Payphone responde `Canceled`)
+  y no salen en las transacciones de prueba. Ver [pagos.md](./pagos.md).
 - **Tarea programada:** diaria, 05:00 UTC (`vercel.json`), con `CRON_SECRET`.
 
 ## Decisiones de producto vigentes
@@ -72,11 +78,12 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 
 ## Pendientes, en orden sugerido
 
-1. **Probar Payphone en modo de pruebas** en producción de prueba: comprar un
-   paquete con tarjeta de prueba y con un probador de la app Payphone.
-2. **Terminar el dominio** `oniric.oniriasolutions.com`: Site URL y Redirect
-   URLs en Supabase, `NEXT_PUBLIC_SITE_URL` en Vercel, redirigir
-   `oniric-jade.vercel.app`.
+1. **Probar una compra completa con Payphone:** pasar la aplicación a Pruebas
+   (o crear otra en Pruebas y cambiar token y StoreId en Vercel) y comprar un
+   paquete; o, si el dueño lo decide, una compra real de US$5 en Producción.
+   Verificar que se acreditan los créditos y que la compra sale en
+   `/admin/purchases`.
+2. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
 3. **Higgsfield real** (`lib/providers/higgsfield.ts`): verificar la API oficial,
    elegir modelos por plantilla, webhooks. Los costos estimados de las plantillas
    están en `lib/providers/mock.ts` y [creditos.md](./creditos.md).
