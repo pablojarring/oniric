@@ -12,7 +12,10 @@ test.describe("selección de idioma", () => {
     await expect(page).toHaveURL("/pt");
     await expect(page.locator("html")).toHaveAttribute("lang", "pt");
     await expect(
-      page.getByText("Estamos construindo a plataforma."),
+      page.getByRole("heading", {
+        level: 1,
+        name: "Anúncios com IA para o seu negócio, prontos em minutos",
+      }),
     ).toBeVisible();
 
     // La cookie hace que la próxima visita a `/` abra en portugués.
@@ -24,7 +27,10 @@ test.describe("selección de idioma", () => {
       .selectOption({ label: "Español" });
     await expect(page).toHaveURL("/");
     await expect(
-      page.getByText("Estamos construyendo la plataforma."),
+      page.getByRole("heading", {
+        level: 1,
+        name: "Anuncios con IA para tu negocio, listos en minutos",
+      }),
     ).toBeVisible();
   });
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -11,6 +11,12 @@ import "../globals.css";
 
 const fontSans = Geist({
   variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+// Títulos con más personalidad; el texto sigue en Geist.
+const fontDisplay = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
@@ -50,7 +56,12 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={cn(fontSans.variable, fontMono.variable, "h-full antialiased")}
+      className={cn(
+        fontSans.variable,
+        fontDisplay.variable,
+        fontMono.variable,
+        "h-full antialiased",
+      )}
     >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>

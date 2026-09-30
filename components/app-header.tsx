@@ -2,6 +2,7 @@ import { LogOutIcon, SettingsIcon, ShieldIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Logo } from "@/components/marketing/logo";
 import { NavLabel, navIconOnlyClassName } from "@/components/nav-label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -19,16 +20,15 @@ export function AppHeader({
   isPlatformAdmin?: boolean;
 }) {
   const t = useTranslations("Nav");
-  const brandClassName = "font-heading text-lg font-semibold";
 
   return (
     <header className="flex items-center justify-between gap-4 border-b px-6 py-3">
       {homePath ? (
-        <Link href={homePath} className={brandClassName}>
-          {t("brand")}
+        <Link href={homePath}>
+          <Logo name={t("brand")} />
         </Link>
       ) : (
-        <span className={brandClassName}>{t("brand")}</span>
+        <Logo name={t("brand")} />
       )}
       <nav className="flex items-center gap-2">
         <LocaleSwitcher />

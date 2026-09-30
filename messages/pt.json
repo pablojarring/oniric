@@ -1,12 +1,7 @@
 {
   "Metadata": {
     "title": "Oniric",
-    "description": "Vídeos e imagens publicitárias com IA para empresas da América Latina."
-  },
-  "HomePage": {
-    "title": "Oniric",
-    "tagline": "Vídeos e imagens publicitárias com IA para empresas da América Latina.",
-    "status": "Estamos construindo a plataforma."
+    "description": "Crie anúncios em vídeo e imagem com IA para Instagram, WhatsApp e Facebook em minutos. Feito para pequenos negócios da América Latina."
   },
   "LocaleSwitcher": {
     "label": "Idioma"
@@ -402,6 +397,225 @@
         "minPriceCredits": "O mínimo deve ser um inteiro entre 1 e 100.000.",
         "model": "Modelo desconhecido."
       }
+    }
+  },
+  "Landing": {
+    "meta": {
+      "title": "Oniric: anúncios com IA para o seu negócio"
+    },
+    "nav": {
+      "how": "Como funciona",
+      "templates": "Modelos",
+      "pricing": "Preços",
+      "faq": "Perguntas",
+      "label": "Seções"
+    },
+    "hero": {
+      "badge": "IA para pequenos negócios da América Latina",
+      "titleStart": "Anúncios com IA para o seu negócio,",
+      "titleHighlight": "prontos em minutos",
+      "description": "Envie uma foto do seu produto, escolha um modelo e o Oniric cria o vídeo ou a imagem para Instagram, WhatsApp e Facebook. Sem designer e sem programas de edição.",
+      "primaryCta": "Criar meu primeiro anúncio",
+      "secondaryCta": "Ver como funciona",
+      "trust": {
+        "noSubscription": "Sem assinatura",
+        "payPerUse": "Pague só o que gerar",
+        "languages": "Em português e espanhol"
+      },
+      "ready": "Seu anúncio está pronto",
+      "readyDetail": "Status do WhatsApp · 9:16"
+    },
+    "samples": {
+      "story": {
+        "label": "Status do WhatsApp",
+        "title": "Padaria da Esquina",
+        "copy": "Pão de queijo saindo do forno todos os dias desde as 7h.",
+        "cta": "Peça pelo WhatsApp"
+      },
+      "square": {
+        "label": "Oferta do dia",
+        "title": "Leve 2 cappuccinos, pague 1",
+        "copy": "Só hoje no Café Andino.",
+        "cta": "Ver endereço"
+      },
+      "landscape": {
+        "label": "Promo 15s para Instagram",
+        "title": "Nova coleção de verão",
+        "copy": "Boutique Luna · Entregamos em todo o país.",
+        "cta": "Comprar agora"
+      }
+    },
+    "industries": {
+      "title": "Feito para negócios como o seu",
+      "items": {
+        "restaurants": "Restaurantes",
+        "bakeries": "Padarias",
+        "cafes": "Cafeterias",
+        "fashion": "Lojas de roupa",
+        "beauty": "Salões de beleza",
+        "hardware": "Lojas de material",
+        "gyms": "Academias",
+        "vets": "Veterinárias",
+        "florists": "Floriculturas",
+        "services": "Serviços profissionais"
+      }
+    },
+    "problem": {
+      "eyebrow": "Por que o Oniric",
+      "title": "Postar todos os dias não deveria custar uma agência",
+      "description": "Seus clientes estão no Instagram e no WhatsApp. O Oniric entrega anúncios com qualidade profissional sem contratar ninguém nem aprender a editar.",
+      "items": {
+        "agency": {
+          "title": "Sem agência e sem mensalidade",
+          "description": "Você paga por cada anúncio que gera. Nada de contratos nem pagamentos fixos."
+        },
+        "time": {
+          "title": "Sem perder horas",
+          "description": "Da foto do produto ao anúncio pronto em minutos."
+        },
+        "skills": {
+          "title": "Sem saber design",
+          "description": "Os modelos já sabem o que funciona em cada rede. Você só conta o que vende."
+        }
+      }
+    },
+    "how": {
+      "eyebrow": "Como funciona",
+      "title": "Seu anúncio em 3 passos",
+      "description": "Sem jargão técnico: o modelo escolhe a IA, o formato e o estilo por você.",
+      "steps": {
+        "product": {
+          "title": "Conte o que você vende",
+          "description": "Envie uma foto do produto ou descreva seu serviço em uma linha."
+        },
+        "template": {
+          "title": "Escolha um modelo",
+          "description": "Promo para Instagram, status do WhatsApp ou oferta do dia, no formato de cada rede."
+        },
+        "generate": {
+          "title": "Revise e gere",
+          "description": "Sugerimos o texto; você ajusta, vê o preço antes de confirmar e pronto."
+        }
+      },
+      "visuals": {
+        "upload": "Envie a foto do seu produto",
+        "file": "produto.jpg",
+        "copy": "Já provou nosso pão de queijo? Peça o seu hoje.",
+        "generate": "Gerar anúncio"
+      },
+      "result": "Em minutos seu anúncio aparece na sua galeria, pronto para baixar ou compartilhar com um link."
+    },
+    "templates": {
+      "eyebrow": "Modelos",
+      "title": "Formatos que já funcionam nas redes",
+      "description": "Cada modelo traz o estilo, a duração e o formato prontos. Você entra com o produto.",
+      "video": "Vídeo de {seconds} s",
+      "image": "Imagem",
+      "cta": "Experimentar os modelos"
+    },
+    "features": {
+      "eyebrow": "Tudo incluído",
+      "title": "Feito para vender, não para complicar",
+      "items": {
+        "copy": {
+          "title": "Textos que vendem",
+          "description": "Sugerimos o texto com o nome do seu negócio e a sua oferta. Você muda como quiser antes de gerar."
+        },
+        "formats": {
+          "title": "O formato de cada rede",
+          "description": "9:16 para Reels e status, 1:1 para o feed e 16:9 para YouTube e Facebook."
+        },
+        "gallery": {
+          "title": "Sua galeria sempre à mão",
+          "description": "Baixe seus anúncios com um clique ou compartilhe com um link, sem ninguém precisar se cadastrar."
+        },
+        "credits": {
+          "title": "Pague só o que usar",
+          "description": "Você vê o preço antes de gerar e, se algo falhar, devolvemos os créditos."
+        },
+        "privacy": {
+          "title": "Suas fotos, protegidas",
+          "description": "Armazenamento privado, revisão de conteúdo e consentimento para fotos com pessoas."
+        },
+        "language": {
+          "title": "No seu idioma",
+          "description": "Toda a plataforma em português e espanhol."
+        }
+      },
+      "copyExample": "🔥 Oferta do dia na Padaria da Esquina: leve 2 coxinhas, pague 1. Só hoje!",
+      "copyEdit": "Editável",
+      "refund": "Créditos devolvidos",
+      "download": "Baixar",
+      "copyLink": "Copiar link"
+    },
+    "pricing": {
+      "eyebrow": "Preços",
+      "title": "Pague por anúncio, não por mês",
+      "description": "Compre créditos quando precisar e use nos anúncios que quiser.",
+      "creditPrice": "US$ 0,01",
+      "creditUnit": "por crédito",
+      "creditNote": "Preços em dólares, impostos à parte.",
+      "points": {
+        "preview": "Você vê o preço de cada anúncio antes de gerar.",
+        "refund": "Se a geração falhar, devolvemos todos os créditos.",
+        "noContract": "Sem mensalidade, contrato ou fidelidade.",
+        "expiry": "Seus créditos valem por 12 meses."
+      },
+      "cta": "Criar minha conta",
+      "teams": {
+        "badge": "Em breve",
+        "title": "Para agências e equipes de marketing",
+        "description": "Estamos preparando o modo empresa para produzir em volume com a identidade da sua marca.",
+        "items": {
+          "roles": "Equipes com funções",
+          "brand": "Kit de marca",
+          "batch": "Lotes via CSV",
+          "approvals": "Aprovações"
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Perguntas frequentes",
+      "title": "O que costumam nos perguntar",
+      "items": {
+        "design": {
+          "question": "Preciso saber design ou edição de vídeo?",
+          "answer": "Não. Você conta o que vende, escolhe um modelo e o Oniric faz o resto. Dá para ajustar o texto antes de gerar."
+        },
+        "where": {
+          "question": "Onde posso publicar meus anúncios?",
+          "answer": "No Instagram (Reels, stories e feed), status do WhatsApp, Facebook, TikTok e YouTube. Você baixa ou compartilha com um link."
+        },
+        "cost": {
+          "question": "Quanto custa?",
+          "answer": "Você paga com créditos pré-pagos (1 crédito = US$ 0,01). Cada anúncio mostra o preço antes de ser gerado e não há mensalidade."
+        },
+        "fail": {
+          "question": "O que acontece se a geração falhar?",
+          "answer": "Devolvemos automaticamente todos os créditos desse anúncio."
+        },
+        "people": {
+          "question": "Posso usar fotos com pessoas?",
+          "answer": "Sim, se você tiver o direito de usá-las e o consentimento dessas pessoas. Pedimos isso ao enviar a foto."
+        },
+        "privacy": {
+          "question": "Minhas fotos e anúncios são privados?",
+          "answer": "Sim. Ficam em armazenamento privado e só você decide se compartilha um anúncio com um link público, que pode desativar quando quiser."
+        }
+      }
+    },
+    "cta": {
+      "title": "Seu próximo anúncio está a",
+      "titleHighlight": "3 passos",
+      "description": "Crie sua conta e experimente o assistente. Em minutos seu anúncio está pronto para publicar.",
+      "primary": "Criar meu primeiro anúncio",
+      "secondary": "Já tenho conta"
+    },
+    "footer": {
+      "tagline": "Anúncios com IA para negócios da América Latina.",
+      "product": "Produto",
+      "account": "Conta",
+      "legal": "© {year} ONIRIASOLUTIONS S.A.S. Feito no Equador."
     }
   }
 }

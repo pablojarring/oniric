@@ -86,14 +86,12 @@ describe("loadMessages", () => {
   it("carga los textos del idioma pedido", async () => {
     const messages = await loadMessages("pt");
 
-    expect(messages.HomePage.status).toBe("Estamos construindo a plataforma.");
+    expect(messages.Landing.hero.titleHighlight).toBe("prontos em minutos");
   });
 
   it("carga el idioma por defecto sin combinar", async () => {
     const messages = await loadMessages(defaultLocale);
 
-    expect(messages.HomePage.status).toBe(
-      "Estamos construyendo la plataforma.",
-    );
+    expect(messages.Landing.hero.titleHighlight).toBe("listos en minutos");
   });
 });
