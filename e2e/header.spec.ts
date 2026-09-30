@@ -40,11 +40,13 @@ test.describe("encabezado en el celular", () => {
   }) => {
     await page.goto("/");
     await expectHeaderFits(page);
+    // El pie repite estos enlaces: se buscan dentro del encabezado.
+    const header = page.getByRole("banner");
     await expect(
-      page.getByRole("link", { name: "Iniciar sesión" }),
+      header.getByRole("link", { name: "Iniciar sesión" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Crear cuenta" }),
+      header.getByRole("link", { name: "Crear cuenta" }),
     ).toBeVisible();
 
     await page.goto("/pt");
