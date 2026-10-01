@@ -25,6 +25,7 @@ import {
   type AdTemplate,
   type TemplateId,
 } from "@/lib/templates";
+import { frameProductPhoto } from "@/lib/uploads/frame";
 import { validateImage } from "@/lib/uploads/images";
 import { INPUT_IMAGE_URL_TTL_SECONDS, type FileStorage } from "@/lib/storage";
 
@@ -134,10 +135,17 @@ export async function createAd(
         },
       };
     }
+    // Se guarda y se envía la foto ya encuadrada en el formato elegido.
+    const framed = await frameProductPhoto(image.bytes, form.aspectRatio).catch(
+      () => null,
+    );
+    if (!framed) {
+      return { ok: false, error: { code: "photoUnsupportedType" } };
+    }
     photo = {
-      bytes: image.bytes,
-      mimeType: image.mimeType,
-      path: `${input.organizationId}/${randomUUID()}.${image.extension}`,
+      bytes: framed,
+      mimeType: "image/jpeg",
+      path: `${input.organizationId}/${randomUUID()}.jpg`,
     };
   }
 
