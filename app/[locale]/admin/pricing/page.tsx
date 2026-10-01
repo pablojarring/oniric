@@ -41,12 +41,14 @@ export default async function AdminPricingPage() {
                 </span>
                 <span className="text-muted-foreground">
                   {row.isDefault ? t("default") : t("custom")} ·{" "}
-                  {row.example.durationSeconds !== undefined
-                    ? t("exampleVideo", {
-                        seconds: row.example.durationSeconds,
-                        count: row.example.priceCredits,
-                      })
-                    : t("exampleImage", { count: row.example.priceCredits })}
+                  {row.example === null
+                    ? t("exampleUnavailable")
+                    : row.example.durationSeconds !== undefined
+                      ? t("exampleVideo", {
+                          seconds: row.example.durationSeconds,
+                          count: row.example.priceCredits,
+                        })
+                      : t("exampleImage", { count: row.example.priceCredits })}
                 </span>
               </div>
               <div className="flex flex-col items-start gap-2">

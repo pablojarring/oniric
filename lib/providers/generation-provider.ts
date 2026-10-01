@@ -41,12 +41,23 @@ export interface OutputFile {
   durationSeconds?: number;
 }
 
+export interface SubmitOptions {
+  /**
+   * Nuestro id del job. El proveedor lo usa para no duplicar un envío que se
+   * reintenta y para avisar por webhook a qué job corresponde.
+   */
+  reference?: string;
+}
+
 export interface GenerationProvider {
   /** Identificador que se guarda en cada job (`generation_jobs.provider`). */
   readonly id: string;
   listModels(): Promise<ModelInfo[]>;
   estimate(req: GenerationRequest): Promise<{ costUsd: number }>;
-  submit(req: GenerationRequest): Promise<{ providerJobId: string }>;
+  submit(
+    req: GenerationRequest,
+    options?: SubmitOptions,
+  ): Promise<{ providerJobId: string }>;
   getStatus(providerJobId: string): Promise<JobStatus>;
   fetchOutput(providerJobId: string): Promise<OutputFile[]>;
 }
