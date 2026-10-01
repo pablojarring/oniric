@@ -133,6 +133,8 @@ test/                utilidades de tests (Postgres en memoria)
   El margen nunca se hardcodea en la UI y todo movimiento queda en el ledger.
 - **Asistente pyme:** plantillas, moderación, fotos y límites según
   [docs/asistente.md](./docs/asistente.md).
+- **Calendario comercial:** fechas por país, anticipación y ambientación según
+  [docs/temporadas.md](./docs/temporadas.md).
 - **Panel de admin:** acceso, márgenes y acreditación manual según
   [docs/admin.md](./docs/admin.md).
 - **Base de datos:** los servicios reciben la base por parámetro (`Database`)
