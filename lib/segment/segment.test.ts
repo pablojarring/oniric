@@ -63,6 +63,11 @@ describe("segmentConfig", () => {
     expect(hasFeature("empresa", "batchGeneration")).toBe(true);
   });
 
+  it("el calendario comercial es del modo guiado", () => {
+    expect(hasFeature("pyme", "seasonalCalendar")).toBe(true);
+    expect(hasFeature("empresa", "seasonalCalendar")).toBe(false);
+  });
+
   it("el menú solo lleva a secciones que el segmento puede usar", () => {
     const { navigation } = segmentConfig.pyme;
     expect(navigation[0]).toBe("home");
