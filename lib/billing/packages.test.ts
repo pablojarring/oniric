@@ -13,6 +13,7 @@ import {
   netRevenueMicroUsd,
   paidCredits,
   pricePerCreditMicroUsd,
+  savingsPercent,
   splitIva,
 } from "./packages";
 
@@ -80,6 +81,14 @@ describe("creditPackages", () => {
     const prices = creditPackages.map(pricePerCreditMicroUsd);
     expect(prices).toEqual([...prices].sort((a, b) => b - a));
     expect(new Set(prices).size).toBe(prices.length);
+  });
+
+  it("el ahorro sale del regalo de créditos", () => {
+    expect(
+      Object.fromEntries(
+        creditPackages.map((pkg) => [pkg.id, savingsPercent(pkg)]),
+      ),
+    ).toEqual({ starter: 0, entrepreneur: 4, business: 9, pro: 13 });
   });
 
   it("reconoce los ids de paquete", () => {

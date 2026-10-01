@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 30 de septiembre de 2026.
+al terminar cada tarea.** Última actualización: 30 de septiembre de 2026 (PR #13).
 
 ## Dónde estamos
 
@@ -26,6 +26,7 @@ al terminar cada tarea.** Última actualización: 30 de septiembre de 2026.
 | #10   | Entorno de prueba en planes gratis: límite de 50 MB, cron diario, `docs/despliegue.md`. |
 | #11   | Paquetes de créditos con IVA incluido, nueva fórmula de precios y pagos con Payphone.   |
 | #12   | Mensajes de pago no aprobado o cancelado y motivo de Payphone en el admin.              |
+| #13   | Nueva interfaz del modo pyme: menú y saldo, inicio, asistente, galería y recarga.       |
 
 ## Entornos
 
@@ -54,11 +55,12 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   mano en Supabase.
 - **Generación:** `MockProvider` (no hay `HIGGSFIELD_API_KEY` a propósito).
 - **Pagos:** Payphone con la aplicación "Oniric" aprobada. Token y StoreId
-  cargados en Vercel. **Ojo: la aplicación quedó en ambiente Producción**, no en
-  Pruebas: los cobros son reales. El 30 de septiembre de 2026 la página de pago
-  cargó bien (Prepare, dominio y credenciales funcionan), pero los intentos con
-  tarjetas ficticias volvieron como no aprobados (Payphone responde `Canceled`)
-  y no salen en las transacciones de prueba. Ver [pagos.md](./pagos.md).
+  cargados en Vercel. La primera prueba falló porque la aplicación estaba en
+  ambiente Producción (tarjetas ficticias rechazadas, `Canceled`). Después de
+  ajustar el ambiente, el dueño confirmó el 30 de septiembre de 2026 que la
+  compra de créditos funciona de punta a punta. TODO: registrar qué aplicación
+  y ambiente quedaron cargados en Vercel, y volver a credenciales de Producción
+  antes de vender. Ver [pagos.md](./pagos.md).
 - **Tarea programada:** diaria, 05:00 UTC (`vercel.json`), con `CRON_SECRET`.
 
 ## Decisiones de producto vigentes
@@ -78,15 +80,22 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 
 ## Pendientes, en orden sugerido
 
-1. **Probar una compra completa con Payphone:** pasar la aplicación a Pruebas
-   (o crear otra en Pruebas y cambiar token y StoreId en Vercel) y comprar un
-   paquete; o, si el dueño lo decide, una compra real de US$5 en Producción.
-   Verificar que se acreditan los créditos y que la compra sale en
-   `/admin/purchases`.
+1. **Higgsfield real** (siguiente tarea acordada con el dueño):
+   `lib/providers/higgsfield.ts`, modelos por plantilla, webhooks y un panel de
+   saldo del proveedor con alerta y reporte mensual para el contador. Lo que ya
+   se sabe de la documentación oficial (docs.higgsfield.ai): saldo prepagado
+   en USD que se recarga en la consola, cobro por generación (las fallidas no
+   se cobran), endpoint de estimación, créditos que vencen al año, resultados
+   disponibles al menos 7 días y autenticación con key y secret. No documenta
+   recarga automática ni un endpoint de saldo: TODO confirmarlo en la consola.
+   El dinero va Payphone → cuenta de Produbanco → tarjeta empresarial → saldo
+   prepagado de Higgsfield (ISD 5 % en el pago al exterior). Los costos
+   estimados de las plantillas están en `lib/providers/mock.ts` y
+   [creditos.md](./creditos.md).
 2. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
-3. **Higgsfield real** (`lib/providers/higgsfield.ts`): verificar la API oficial,
-   elegir modelos por plantilla, webhooks. Los costos estimados de las plantillas
-   están en `lib/providers/mock.ts` y [creditos.md](./creditos.md).
+3. **Con el contador:** ISD, IVA de servicios digitales importados y retención
+   en pagos al exterior; si algo no se recupera, subir el factor de costos del
+   proveedor en `lib/billing/config.ts`.
 4. **Antes de cobrar de verdad:** Payphone a producción, regenerar credenciales
    (token de Payphone y contraseña de la base de datos), Vercel Pro (uso
    comercial), revisar límites de Supabase Free.

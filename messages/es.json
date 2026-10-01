@@ -17,7 +17,23 @@
     "signup": "Crear cuenta",
     "settings": "Configuración",
     "logout": "Cerrar sesión",
-    "admin": "Admin"
+    "admin": "Admin",
+    "mainNav": "Menú principal",
+    "sections": {
+      "home": "Inicio",
+      "create": "Crear",
+      "ads": "Mis anuncios",
+      "credits": "Créditos"
+    },
+    "tabs": {
+      "home": "Inicio",
+      "create": "Crear",
+      "ads": "Anuncios",
+      "credits": "Créditos",
+      "settings": "Ajustes"
+    },
+    "balance": "{count, plural, one {# crédito} other {# créditos}}",
+    "balanceLabel": "Tu saldo: {count, plural, one {# crédito} other {# créditos}}"
   },
   "Auth": {
     "email": "Correo electrónico",
@@ -73,7 +89,7 @@
   },
   "Onboarding": {
     "title": "Cuéntanos sobre tu negocio",
-    "description": "Con esto preparamos Oniric para ti. Puedes cambiarlo después.",
+    "description": "Con esto preparamos Oniric para tu negocio. Puedes cambiarlo después.",
     "fields": {
       "businessName": "Nombre del negocio",
       "country": "País",
@@ -127,23 +143,55 @@
       "teamSize": "Elige cuántas personas trabajan en tu negocio.",
       "teamType": "Elige quién va a crear los anuncios.",
       "videoPurposes": "Elige al menos una opción."
-    }
+    },
+    "eyebrow": "Te toma menos de un minuto"
   },
   "PymeHome": {
     "title": "¡Hola, {name}!",
-    "description": "Crea un anuncio para tus redes en 3 pasos.",
+    "description": "¿Qué vas a anunciar hoy? Crea un anuncio listo para tus redes en 3 pasos, sin saber de diseño.",
     "create": "Crear anuncio",
     "balance": {
       "title": "Tu saldo",
       "credits": "{count, plural, one {# crédito} other {# créditos}}",
-      "usd": "Equivale a {usd}.",
-      "empty": "Todavía no tienes créditos. Recarga para crear tu primer anuncio.",
+      "usd": "Equivale a {usd}",
+      "empty": "Todavía no tienes créditos. Recarga desde US$5 y crea tu primer anuncio.",
       "recharge": "Recargar créditos"
     },
     "recent": {
       "title": "Tus anuncios recientes",
       "viewAll": "Ver todos",
-      "empty": "Todavía no creaste anuncios. ¡Crea el primero!"
+      "empty": "Tu primer anuncio está a un minuto. Te guiamos paso a paso.",
+      "emptyTitle": "Aquí verás tus anuncios"
+    },
+    "eyebrow": "Tu estudio de anuncios",
+    "viewAds": "Ver mis anuncios",
+    "sample": {
+      "title": "Tu producto",
+      "offer": "2x1 hoy",
+      "copy": "Listo para tus redes",
+      "cta": "Pídelo ya"
+    },
+    "templates": {
+      "title": "Empieza con una plantilla",
+      "description": "Elige el formato y nosotros lo adaptamos a tu producto.",
+      "duration": "{seconds} s",
+      "price": "{count, plural, one {# crédito} other {# créditos}}",
+      "use": "Usar plantilla"
+    },
+    "steps": {
+      "title": "Así de fácil",
+      "product": {
+        "title": "Cuéntanos qué vendes",
+        "description": "Sube una foto de tu producto o descríbelo con tus palabras."
+      },
+      "template": {
+        "title": "Elige una plantilla",
+        "description": "Para Instagram, estados de WhatsApp u ofertas del día."
+      },
+      "share": {
+        "title": "Descarga y comparte",
+        "description": "Publícalo en tus redes o envíalo por WhatsApp."
+      }
     }
   },
   "EmpresaHome": {
@@ -159,6 +207,19 @@
       "onlyAdmins": "Solo un administrador de la organización puede cambiar el modo.",
       "saved": "Listo, guardamos el cambio.",
       "error": "No pudimos guardar el cambio. Inténtalo de nuevo."
+    },
+    "business": {
+      "title": "Tu negocio",
+      "name": "Nombre",
+      "country": "País",
+      "industry": "Rubro"
+    },
+    "account": {
+      "title": "Tu cuenta",
+      "email": "Correo"
+    },
+    "mode": {
+      "title": "Forma de trabajo"
     }
   },
   "Templates": {
@@ -187,11 +248,21 @@
         "description": "Imagen llamativa para anunciar una promoción por tiempo limitado.",
         "copy": "🔥 Oferta del día en {business}: {offer} en {product}. ¡Solo por hoy!"
       }
+    },
+    "formatsShort": {
+      "9:16": "Vertical 9:16",
+      "1:1": "Cuadrado 1:1",
+      "16:9": "Horizontal 16:9"
+    },
+    "formatUses": {
+      "9:16": "Reels, TikTok y estados",
+      "1:1": "Publicaciones del feed",
+      "16:9": "YouTube y Facebook"
     }
   },
   "AdWizard": {
     "title": "Crea tu anuncio",
-    "description": "Solo necesitas 3 pasos.",
+    "description": "En 3 pasos y sin saber de diseño. Te mostramos cómo va quedando.",
     "stepOf": "Paso {current} de {total}: {name}",
     "steps": {
       "product": "Tu producto",
@@ -218,7 +289,10 @@
       "offerPlaceholder": "Ej.: 2x1, 20 % de descuento",
       "adCopy": "Texto del anuncio",
       "adCopyHelp": "Lo sugerimos con tus datos. Puedes cambiarlo.",
-      "resetCopy": "Usar el texto sugerido"
+      "resetCopy": "Usar el texto sugerido",
+      "photoDrop": "Arrastra una foto aquí o toca para elegirla",
+      "changePhoto": "Cambiar foto",
+      "descriptionPlaceholder": "Ej.: Pan de yuca recién horneado, crocante por fuera y suave por dentro."
     },
     "templateCard": {
       "duration": "{seconds} s",
@@ -231,7 +305,8 @@
       "price": "Precio",
       "balance": "Tu saldo",
       "credits": "{count, plural, one {# crédito} other {# créditos}}",
-      "creditsWithUsd": "{count, plural, one {# crédito} other {# créditos}} ({usd})"
+      "creditsWithUsd": "{count, plural, one {# crédito} other {# créditos}} ({usd})",
+      "remaining": "Después te quedan"
     },
     "insufficient": {
       "title": "No te alcanzan los créditos",
@@ -254,6 +329,29 @@
       "insufficientCredits": "Te faltan {missing, plural, one {# crédito} other {# créditos}} para este anuncio.",
       "rateLimited": "Creaste muchos anuncios en poco tiempo. Espera un rato e inténtalo de nuevo.",
       "priceChanged": "El precio cambió a {count, plural, one {# crédito} other {# créditos}}. Revísalo y vuelve a generar."
+    },
+    "stepTitles": {
+      "product": {
+        "title": "Cuéntanos sobre tu producto",
+        "description": "Con una foto o una descripción corta es suficiente."
+      },
+      "template": {
+        "title": "Elige cómo se verá",
+        "description": "Cada plantilla está pensada para una red social."
+      },
+      "review": {
+        "title": "Revisa y genera",
+        "description": "Ajusta el texto si quieres y confirma el precio."
+      }
+    },
+    "tip": "Consejo: una foto con buena luz y fondo simple da mejores resultados.",
+    "preview": {
+      "title": "Vista previa",
+      "note": "Es una vista de ejemplo: la IA crea el anuncio final a partir de tu producto.",
+      "label": "Tu anuncio",
+      "product": "Tu producto",
+      "copy": "Aquí va el texto de tu anuncio",
+      "cta": "Pídelo ya"
     }
   },
   "AdPage": {
@@ -268,12 +366,14 @@
       "description": "Puede tardar unos minutos. Puedes quedarte aquí o volver más tarde."
     },
     "succeeded": {
-      "title": "¡Tu anuncio está listo!"
+      "title": "¡Tu anuncio está listo!",
+      "description": "Descárgalo y publícalo en tus redes, o compártelo con un enlace."
     },
     "failed": {
       "title": "No pudimos crear tu anuncio",
       "description": "Te devolvimos {count, plural, one {el crédito} other {los # créditos}} de este anuncio. Puedes intentarlo de nuevo.",
-      "retry": "Intentar de nuevo"
+      "retry": "Intentar de nuevo",
+      "stage": "Esta vez no se pudo crear el anuncio."
     },
     "details": {
       "template": "Plantilla",
@@ -296,18 +396,30 @@
       "copied": "¡Copiado!",
       "native": "Compartir…",
       "disable": "Desactivar enlace",
-      "error": "No pudimos actualizar el enlace. Inténtalo de nuevo."
+      "error": "No pudimos actualizar el enlace. Inténtalo de nuevo.",
+      "whatsapp": "Enviar por WhatsApp"
+    },
+    "progress": {
+      "queued": "En cola",
+      "creating": "Creando tu anuncio",
+      "ready": "Listo para descargar"
+    },
+    "downloadNumbered": "Descargar {number}",
+    "copyText": {
+      "copy": "Copiar texto",
+      "copied": "¡Copiado!"
     }
   },
   "AdGallery": {
     "title": "Mis anuncios",
-    "description": "Todos los anuncios de {name}.",
-    "empty": "Todavía no creaste anuncios.",
+    "description": "Todos los anuncios de {name}, listos para descargar y compartir.",
+    "empty": "Cuando crees tu primer anuncio, lo vas a encontrar aquí.",
     "create": "Crear anuncio",
     "newer": "Más recientes",
     "older": "Más antiguos",
-    "shared": "Enlace público activo",
-    "thumbnailAlt": "Anuncio de {product}"
+    "shared": "Público",
+    "thumbnailAlt": "Anuncio de {product}",
+    "emptyTitle": "Todavía no tienes anuncios"
   },
   "SharedAd": {
     "title": "Anuncio de {business}",
@@ -658,7 +770,7 @@
   "Credits": {
     "metaTitle": "Recargar créditos",
     "title": "Recarga créditos",
-    "description": "Elige un paquete y paga con tarjeta de crédito o débito a través de Payphone. Los créditos se acreditan al instante.",
+    "description": "Elige un paquete y paga con tarjeta de crédito o débito en Payphone. Tus créditos llegan al instante.",
     "balance": "Tu saldo: {count, plural, one {# crédito} other {# créditos}}",
     "packages": {
       "starter": "Inicial",
@@ -671,7 +783,7 @@
     "featured": "Más elegido",
     "ivaIncluded": "IVA incluido",
     "breakdown": "Subtotal {base} + IVA {tax}",
-    "yield": "Te alcanza para {whatsapp}, {promo} o {images}.",
+    "yield": "Te alcanza para <strong>{whatsapp}</strong>, <strong>{promo}</strong> o <strong>{images}</strong>.",
     "yieldItems": {
       "whatsapp": "{count, plural, one {# estado de WhatsApp} other {# estados de WhatsApp}}",
       "promo": "{count, plural, one {# promo de 15 s} other {# promos de 15 s}}",
@@ -716,6 +828,39 @@
       "invalid": "Elige un paquete.",
       "rateLimit": "Iniciaste muchas compras en poco tiempo. Espera un rato e inténtalo de nuevo.",
       "gateway": "No pudimos conectar con Payphone. Inténtalo de nuevo en unos minutos."
+    },
+    "savings": "Ahorras {percent} %",
+    "starterHint": "Ideal para probar",
+    "howItWorks": {
+      "step": "Paso {number}",
+      "choose": "Elige tu paquete",
+      "pay": "Paga con tarjeta en Payphone",
+      "instant": "Tus créditos llegan al instante"
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "items": {
+        "credit": {
+          "question": "¿Qué es un crédito?",
+          "answer": "Es la moneda de Oniric: 1 crédito vale US$0,01 con IVA incluido. Antes de generar cada anuncio te mostramos cuántos créditos cuesta."
+        },
+        "failed": {
+          "question": "¿Qué pasa si un anuncio no se puede crear?",
+          "answer": "Te devolvemos automáticamente todos los créditos de ese anuncio. Solo pagas por los anuncios que se crean."
+        },
+        "expiry": {
+          "question": "¿Mis créditos vencen?",
+          "answer": "Duran {months} meses desde la compra. Siempre usamos primero los que vencen antes."
+        },
+        "invoice": {
+          "question": "¿Cómo recibo mi factura?",
+          "answer": "Tu factura electrónica llega al correo que ingreses al pagar en Payphone."
+        },
+        "security": {
+          "question": "¿Es seguro pagar con tarjeta?",
+          "answer": "Sí. Pagas en la página segura de Payphone: Oniric nunca ve ni guarda los datos de tu tarjeta."
+        }
+      }
     }
   }
 }

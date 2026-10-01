@@ -81,6 +81,10 @@ test.describe("asistente de anuncios pyme", () => {
       page.getByRole("heading", { name: "Pan de yuca" }),
     ).toBeVisible();
     await expect(page.getByText("¡Pan de yuca calientito!")).toBeVisible();
+    // El saldo del encabezado se actualiza al cambiar de página.
+    await expect(page.getByTestId("header-balance")).toHaveAccessibleName(
+      "Tu saldo: 37 créditos",
+    );
     await expect(
       page.getByRole("heading", { name: "¡Tu anuncio está listo!" }),
     ).toBeVisible({ timeout: 30_000 });
@@ -140,6 +144,28 @@ test.describe("asistente de anuncios pyme", () => {
     ).toBeVisible();
     await page.goto("/home");
     await expect(page.getByTestId("credit-balance")).toHaveText("20 créditos");
+  });
+
+  test("la plantilla elegida en el inicio llega elegida al asistente", async ({
+    page,
+  }) => {
+    await pymeWithCredits(page, 0);
+    await page.getByRole("link", { name: /Estado de WhatsApp/ }).click();
+    await expect(page).toHaveURL("/create?template=whatsappStatus");
+
+    await page.getByLabel("¿Qué quieres anunciar?").fill("Pan de yuca");
+    await page
+      .getByLabel("Describe tu producto o servicio")
+      .fill("Recién horneado");
+    await next(page);
+
+    await expect(page.getByText("Paso 2 de 3: Plantilla")).toBeAttached();
+    await expect(
+      page.getByRole("radio", { name: /Estado de WhatsApp/ }),
+    ).toBeChecked();
+    await expect(
+      page.getByRole("radio", { name: /Vertical 9:16/ }),
+    ).toBeChecked();
   });
 
   test("valida cada paso y no deja generar sin saldo", async ({ page }) => {
@@ -229,6 +255,17 @@ test.describe("asistente de anuncios pyme", () => {
     const link = page.getByLabel("Enlace público");
     await expect(link).toHaveValue(/\/s\/[A-Za-z0-9_-]{22}$/);
     const shareUrl = await link.inputValue();
+
+    // WhatsApp recibe el texto del anuncio junto con el enlace.
+    const whatsapp = await page
+      .getByRole("link", { name: "Enviar por WhatsApp" })
+      .getAttribute("href");
+    expect(whatsapp).toMatch(/^https:\/\/wa\.me\/\?text=/);
+    expect(
+      decodeURIComponent(
+        new URL(whatsapp ?? "").searchParams.get("text") ?? "",
+      ),
+    ).toContain(shareUrl);
 
     // Cualquiera lo abre sin sesión, y no se indexa en buscadores.
     const visitor = await browser.newContext({ locale: "es-EC" });

@@ -1,8 +1,13 @@
 "use client";
 
+import { cn } from "cn";
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect } from "react";
 
+import {
+  appPrimaryClassName,
+  appSecondaryClassName,
+} from "@/components/app/ui";
 import { Button } from "@/components/ui/button";
 import { buyCreditsAction } from "@/lib/payments/actions";
 
@@ -30,10 +35,12 @@ export function BuyPackageForm({
       <input type="hidden" name="packageId" value={packageId} />
       <Button
         type="submit"
-        size="lg"
         variant={featured ? "default" : "outline"}
         disabled={disabled || pending || redirectUrl !== null}
-        className="w-full"
+        className={cn(
+          featured ? appPrimaryClassName : appSecondaryClassName,
+          "w-full",
+        )}
       >
         {pending || redirectUrl ? t("buying") : t("buy")}
       </Button>

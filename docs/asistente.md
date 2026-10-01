@@ -5,8 +5,8 @@ El cliente pyme crea un anuncio en 3 pasos, sin elegir modelos ni parámetros
 
 | Ruta         | Qué hace                                                           |
 | ------------ | ------------------------------------------------------------------ |
-| `/home`      | Saldo, botón "Crear anuncio" y los últimos anuncios.               |
-| `/create`    | Asistente de 3 pasos.                                              |
+| `/home`      | Saldo, botón "Crear anuncio", plantillas y los últimos anuncios.   |
+| `/create`    | Asistente de 3 pasos (`?template=<id>` llega con esa plantilla).   |
 | `/ads`       | Galería con todos los anuncios de la organización, por páginas.    |
 | `/ads/[id]`  | Estado y resultado del anuncio, descarga y enlace público.         |
 | `/s/[token]` | Página pública de un anuncio compartido (sin sesión, no indexada). |
@@ -23,6 +23,24 @@ El cliente pyme crea un anuncio en 3 pasos, sin elegir modelos ni parámetros
 
 Al generar, la página del anuncio muestra el resultado cuando termina, o el
 aviso de que falló y se devolvieron los créditos.
+
+## Interfaz
+
+- **Menú:** en pantallas anchas va en el encabezado; en el celular, en una
+  barra fija abajo con "Crear" en el centro y la configuración al final. Las
+  secciones de cada segmento están en `segmentConfig[segment].navigation`
+  (`lib/segment`), no en los componentes.
+- **Saldo:** siempre a la vista en el encabezado (lleva a recargar). El
+  encabezado vive en el layout y no se vuelve a renderizar al navegar, así que
+  el saldo se consulta de nuevo en cada cambio de página
+  (`getAvailableCredits`).
+- **Vista previa:** mientras el cliente completa el asistente, una vista de
+  ejemplo muestra el anuncio con su producto, su foto, la plantilla, el formato
+  y el texto. Es una ilustración (`AdMockup`), no el resultado de la IA.
+- **Plantillas en el inicio:** cada una lleva al asistente con la plantilla y
+  su formato por defecto ya elegidos.
+- **Resultado:** descarga, "Copiar texto" para pegarlo al publicar y, con el
+  enlace público activo, "Enviar por WhatsApp" con el texto y el enlace.
 
 ## Plantillas
 
@@ -90,8 +108,9 @@ Ver [creditos.md](./creditos.md).
 
 Cada anuncio terminado puede tener un **enlace público** (`/s/<token>`):
 
-- El dueño lo crea desde la página del anuncio y puede copiarlo, usar el diálogo
-  de compartir del celular o desactivarlo.
+- El dueño lo crea desde la página del anuncio y puede copiarlo, enviarlo por
+  WhatsApp (`wa.me`, con el texto del anuncio), usar el diálogo de compartir
+  del celular o desactivarlo.
 - El token es aleatorio (128 bits). Al desactivarlo se borra: el enlace anterior
   deja de funcionar para siempre y uno nuevo tiene otro token.
 - La página pública muestra solo el resultado, el texto del anuncio y el nombre

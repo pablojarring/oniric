@@ -48,7 +48,7 @@ export function SiteHeader() {
             className={buttonVariants({
               variant: "ghost",
               size: "sm",
-              className: navIconOnlyClassName,
+              className: navIconOnlyClassName(),
             })}
           >
             <NavLabel icon={LogInIcon}>{t("login")}</NavLabel>

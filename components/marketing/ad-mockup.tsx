@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import { PlayIcon, type LucideIcon } from "lucide-react";
+import Image from "next/image";
 
 const tones = {
   sunset: "from-orange-400 via-fuchsia-500 to-violet-700",
@@ -14,6 +15,7 @@ const sizes = {
     screen: "rounded-[11cqw] p-[7cqw]",
     label: "px-[3.5cqw] py-[1.5cqw] text-[4.2cqw]",
     icon: "size-[34cqw]",
+    photo: "size-[64cqw] rounded-[7cqw]",
     title: "text-[8.5cqw]",
     copy: "text-[5.2cqw]",
     cta: "mt-[3cqw] px-[5cqw] py-[2cqw] text-[4.8cqw]",
@@ -22,6 +24,7 @@ const sizes = {
     screen: "rounded-[8cqw] p-[6cqw]",
     label: "px-[3cqw] py-[1.2cqw] text-[4.2cqw]",
     icon: "size-[22cqw]",
+    photo: "size-[40cqw] rounded-[5cqw]",
     title: "text-[8cqw]",
     copy: "text-[5cqw]",
     cta: "mt-[2.5cqw] px-[4cqw] py-[1.6cqw] text-[4.5cqw]",
@@ -30,6 +33,7 @@ const sizes = {
     screen: "rounded-[5cqw] p-[4.5cqw]",
     label: "px-[2cqw] py-[0.8cqw] text-[2.8cqw]",
     icon: "size-[20cqw]",
+    photo: "size-[30cqw] rounded-[3cqw]",
     title: "text-[5.5cqw]",
     copy: "text-[3.3cqw]",
     cta: "mt-[1.5cqw] px-[2.8cqw] py-[1cqw] text-[3cqw]",
@@ -46,6 +50,8 @@ export type AdMockupProps = {
   copy: string;
   cta: string;
   video?: boolean;
+  /** Foto del producto (p. ej. la que se sube en el asistente) en vez del ícono. */
+  image?: string;
   /** Debe fijar el ancho: el alto sale del formato. */
   className?: string;
 };
@@ -63,6 +69,7 @@ export function AdMockup({
   copy,
   cta,
   video = false,
+  image,
   className,
 }: AdMockupProps) {
   const size = sizes[format];
@@ -97,13 +104,26 @@ export function AdMockup({
       >
         <span
           className={cn(
-            "relative grid place-items-center rounded-full bg-white/20 ring-1 ring-white/40 backdrop-blur-sm",
-            size.icon,
+            "relative grid place-items-center ring-1 ring-white/40",
+            image
+              ? cn("overflow-hidden shadow-lg", size.photo)
+              : cn("rounded-full bg-white/20 backdrop-blur-sm", size.icon),
           )}
         >
-          <Icon className="size-1/2" strokeWidth={1.6} aria-hidden />
+          {image ? (
+            <Image
+              src={image}
+              alt=""
+              fill
+              unoptimized
+              sizes="200px"
+              className="object-cover"
+            />
+          ) : (
+            <Icon className="size-1/2" strokeWidth={1.6} aria-hidden />
+          )}
           {video && (
-            <span className="absolute -right-[4%] -bottom-[4%] grid size-[36%] place-items-center rounded-full bg-white text-violet-700 shadow">
+            <span className="absolute -right-[4%] -bottom-[4%] grid size-[36%] max-h-[12cqw] max-w-[12cqw] place-items-center rounded-full bg-white text-violet-700 shadow">
               <PlayIcon className="size-1/2 fill-current" aria-hidden />
             </span>
           )}

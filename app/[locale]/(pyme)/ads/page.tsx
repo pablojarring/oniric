@@ -1,7 +1,18 @@
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  LayoutGridIcon,
+  PlusIcon,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { AdCard } from "@/components/ads/ad-card";
-import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/app/empty-state";
+import { PageHeader } from "@/components/app/page-header";
+import {
+  appPrimaryClassName,
+  appSecondaryClassName,
+} from "@/components/app/ui";
 import { getDb } from "@/db";
 import { Link } from "@/i18n/navigation";
 import { signThumbnails } from "@/lib/ads/files";
@@ -31,24 +42,25 @@ export default async function AdGalleryPage({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="font-heading text-3xl font-semibold tracking-tight">
-            {t("title")}
-          </h1>
-          <p className="text-muted-foreground">
-            {t("description", { name: organization.name })}
-          </p>
-        </div>
-        <Link href="/create" className={buttonVariants()}>
-          {t("create")}
-        </Link>
-      </div>
+      <PageHeader
+        title={t("title")}
+        description={t("description", { name: organization.name })}
+        actions={
+          <Link href="/create" className={appPrimaryClassName}>
+            <PlusIcon aria-hidden />
+            {t("create")}
+          </Link>
+        }
+      />
 
       {jobs.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState
+          icon={LayoutGridIcon}
+          title={t("emptyTitle")}
+          description={t("empty")}
+        />
       ) : (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {jobs.map((job) => (
             <li key={job.id}>
               <AdCard job={job} thumbnailUrl={thumbnails.get(job.id)} />
@@ -62,8 +74,9 @@ export default async function AdGalleryPage({
           {page > 1 ? (
             <Link
               href={{ pathname: "/ads", query: { page: page - 1 } }}
-              className={buttonVariants({ variant: "outline" })}
+              className={appSecondaryClassName}
             >
+              <ArrowLeftIcon aria-hidden />
               {t("newer")}
             </Link>
           ) : (
@@ -72,9 +85,10 @@ export default async function AdGalleryPage({
           {hasMore && (
             <Link
               href={{ pathname: "/ads", query: { page: page + 1 } }}
-              className={buttonVariants({ variant: "outline" })}
+              className={appSecondaryClassName}
             >
               {t("older")}
+              <ArrowRightIcon aria-hidden />
             </Link>
           )}
         </nav>
