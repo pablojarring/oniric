@@ -105,8 +105,10 @@ Pendientes:
   como costo, que es lo conservador).
 - TODO(producto): confirmar con el banco la comisión real de los pagos al
   exterior (hoy 2 %).
-- TODO(fase 3): recalcular los costos con los modelos reales de Higgsfield por
-  plantilla. Si cambian, el precio en créditos se ajusta solo; el margen no.
+- Con Higgsfield, el costo de cada plantilla sale de su endpoint de estimación
+  (ver [higgsfield.md](./higgsfield.md)): el precio en créditos se ajusta solo
+  y el margen no cambia. TODO(producto): revisar los precios resultantes con la
+  cuenta real antes de vender.
 
 La compra de paquetes con Payphone está en [pagos.md](./pagos.md). Un admin
 también puede acreditar pagos a mano desde `/admin` (ver [admin.md](./admin.md)).
@@ -186,7 +188,6 @@ página del anuncio, la UI sincroniza su job sin esperar al cron.
 Pendientes:
 
 - TODO(producto): la frecuencia del cron cuando se pase a Vercel Pro.
-- TODO(fase 3): webhooks de Higgsfield.
 - TODO(fase 3): dar el job por fallido si la copia de los resultados sigue
   fallando cuando los archivos del proveedor están por vencer.
 
@@ -200,6 +201,5 @@ Pendientes:
 - Falla a propósito si el prompt incluye `[mock:falla]`.
 - Sus outputs son imágenes de muestra en `public/mock/`.
 
-El proveedor real de Higgsfield llega en la fase 3, después de verificar los
-endpoints en su documentación oficial. Mientras tanto, definir la clave hace
-fallar las generaciones a propósito, para no usar el mock en silencio.
+Con `HIGGSFIELD_API_KEY` se usa el proveedor real, que gasta saldo de
+Higgsfield. Ver [higgsfield.md](./higgsfield.md).

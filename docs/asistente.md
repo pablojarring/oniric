@@ -153,4 +153,5 @@ descripción.
   Open Graph), que necesita una URL que no venza.
 - Si no alcanzan los créditos, el paso 3 lleva a la recarga (`/credits`, ver
   [pagos.md](./pagos.md)).
-- TODO(fase 3): modelos de Higgsfield por plantilla y vigencia de la URL firmada.
+- TODO(fase 3): vigencia de la URL firmada de la foto (1 hora) si Higgsfield
+  tarda más en tomarla. Modelos por plantilla: ver [higgsfield.md](./higgsfield.md).

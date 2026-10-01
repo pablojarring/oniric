@@ -51,10 +51,13 @@ marcadas como sensibles.
 | `AUTH_GOOGLE_ENABLED`                  | `false` hasta configurar Google.                         |
 | `PAYPHONE_TOKEN`                       | Payphone Developer → Credenciales. Secreta.              |
 | `PAYPHONE_STORE_ID`                    | Payphone Developer → Solicitud de compañía.              |
+| `HIGGSFIELD_API_KEY`                   | Solo al empezar a gastar saldo real. Secreta.            |
+| `HIGGSFIELD_WEBHOOK_SECRET`            | `openssl rand -hex 32`, junto con la anterior. Secreta.  |
 
-No van en Vercel: `HIGGSFIELD_API_KEY` (con la integración actual hace fallar
-las generaciones a propósito), `PAYMENT_GATEWAY`, `DATABASE_URL_DIRECT` ni
-`MAILPIT_URL`. Ver [pagos.md](./pagos.md).
+`HIGGSFIELD_API_KEY` activa el proveedor real: cada anuncio gasta saldo de
+Higgsfield. Cárgala solo cuando el dueño lo decida (ver
+[higgsfield.md](./higgsfield.md)). No van en Vercel: `PAYMENT_GATEWAY`,
+`DATABASE_URL_DIRECT` ni `MAILPIT_URL`. Ver [pagos.md](./pagos.md).
 
 Despliega siempre desde Git (push a `main` o Deployments → Redeploy), no con la
 CLI de Vercel desde una carpeta local: podría subir archivos `.env` locales.
@@ -76,5 +79,5 @@ la variable existe; sin ella, la tarea responde 401 y no hace nada. Ver
 
 ## Pendientes
 
-- TODO(fase 3): Higgsfield y facturación electrónica automática.
+- TODO(fase 3): facturación electrónica automática.
 - TODO(producto): cuándo pasar a Vercel Pro y Supabase Pro.
