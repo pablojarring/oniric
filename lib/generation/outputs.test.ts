@@ -51,6 +51,49 @@ describe("storeOutputs", () => {
     });
   });
 
+  it("usa el tipo que declara la descarga si es del mismo medio", async () => {
+    const { storage, files } = createMemoryStorage();
+    const jpeg = { "content-type": "image/jpeg; charset=binary" };
+
+    const [stored] = await storeOutputs(
+      storage,
+      job,
+      [
+        {
+          url: "https://proveedor.test/sin-extension",
+          mediaType: "image",
+          mimeType: "image/png",
+        },
+      ],
+      fakeFetch(png, { headers: jpeg }),
+    );
+
+    expect(stored).toMatchObject({
+      path: "org-1/job-1/0.jpg",
+      mimeType: "image/jpeg",
+    });
+    expect(files.get("org-1/job-1/0.jpg")?.mimeType).toBe("image/jpeg");
+  });
+
+  it("ignora un tipo declarado de otro medio o no soportado", async () => {
+    const { storage } = createMemoryStorage();
+    const output = {
+      url: "https://proveedor.test/v",
+      mediaType: "video" as const,
+      mimeType: "video/mp4",
+    };
+
+    for (const type of ["image/png", "application/octet-stream"]) {
+      const [stored] = await storeOutputs(
+        storage,
+        job,
+        [output],
+        fakeFetch(png, { headers: { "content-type": type } }),
+      );
+      expect(stored?.mimeType).toBe("video/mp4");
+    }
+  });
+
   it("repetir la copia reemplaza el mismo archivo", async () => {
     const { storage, files } = createMemoryStorage();
     const output = {

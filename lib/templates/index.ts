@@ -33,8 +33,8 @@ export type AdTemplate = {
   style: string;
 };
 
-// TODO(fase 3): modelos de Higgsfield para cada plantilla, verificados en su
-// documentación oficial.
+// Modelos de Higgsfield verificados en su documentación oficial (ver
+// lib/providers/higgsfield.ts y docs/higgsfield.md).
 export const adTemplates: Record<TemplateId, AdTemplate> = {
   promoInstagram: {
     id: "promoInstagram",
@@ -42,7 +42,7 @@ export const adTemplates: Record<TemplateId, AdTemplate> = {
     durationSeconds: 15,
     aspectRatios: ["9:16", "1:1", "16:9"],
     defaultAspectRatio: "9:16",
-    models: { mock: "mock-video-standard" },
+    models: { mock: "mock-video-standard", higgsfield: "kling-3.0-std" },
     requiresOffer: false,
     style:
       "Energetic 15-second social media promo video with dynamic cuts, bright natural lighting and a clear call to action at the end.",
@@ -53,7 +53,7 @@ export const adTemplates: Record<TemplateId, AdTemplate> = {
     durationSeconds: 10,
     aspectRatios: ["9:16"],
     defaultAspectRatio: "9:16",
-    models: { mock: "mock-video-standard" },
+    models: { mock: "mock-video-standard", higgsfield: "kling-3.0-std" },
     requiresOffer: false,
     style:
       "Short, friendly vertical video for a WhatsApp status, close-up shots, warm tones and large readable text.",
@@ -63,7 +63,7 @@ export const adTemplates: Record<TemplateId, AdTemplate> = {
     mediaType: "image",
     aspectRatios: ["1:1", "9:16", "16:9"],
     defaultAspectRatio: "1:1",
-    models: { mock: "mock-image" },
+    models: { mock: "mock-image", higgsfield: "marketing-studio-image" },
     requiresOffer: true,
     style:
       "Bold promotional graphic announcing a limited-time offer, high contrast colors, the offer as the main headline.",

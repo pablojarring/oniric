@@ -65,5 +65,6 @@ de una generación de referencia (la duración más corta).
 - Solo afecta a las generaciones nuevas: cada job guarda el costo, los
   recargos, el margen y el precio con el que se creó.
 
-La lista sale de `listProviders()` (`lib/providers`): hoy solo el
-MockProvider; el de Higgsfield se suma en la fase 3.
+La lista sale de `listProviders()` (`lib/providers`): el MockProvider y
+Higgsfield. Higgsfield aparece aunque no esté configurado; sin clave no puede
+estimar y el ejemplo de precio queda vacío.

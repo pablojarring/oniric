@@ -55,10 +55,11 @@ export async function storeOutputs(
   fetchFile: typeof fetch = fetch,
 ): Promise<StoredOutput[]> {
   const stored: StoredOutput[] = [];
-  for (const [index, { url, ...output }] of outputs.entries()) {
-    const extension = outputTypes[output.mimeType];
-    if (!extension) throw new OutputRejectedError("unsupported_output");
-
+  for (const [index, { url, ...declared }] of outputs.entries()) {
+    // Un tipo declarado no soportado se rechaza sin descargar nada.
+    if (!outputTypes[declared.mimeType]) {
+      throw new OutputRejectedError("unsupported_output");
+    }
     const response = await fetchFile(url, {
       signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
     });
@@ -72,6 +73,15 @@ export async function storeOutputs(
     ) {
       throw new OutputRejectedError("output_too_large");
     }
+    // El tipo que declara la descarga manda si es uno soportado del mismo
+    // medio (Higgsfield no informa el tipo en la consulta de estado).
+    const output = {
+      ...declared,
+      mimeType: servedType(response, declared.mediaType) ?? declared.mimeType,
+    };
+    const extension = outputTypes[output.mimeType];
+    if (!extension) throw new OutputRejectedError("unsupported_output");
+
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes.length > MAX_OUTPUT_BYTES) {
       throw new OutputRejectedError("output_too_large");
@@ -82,4 +92,15 @@ export async function storeOutputs(
     stored.push({ ...output, path, size: bytes.length });
   }
   return stored;
+}
+
+function servedType(response: Response, mediaType: string): string | null {
+  const type = response.headers
+    .get("content-type")
+    ?.split(";")[0]
+    ?.trim()
+    .toLowerCase();
+  return type && outputTypes[type] && type.startsWith(`${mediaType}/`)
+    ? type
+    : null;
 }

@@ -510,7 +510,8 @@
         "marginBps": "El margen debe estar entre 25 % y 90 %, con hasta 2 decimales.",
         "minPriceCredits": "El mínimo debe ser un entero entre 1 y 100.000.",
         "model": "Modelo desconocido."
-      }
+      },
+      "exampleUnavailable": "sin estimación (proveedor sin configurar)"
     },
     "purchases": {
       "title": "Compras de créditos",

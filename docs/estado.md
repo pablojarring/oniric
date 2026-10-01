@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 30 de septiembre de 2026 (PR #13).
+al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #14).
 
 ## Dónde estamos
 
@@ -27,6 +27,7 @@ al terminar cada tarea.** Última actualización: 30 de septiembre de 2026 (PR #
 | #11   | Paquetes de créditos con IVA incluido, nueva fórmula de precios y pagos con Payphone.   |
 | #12   | Mensajes de pago no aprobado o cancelado y motivo de Payphone en el admin.              |
 | #13   | Nueva interfaz del modo pyme: menú y saldo, inicio, asistente, galería y recarga.       |
+| #14   | Proveedor real de Higgsfield, webhook firmado y foto encuadrada en el formato elegido.  |
 
 ## Entornos
 
@@ -53,7 +54,9 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   (`smtp.gmail.com:587`, contraseña de aplicación), remitente
   `no-reply@oniriasolutions.com`. Plantillas de `supabase/templates/` pegadas a
   mano en Supabase.
-- **Generación:** `MockProvider` (no hay `HIGGSFIELD_API_KEY` a propósito).
+- **Generación:** `MockProvider` (no hay `HIGGSFIELD_API_KEY` a propósito). El
+  proveedor real está listo ([higgsfield.md](./higgsfield.md)) pero no se
+  activa hasta que el dueño dé permiso para gastar saldo real.
 - **Pagos:** Payphone con la aplicación "Oniric" aprobada. Token y StoreId
   cargados en Vercel. La primera prueba falló porque la aplicación estaba en
   ambiente Producción (tarjetas ficticias rechazadas, `Canceled`). Después de
@@ -80,18 +83,15 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 
 ## Pendientes, en orden sugerido
 
-1. **Higgsfield real** (siguiente tarea acordada con el dueño):
-   `lib/providers/higgsfield.ts`, modelos por plantilla, webhooks y un panel de
-   saldo del proveedor con alerta y reporte mensual para el contador. Lo que ya
-   se sabe de la documentación oficial (docs.higgsfield.ai): saldo prepagado
-   en USD que se recarga en la consola, cobro por generación (las fallidas no
-   se cobran), endpoint de estimación, créditos que vencen al año, resultados
-   disponibles al menos 7 días y autenticación con key y secret. No documenta
-   recarga automática ni un endpoint de saldo: TODO confirmarlo en la consola.
-   El dinero va Payphone → cuenta de Produbanco → tarjeta empresarial → saldo
-   prepagado de Higgsfield (ISD 5 % en el pago al exterior). Los costos
-   estimados de las plantillas están en `lib/providers/mock.ts` y
-   [creditos.md](./creditos.md).
+1. **Higgsfield:** el proveedor ya está (PR #14, ver
+   [higgsfield.md](./higgsfield.md)). Falta:
+   - una prueba pagada de cada plantilla, con permiso del dueño y un tope de
+     gasto, para validar calidad y costos (TODO(producto) de higgsfield.md);
+   - el panel del saldo del proveedor con alerta y el reporte mensual para el
+     contador (siguiente PR). El dinero va Payphone → Produbanco → tarjeta
+     empresarial → saldo prepagado de Higgsfield (ISD 5 % en el pago al
+     exterior). Higgsfield no documenta recarga automática ni un endpoint de
+     saldo: TODO confirmarlo en su consola.
 2. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
 3. **Con el contador:** ISD, IVA de servicios digitales importados y retención
    en pagos al exterior; si algo no se recupera, subir el factor de costos del

@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import es from "@/messages/es.json";
 import pt from "@/messages/pt.json";
+import type { GenerationProvider } from "@/lib/providers/generation-provider";
+import { HiggsfieldProvider } from "@/lib/providers/higgsfield";
 import { MockProvider } from "@/lib/providers/mock";
 
 import {
@@ -22,13 +24,22 @@ describe("plantillas pyme", () => {
     ]);
   });
 
-  it.each(templateIds)(
-    "%s usa un modelo del mock compatible con su formato y duración",
-    async (id) => {
+  const providers: Record<string, GenerationProvider> = {
+    mock: new MockProvider(),
+    higgsfield: new HiggsfieldProvider({ credentials: "" }),
+  };
+
+  it.each(
+    templateIds.flatMap((id) =>
+      Object.keys(providers).map((providerId) => [id, providerId] as const),
+    ),
+  )(
+    "%s usa un modelo de %s compatible con su formato y duración",
+    async (id, providerId) => {
       const template = adTemplates[id];
-      const models = await new MockProvider().listModels();
+      const models = await providers[providerId]!.listModels();
       const model = models.find(
-        (candidate) => candidate.id === modelForTemplate(template, "mock"),
+        (candidate) => candidate.id === modelForTemplate(template, providerId),
       );
 
       expect(model).toBeDefined();

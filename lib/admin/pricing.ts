@@ -35,8 +35,11 @@ export type PricingRow = {
   minPriceCredits: number;
   /** Sin fila propia: rigen los valores por defecto. */
   isDefault: boolean;
-  /** Precio de una generación de referencia (duración más corta), para comparar. */
-  example: { durationSeconds?: number; priceCredits: number };
+  /**
+   * Precio de una generación de referencia (duración más corta), para comparar.
+   * Null si el proveedor no pudo estimar (p. ej. Higgsfield sin configurar).
+   */
+  example: { durationSeconds?: number; priceCredits: number } | null;
 };
 
 /** Margen y mínimo vigentes de cada modelo de cada proveedor, por segmento. */
@@ -55,12 +58,21 @@ export async function listEffectivePricing(
   for (const provider of providers) {
     for (const model of await provider.listModels()) {
       const durationSeconds = model.durationsSeconds?.[0];
-      const { costUsd } = await provider.estimate({
-        modelId: model.id,
-        prompt: "",
-        aspectRatio: model.aspectRatios[0] ?? "1:1",
-        durationSeconds,
-      });
+      const costUsd = await provider
+        .estimate({
+          modelId: model.id,
+          prompt: "",
+          aspectRatio: model.aspectRatios[0] ?? "1:1",
+          durationSeconds,
+        })
+        .then((estimate) => estimate.costUsd)
+        .catch((error: unknown) => {
+          console.error(
+            `No se pudo estimar ${provider.id}/${model.id} para el panel`,
+            error,
+          );
+          return null;
+        });
       for (const segment of segments) {
         const row = byKey.get(key(provider.id, model.id, segment));
         const marginBps = row?.marginBps ?? DEFAULT_MARGIN_BPS;
@@ -75,14 +87,17 @@ export async function listEffectivePricing(
           marginBps,
           minPriceCredits,
           isDefault: !row,
-          example: {
-            durationSeconds,
-            priceCredits: quotePrice({
-              costMicroUsd: usdToMicroUsd(costUsd),
-              marginBps,
-              minPriceCredits,
-            }).priceCredits,
-          },
+          example:
+            costUsd === null
+              ? null
+              : {
+                  durationSeconds,
+                  priceCredits: quotePrice({
+                    costMicroUsd: usdToMicroUsd(costUsd),
+                    marginBps,
+                    minPriceCredits,
+                  }).priceCredits,
+                },
         });
       }
     }

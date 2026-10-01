@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { generationJobs } from "@/db/schema";
@@ -5,6 +6,7 @@ import { getBalance, grantCredits } from "@/lib/billing/wallet";
 import { MOCK_FAILURE_MARKER, MockProvider } from "@/lib/providers/mock";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 import { createOrganization } from "@/test/fixtures";
+import { sampleJpeg } from "@/test/images";
 import { createMemoryStorage } from "@/test/storage";
 
 import type { AdForm } from "./schema";
@@ -31,7 +33,12 @@ afterAll(async () => {
   await testDb.close();
 });
 
-const jpegBytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
+/** Firma de JPEG sin una imagen válida detrás. */
+const fakeJpegBytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
+let jpegBytes: Uint8Array<ArrayBuffer>;
+beforeAll(async () => {
+  jpegBytes = await sampleJpeg(300, 200);
+});
 
 // Estado de WhatsApp: video de 10 s → 163 créditos.
 const baseForm: AdForm = {
@@ -129,7 +136,14 @@ describe("createAd", () => {
     expect(inputImagePath).toMatch(
       new RegExp(`^${context.organization.id}/[0-9a-f-]{36}\\.jpg$`),
     );
-    expect(storage.files.get(inputImagePath ?? "")?.bytes).toEqual(jpegBytes);
+    // Se guarda encuadrada en el formato elegido (9:16).
+    const stored = storage.files.get(inputImagePath ?? "");
+    expect(stored?.mimeType).toBe("image/jpeg");
+    expect(await sharp(stored?.bytes).metadata()).toMatchObject({
+      format: "jpeg",
+      width: 1080,
+      height: 1920,
+    });
     expect(request.inputImageUrl).toBe(
       `https://storage.test/${inputImagePath}?ttl=3600`,
     );
@@ -177,6 +191,21 @@ describe("createAd", () => {
       ok: false,
       error: { code: "photoUnsupportedType" },
     });
+  });
+
+  it("rechaza una foto con firma de JPEG que no se puede leer", async () => {
+    const context = await fundedOrganization();
+
+    const result = await create(context, {
+      photo: new Blob([fakeJpegBytes]),
+      photoConsent: true,
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error: { code: "photoUnsupportedType" },
+    });
+    expect(storage.files.size).toBe(0);
   });
 
   it("sin saldo suficiente no crea el job y borra la foto subida", async () => {

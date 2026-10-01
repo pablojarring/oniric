@@ -195,7 +195,9 @@ export async function startGeneration(
 
   let providerJobId: string;
   try {
-    ({ providerJobId } = await provider.submit(request));
+    ({ providerJobId } = await provider.submit(request, {
+      reference: job.id,
+    }));
   } catch (error) {
     console.error(`No se pudo enviar el job ${job.id} al proveedor`, error);
     return failJob(db, job.id, "submit_failed", input.now);
