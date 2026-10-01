@@ -1,6 +1,7 @@
 import { cn } from "cn";
 import {
   ArrowRightIcon,
+  CalendarDaysIcon,
   CoinsIcon,
   ImagePlusIcon,
   LayoutGridIcon,
@@ -21,6 +22,7 @@ import {
   appSecondaryClassName,
 } from "@/components/app/ui";
 import { AdMockup } from "@/components/marketing/ad-mockup";
+import { SeasonCard } from "@/components/seasons/season-card";
 import { getDb } from "@/db";
 import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
@@ -31,11 +33,14 @@ import { requireOrganization } from "@/lib/auth/session";
 import { getBalance } from "@/lib/billing/wallet";
 import { creditsToUsd, formatUsd } from "@/lib/format";
 import { getGenerationProvider } from "@/lib/providers";
+import { upcomingSeasons } from "@/lib/seasons";
+import { hasFeature } from "@/lib/segment";
 import { buckets } from "@/lib/storage";
 import { getStorage } from "@/lib/storage/supabase";
 import { adTemplates, templateIds } from "@/lib/templates";
 
 const RECENT_ADS = 4;
+const UPCOMING_SEASONS = 3;
 
 const steps = [
   { key: "product", icon: ImagePlusIcon },
@@ -43,7 +48,10 @@ const steps = [
   { key: "share", icon: Share2Icon },
 ] as const;
 
-/** Inicio del modo guiado: crear, saldo, plantillas y anuncios recientes. */
+/**
+ * Inicio del modo guiado: crear, saldo, próximas fechas comerciales,
+ * plantillas y anuncios recientes.
+ */
 export default async function PymeHomePage() {
   const { organization } = await requireOrganization();
   const db = getDb();
@@ -63,6 +71,11 @@ export default async function PymeHomePage() {
   );
   const hasCredits = balance.available > 0;
   const yieldCounts = creditsYield(prices, balance.available);
+  const seasons = hasFeature(organization.segment, "seasonalCalendar")
+    ? upcomingSeasons(organization.country, new Date(), {
+        limit: UPCOMING_SEASONS,
+      })
+    : [];
 
   return (
     <div className="flex flex-col gap-12">
@@ -191,6 +204,39 @@ export default async function PymeHomePage() {
           </Link>
         </div>
       </section>
+
+      {seasons.length > 0 && (
+        <section className="flex flex-col gap-5">
+          <div className="flex items-end justify-between gap-4">
+            <div className="flex min-w-0 flex-col gap-1">
+              <h2 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
+                {t("seasons.title")}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t("seasons.description")}
+              </p>
+            </div>
+            <Link
+              href="/calendar"
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-violet-700 hover:underline dark:text-violet-300"
+            >
+              <CalendarDaysIcon aria-hidden className="size-4" />
+              {t("seasons.viewAll")}
+            </Link>
+          </div>
+          {/* En el celular, carrusel horizontal para no empujar el resto. */}
+          <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+            {seasons.map((upcoming) => (
+              <li
+                key={upcoming.season.id}
+                className="w-[85%] shrink-0 snap-start scroll-ml-4 sm:w-auto"
+              >
+                <SeasonCard upcoming={upcoming} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="flex flex-col gap-5">
         <div className="flex flex-col gap-1">
