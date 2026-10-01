@@ -192,6 +192,11 @@
         "title": "Descarga y comparte",
         "description": "Publícalo en tus redes o envíalo por WhatsApp."
       }
+    },
+    "seasons": {
+      "title": "Fechas que venden",
+      "description": "Las próximas fechas comerciales de Ecuador, con la idea del anuncio lista.",
+      "viewAll": "Ver calendario"
     }
   },
   "EmpresaHome": {
@@ -352,6 +357,11 @@
       "product": "Tu producto",
       "copy": "Aquí va el texto de tu anuncio",
       "cta": "Pídelo ya"
+    },
+    "season": {
+      "title": "Anuncio para {name}",
+      "description": "Le damos la ambientación de la fecha y un texto pensado para ella.",
+      "remove": "Quitar fecha"
     }
   },
   "AdPage": {
@@ -381,7 +391,8 @@
       "price": "Precio",
       "createdAt": "Creado",
       "copy": "Texto del anuncio",
-      "credits": "{count, plural, one {# crédito} other {# créditos}}"
+      "credits": "{count, plural, one {# crédito} other {# créditos}}",
+      "season": "Fecha comercial"
     },
     "outputAlt": "Anuncio de {product}",
     "createAnother": "Crear otro anuncio",
@@ -862,6 +873,110 @@
           "answer": "Sí. Pagas en la página segura de Payphone: Oniric nunca ve ni guarda los datos de tu tarjeta."
         }
       }
+    }
+  },
+  "Seasons": {
+    "items": {
+      "valentines": {
+        "name": "San Valentín",
+        "tip": "Regalos, flores, cenas y detalles: la gente compra hasta el mismo día.",
+        "copy": "Este San Valentín, sorprende con {product} de {business} ❤️ ¡Escríbenos y separa el tuyo!",
+        "copyOffer": "❤️ San Valentín en {business}: {offer} en {product}. ¡Por tiempo limitado!"
+      },
+      "carnival": {
+        "name": "Carnaval",
+        "tip": "Feriado largo de viajes, comida y fiesta. Publica antes de que la gente salga.",
+        "copy": "¡Llegó el Carnaval! Disfrútalo con {product} de {business} 🎉 Escríbenos y pide el tuyo.",
+        "copyOffer": "🎉 Carnaval en {business}: {offer} en {product}. ¡Solo este feriado!"
+      },
+      "holyWeek": {
+        "name": "Semana Santa",
+        "tip": "Temporada de fanesca y feriado en familia. Ideal para comida y paseos.",
+        "copy": "Esta Semana Santa, comparte en familia con {product} de {business}. ¡Haz tu pedido con tiempo!",
+        "copyOffer": "Semana Santa en {business}: {offer} en {product}. ¡Haz tu pedido con tiempo!"
+      },
+      "backToSchoolCoast": {
+        "name": "Regreso a clases (Costa)",
+        "tip": "Útiles, uniformes, mochilas y loncheras. El Ministerio de Educación fija la fecha cada año.",
+        "copy": "¡Vuelven las clases! Prepárate con {product} de {business} ✏️ Escríbenos y pide el tuyo.",
+        "copyOffer": "✏️ Regreso a clases en {business}: {offer} en {product}. ¡Aprovecha!"
+      },
+      "mothersDay": {
+        "name": "Día de la Madre",
+        "tip": "Una de las fechas que más venden en el año. Publica al menos una semana antes.",
+        "copy": "Este Día de la Madre, sorpréndela con {product} de {business} 💐 ¡Escríbenos y separa el tuyo!",
+        "copyOffer": "💐 Día de la Madre en {business}: {offer} en {product}. ¡Por tiempo limitado!"
+      },
+      "childrensDay": {
+        "name": "Día del Niño",
+        "tip": "Juguetes, dulces, comida y planes en familia para el 1 de junio.",
+        "copy": "¡Feliz Día del Niño! Celébralo con {product} de {business} 🎈 Escríbenos y pide el tuyo.",
+        "copyOffer": "🎈 Día del Niño en {business}: {offer} en {product}. ¡Solo por esta fecha!"
+      },
+      "fathersDay": {
+        "name": "Día del Padre",
+        "tip": "Regalos, almuerzos y planes. Muchos compran el fin de semana anterior.",
+        "copy": "Este Día del Padre, consiente a papá con {product} de {business} 🎁 ¡Escríbenos y separa el tuyo!",
+        "copyOffer": "🎁 Día del Padre en {business}: {offer} en {product}. ¡Por tiempo limitado!"
+      },
+      "guayaquilFoundation": {
+        "name": "Fundación de Guayaquil",
+        "tip": "Fiestas julianas del 25 de julio: celebra con tus clientes guayaquileños.",
+        "copy": "¡Felices fiestas, Guayaquil! Celébralas con {product} de {business} 💙🤍 Escríbenos y pide el tuyo.",
+        "copyOffer": "💙🤍 Fiestas de Guayaquil en {business}: {offer} en {product}. ¡Aprovecha!"
+      },
+      "backToSchoolHighlands": {
+        "name": "Regreso a clases (Sierra y Amazonía)",
+        "tip": "Útiles, uniformes, mochilas y loncheras. El Ministerio de Educación fija la fecha cada año.",
+        "copy": "¡Vuelven las clases! Prepárate con {product} de {business} ✏️ Escríbenos y pide el tuyo.",
+        "copyOffer": "✏️ Regreso a clases en {business}: {offer} en {product}. ¡Aprovecha!"
+      },
+      "guayaquilIndependence": {
+        "name": "Independencia de Guayaquil",
+        "tip": "Fiestas octubrinas y feriado del 9 de octubre: buen momento para promociones.",
+        "copy": "¡Felices fiestas octubrinas! Celebra con {product} de {business} 💙🤍 Escríbenos y pide el tuyo.",
+        "copyOffer": "💙🤍 Fiestas octubrinas en {business}: {offer} en {product}. ¡Aprovecha el feriado!"
+      },
+      "dayOfTheDead": {
+        "name": "Día de Difuntos",
+        "tip": "Temporada de colada morada y guaguas de pan, con feriado largo junto a la independencia de Cuenca.",
+        "copy": "En este feriado de Difuntos, compártelo en familia con {product} de {business} 💜 ¡Escríbenos y haz tu pedido!",
+        "copyOffer": "💜 Feriado de Difuntos en {business}: {offer} en {product}. ¡Aprovecha!"
+      },
+      "blackFriday": {
+        "name": "Black Friday",
+        "tip": "La fecha de las ofertas. Anuncia tu descuento desde la semana anterior.",
+        "copy": "Black Friday en {business}: {product} con precios especiales 🖤 ¡Escríbenos antes de que se acabe!",
+        "copyOffer": "🖤 Black Friday en {business}: {offer} en {product}. ¡Solo por tiempo limitado!"
+      },
+      "quitoFestivities": {
+        "name": "Fiestas de Quito",
+        "tip": "Celebraciones de fines de noviembre hasta el 6 de diciembre: ideales para promociones quiteñas.",
+        "copy": "¡Que vivan las Fiestas de Quito! Celébralas con {product} de {business} 🎉 Escríbenos y pide el tuyo.",
+        "copyOffer": "🎉 Fiestas de Quito en {business}: {offer} en {product}. ¡Aprovecha!"
+      },
+      "christmas": {
+        "name": "Navidad",
+        "tip": "La temporada de compras más larga. Empieza a publicar desde fines de noviembre.",
+        "copy": "Esta Navidad, regala {product} de {business} 🎄 ¡Escríbenos y separa el tuyo con tiempo!",
+        "copyOffer": "🎄 Navidad en {business}: {offer} en {product}. ¡Separa el tuyo con tiempo!"
+      },
+      "newYearsEve": {
+        "name": "Año Viejo",
+        "tip": "Cenas, monigotes, ropa y fiestas para despedir el año.",
+        "copy": "¡Despide el año con {product} de {business}! 🥂 Escríbenos y haz tu pedido.",
+        "copyOffer": "🥂 Fin de año en {business}: {offer} en {product}. ¡Hasta el 31!"
+      }
+    },
+    "countdown": "{count, plural, =0 {Es hoy} =1 {Es mañana} other {Faltan # días}}",
+    "approximate": "Aprox. en {month}",
+    "approximateShort": "aprox.",
+    "now": "Es momento de publicar",
+    "create": "Crear anuncio",
+    "calendar": {
+      "title": "Calendario comercial",
+      "description": "Las fechas que más venden en Ecuador durante los próximos 12 meses. Para cada una te sugerimos una plantilla y un texto: publica unos días antes.",
+      "eyebrow": "Ecuador"
     }
   }
 }

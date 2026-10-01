@@ -1,3 +1,5 @@
+import type { SeasonId } from "@/lib/seasons";
+
 // Datos que el cliente pyme completa en el asistente de 3 pasos. Se guardan en
 // `generation_jobs.brief` para mostrarlos en la galería y como registro.
 
@@ -14,6 +16,8 @@ export type AdBrief = {
    * de las personas que aparecen en ella (CLAUDE.md §7).
    */
   photoConsent: boolean;
+  /** Fecha comercial del anuncio ("Día de la Madre"), si se creó para una. */
+  seasonId?: SeasonId;
 };
 
 /** Largo máximo de cada texto del asistente (se valida en cliente y servidor). */

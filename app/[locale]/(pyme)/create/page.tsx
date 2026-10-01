@@ -8,15 +8,28 @@ import { quoteTemplates } from "@/lib/ads/service";
 import { requireOrganization } from "@/lib/auth/session";
 import { getBalance } from "@/lib/billing/wallet";
 import { getGenerationProvider } from "@/lib/providers";
+import { isSeasonId, isSeasonInCalendar, seasons } from "@/lib/seasons";
 import { hasFeature } from "@/lib/segment";
 import { isTemplateId } from "@/lib/templates";
 
 export default async function CreateAdPage({
   searchParams,
 }: PageProps<"/[locale]/create">) {
-  const { template } = await searchParams;
+  const { template, season } = await searchParams;
   const { organization } = await requireOrganization();
   if (!hasFeature(organization.segment, "guidedWizard")) notFound();
+
+  // Desde el calendario (`?season=`): la fecha propone su plantilla, salvo que
+  // también venga una plantilla elegida.
+  const seasonId =
+    hasFeature(organization.segment, "seasonalCalendar") &&
+    isSeasonId(season) &&
+    isSeasonInCalendar(organization.country, season)
+      ? season
+      : undefined;
+  const templateId = isTemplateId(template)
+    ? template
+    : seasonId && seasons[seasonId].templateId;
 
   const db = getDb();
   const [prices, balance, t] = await Promise.all([
@@ -32,7 +45,8 @@ export default async function CreateAdPage({
         businessName={organization.name}
         prices={prices}
         availableCredits={balance.available}
-        initialTemplateId={isTemplateId(template) ? template : undefined}
+        initialTemplateId={templateId}
+        initialSeasonId={seasonId}
       />
     </div>
   );

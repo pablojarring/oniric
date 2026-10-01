@@ -103,6 +103,19 @@ describe("buildPrompt", () => {
     );
   });
 
+  it("agrega la ambientación de la fecha comercial después del estilo", () => {
+    const prompt = buildPrompt(adTemplates.promoInstagram, {
+      productName: "Rosas",
+      adCopy: "Para mamá",
+      hasProductPhoto: false,
+      seasonScene: "Mother's Day theme: soft flowers.",
+    });
+
+    expect(prompt).toContain(
+      `${adTemplates.promoInstagram.style} Mother's Day theme: soft flowers.`,
+    );
+  });
+
   it("no supera el largo máximo", () => {
     const prompt = buildPrompt(adTemplates.promoInstagram, {
       productName: "x",

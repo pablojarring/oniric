@@ -4,6 +4,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { generationJobs } from "@/db/schema";
 import { getBalance, grantCredits } from "@/lib/billing/wallet";
 import { MOCK_FAILURE_MARKER, MockProvider } from "@/lib/providers/mock";
+import { seasons } from "@/lib/seasons";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 import { createOrganization } from "@/test/fixtures";
 import { sampleJpeg } from "@/test/images";
@@ -163,6 +164,16 @@ describe("createAd", () => {
     if (!result.ok) throw new Error(result.error.code);
     expect(result.job.brief).not.toHaveProperty("offer");
     expect(result.job.request.prompt).not.toContain("2x1");
+  });
+
+  it("ambienta el anuncio en la fecha comercial y la guarda en el brief", async () => {
+    const context = await fundedOrganization();
+
+    const result = await create(context, { seasonId: "mothersDay" });
+
+    if (!result.ok) throw new Error(result.error.code);
+    expect(result.job.brief?.seasonId).toBe("mothersDay");
+    expect(result.job.request.prompt).toContain(seasons.mothersDay.scene);
   });
 
   it("bloquea textos que no pasan la moderación, sin subir nada", async () => {

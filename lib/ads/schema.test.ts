@@ -60,6 +60,16 @@ describe("parseAdForm", () => {
     expect(invalidFields(form({ photo: jpeg }))).toEqual(["photoConsent"]);
   });
 
+  it("acepta una fecha comercial conocida y rechaza las demás", () => {
+    expect(parseAdForm(form({ seasonId: "mothersDay" })).data?.seasonId).toBe(
+      "mothersDay",
+    );
+    expect(parseAdForm(form({ seasonId: "" })).data?.seasonId).toBeUndefined();
+    expect(invalidFields(form({ seasonId: "halloween" }))).toEqual([
+      "seasonId",
+    ]);
+  });
+
   it("pide la oferta en la oferta del día", () => {
     expect(
       invalidFields(form({ templateId: "dailyOffer", aspectRatio: "1:1" })),

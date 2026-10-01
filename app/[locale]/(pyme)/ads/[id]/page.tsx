@@ -33,6 +33,7 @@ import { formatDateTime } from "@/lib/format";
 import type { AspectRatio } from "@/lib/providers/generation-provider";
 import { buckets } from "@/lib/storage";
 import { getStorage } from "@/lib/storage/supabase";
+import { isSeasonId } from "@/lib/seasons";
 import { isTemplateId } from "@/lib/templates";
 
 const aspectClassNames: Record<AspectRatio, string> = {
@@ -59,9 +60,10 @@ export default async function AdPage({
   const job = await getOrganizationJob(getDb(), organization.id, id);
   if (!job) notFound();
 
-  const [t, tTemplates, locale, outputs] = await Promise.all([
+  const [t, tTemplates, tSeasons, locale, outputs] = await Promise.all([
     getTranslations("AdPage"),
     getTranslations("Templates"),
+    getTranslations("Seasons"),
     getLocale() as Promise<Locale>,
     job.status === "succeeded"
       ? signOutputs(getStorage(buckets.adOutputs), job)
@@ -281,6 +283,12 @@ export default async function AdPage({
                 label={t("details.createdAt")}
                 value={formatDateTime(job.createdAt, locale)}
               />
+              {isSeasonId(job.brief?.seasonId) && (
+                <Detail
+                  label={t("details.season")}
+                  value={tSeasons(`items.${job.brief.seasonId}.name`)}
+                />
+              )}
             </dl>
           </div>
         </aside>

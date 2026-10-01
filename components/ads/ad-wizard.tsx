@@ -10,6 +10,8 @@ import {
   RotateCcwIcon,
   SparklesIcon,
   Trash2Icon,
+  XIcon,
+  type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
@@ -28,6 +30,7 @@ import {
 } from "@/components/ads/template-visuals";
 import { appCardClassName, appPrimaryClassName } from "@/components/app/ui";
 import { AdMockup, type AdMockupProps } from "@/components/marketing/ad-mockup";
+import { seasonIcons } from "@/components/seasons/season-visuals";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -52,6 +55,7 @@ import type { TemplatePrices } from "@/lib/ads/service";
 import { adFieldLimits, type AdField } from "@/lib/ads/types";
 import { creditsToUsd, formatUsd } from "@/lib/format";
 import type { AspectRatio } from "@/lib/providers/generation-provider";
+import type { SeasonId } from "@/lib/seasons";
 import { adTemplates, templateIds, type TemplateId } from "@/lib/templates";
 import { imageTypes, MAX_IMAGE_BYTES } from "@/lib/uploads/images";
 
@@ -98,15 +102,19 @@ export function AdWizard({
   prices,
   availableCredits,
   initialTemplateId,
+  initialSeasonId,
 }: {
   businessName: string;
   prices: TemplatePrices;
   availableCredits: number;
   /** Plantilla elegida desde el inicio (`/create?template=…`). */
   initialTemplateId?: TemplateId;
+  /** Fecha comercial elegida en el calendario (`/create?season=…`). */
+  initialSeasonId?: SeasonId;
 }) {
   const t = useTranslations("AdWizard");
   const tTemplates = useTranslations("Templates");
+  const tSeasons = useTranslations("Seasons");
   const locale = useLocale() as Locale;
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
@@ -129,6 +137,9 @@ export function AdWizard({
   );
   const [offer, setOffer] = useState("");
   const [editedCopy, setEditedCopy] = useState<string | null>(null);
+  const [seasonId, setSeasonId] = useState<SeasonId | null>(
+    initialSeasonId ?? null,
+  );
   const photoInput = useRef<HTMLInputElement>(null);
 
   const template = templateId ? adTemplates[templateId] : null;
@@ -136,13 +147,21 @@ export function AdWizard({
     template && aspectRatio ? prices[template.id][aspectRatio] : undefined;
   const missingCredits = price ? Math.max(price - availableCredits, 0) : 0;
 
-  const suggestedCopy = template
-    ? tTemplates(`items.${template.id}.copy`, {
-        product: productName.trim(),
-        business: businessName,
-        offer: offer.trim(),
-      })
-    : "";
+  // Con una fecha comercial, el copy sugerido es el de la fecha (con la oferta
+  // en las plantillas que la piden); si no, el de la plantilla.
+  const copyValues = {
+    product: productName.trim(),
+    business: businessName,
+    offer: offer.trim(),
+  };
+  const suggestedCopy = !template
+    ? ""
+    : seasonId
+      ? tSeasons(
+          `items.${seasonId}.${template.requiresOffer ? "copyOffer" : "copy"}`,
+          copyValues,
+        )
+      : tTemplates(`items.${template.id}.copy`, copyValues);
   const adCopy = editedCopy ?? suggestedCopy;
 
   const photoPreview = useMemo(
@@ -370,6 +389,18 @@ export function AdWizard({
             {t(`stepTitles.${steps[step]}.description`)}
           </p>
         </div>
+
+        {seasonId && (
+          <SeasonNotice
+            icon={seasonIcons[seasonId]}
+            title={t("season.title", {
+              name: tSeasons(`items.${seasonId}.name`),
+            })}
+            description={t("season.description")}
+            removeLabel={t("season.remove")}
+            onRemove={() => setSeasonId(null)}
+          />
+        )}
 
         <ServerError state={state} />
 
@@ -766,6 +797,7 @@ export function AdWizard({
         {price !== undefined && (
           <input type="hidden" name="expectedPriceCredits" value={price} />
         )}
+        {seasonId && <input type="hidden" name="seasonId" value={seasonId} />}
 
         <div className="flex items-center justify-between gap-4 border-t pt-6">
           {step > 0 ? (
@@ -817,6 +849,48 @@ export function AdWizard({
         </p>
       </aside>
     </form>
+  );
+}
+
+/** Aviso de que el anuncio se ambienta en una fecha comercial. */
+function SeasonNotice({
+  icon: Icon,
+  title,
+  description,
+  removeLabel,
+  onRemove,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  removeLabel: string;
+  onRemove: () => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 dark:border-violet-500/30 dark:bg-violet-500/10"
+      data-testid="season-notice"
+    >
+      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-brand text-white">
+        <Icon aria-hidden className="size-5" />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <p className="font-semibold">{title}</p>
+        <p className="text-sm text-pretty text-muted-foreground">
+          {description}
+        </p>
+      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onRemove}
+        className="shrink-0 rounded-full max-sm:size-8 max-sm:px-0"
+      >
+        <XIcon aria-hidden />
+        <span className="max-sm:sr-only">{removeLabel}</span>
+      </Button>
+    </div>
   );
 }
 

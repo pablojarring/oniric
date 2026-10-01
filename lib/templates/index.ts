@@ -91,9 +91,9 @@ export function modelForTemplate(
 export const MAX_PROMPT_LENGTH = 2_000;
 
 /**
- * Prompt para el proveedor: estilo de la plantilla + datos del producto + copy.
- * El copy va entre comillas para que el modelo lo muestre tal cual, en el
- * idioma del cliente.
+ * Prompt para el proveedor: estilo de la plantilla + ambientación de la fecha
+ * comercial (si la hay) + datos del producto + copy. El copy va entre comillas
+ * para que el modelo lo muestre tal cual, en el idioma del cliente.
  */
 export function buildPrompt(
   template: AdTemplate,
@@ -103,10 +103,13 @@ export function buildPrompt(
     offer?: string;
     adCopy: string;
     hasProductPhoto: boolean;
+    /** Ambientación de la fecha comercial (`lib/seasons`), en inglés. */
+    seasonScene?: string;
   },
 ): string {
   const parts = [
     template.style,
+    input.seasonScene ?? null,
     `Product or service: ${input.productName}.`,
     input.description
       ? `Details from the business owner: ${input.description}`

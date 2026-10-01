@@ -13,6 +13,7 @@ import {
   startGeneration,
 } from "@/lib/generation/service";
 import { moderateText } from "@/lib/moderation";
+import { seasons } from "@/lib/seasons";
 import type {
   AspectRatio,
   GenerationProvider,
@@ -155,8 +156,13 @@ export async function createAd(
     ...(offer && { offer }),
     adCopy: form.adCopy,
     photoConsent: photo !== null && form.photoConsent,
+    ...(form.seasonId && { seasonId: form.seasonId }),
   };
-  const prompt = buildPrompt(template, { ...brief, hasProductPhoto: !!photo });
+  const prompt = buildPrompt(template, {
+    ...brief,
+    hasProductPhoto: !!photo,
+    seasonScene: form.seasonId && seasons[form.seasonId].scene,
+  });
 
   let inputImageUrl: string | undefined;
   if (photo) {
