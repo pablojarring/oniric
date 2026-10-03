@@ -5,6 +5,7 @@ import {
   CoinsIcon,
   ImagePlusIcon,
   LayoutGridIcon,
+  LightbulbIcon,
   Share2Icon,
   WandSparklesIcon,
 } from "lucide-react";
@@ -204,6 +205,34 @@ export default async function PymeHomePage() {
           </Link>
         </div>
       </section>
+
+      {hasFeature(organization.segment, "creativeDirector") && (
+        <section
+          className={cn(
+            appCardClassName,
+            "flex flex-col gap-4 border-violet-200 bg-violet-50/60 p-5 sm:flex-row sm:items-center sm:p-6 dark:border-violet-500/30 dark:bg-violet-500/5",
+          )}
+        >
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-brand text-white">
+            <LightbulbIcon aria-hidden className="size-6" />
+          </span>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="text-xs font-semibold text-violet-700 uppercase dark:text-violet-300">
+              {t("director.eyebrow")}
+            </span>
+            <h2 className="font-heading text-lg font-semibold text-balance">
+              {t("director.title")}
+            </h2>
+            <p className="text-sm text-pretty text-muted-foreground">
+              {t("director.description")}
+            </p>
+          </div>
+          <Link href="/director" className={appSecondaryClassName}>
+            {t("director.cta")}
+            <ArrowRightIcon aria-hidden />
+          </Link>
+        </section>
+      )}
 
       {seasons.length > 0 && (
         <section className="flex flex-col gap-5">

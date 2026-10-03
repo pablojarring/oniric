@@ -68,6 +68,11 @@ describe("segmentConfig", () => {
     expect(hasFeature("empresa", "seasonalCalendar")).toBe(false);
   });
 
+  it("el director creativo es del modo guiado", () => {
+    expect(hasFeature("pyme", "creativeDirector")).toBe(true);
+    expect(hasFeature("empresa", "creativeDirector")).toBe(false);
+  });
+
   it("el menú solo lleva a secciones que el segmento puede usar", () => {
     const { navigation } = segmentConfig.pyme;
     expect(navigation[0]).toBe("home");

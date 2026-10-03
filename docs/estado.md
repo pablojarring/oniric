@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #23).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #24).
 
 ## Dónde estamos
 
@@ -46,6 +46,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #23).
 | #21   | Fase B cerrada: modelo mixto, barra de uso, prueba gratis y fase C por tramos.          |
 | #22   | Fase C, tramo 1: `TextProvider` con GPT-6 Luna y su simulador.                          |
 | #23   | Fase C, tramo 1: lógica del director creativo (conversación, ideas, guion y prompts).   |
+| #24   | Fase C, tramo 1: pantallas del director creativo, del inicio al guion.                  |
 
 ## Entornos
 
@@ -164,14 +165,18 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      fecha de fin.
    - **Fase C, construcción** con el simulador, por tramos (sección 10 de
      [fase-b/README.md](./fase-b/README.md)). La primera prueba pagada es al
-     final del tramo 1 (4 PRs); cada tramo cierra con una ronda de pruebas en
+     final del tramo 1 (5 PRs); cada tramo cierra con una ronda de pruebas en
      la app real. Tramo 1, paso 1 hecho: `TextProvider` con GPT-6 Luna y su
      simulador (PR #22, [proveedor-de-texto.md](./proveedor-de-texto.md));
-     todavía ninguna pantalla lo usa. Paso 2, primera parte, hecha: datos y
-     lógica del director creativo (PR #23,
-     [director-creativo.md](./director-creativo.md)), sin pantallas.
-     Siguiente: las pantallas de la conversación, el nivel, las ideas y el
-     guion. Se trabaja en una sola sesión
+     Paso 2 hecho: datos y lógica del director creativo (PR #23) y sus
+     pantallas (PR #24, [director-creativo.md](./director-creativo.md)): en
+     `/director` el dueño conversa, elige el nivel, recibe 3 ideas y el guion,
+     y puede pedir cambios. La entrada está en el inicio, como "Nuevo · Beta".
+     En Vercel usa GPT-6 Luna (gasta saldo real de OpenAI, menos de un
+     centavo por sesión típica, con el límite de 120 pedidos por hora y
+     organización); el tope de
+     gasto llega en el paso 4. Siguiente: paso 3, imagen de prueba como primer
+     cuadro, video con Kling y precio. Se trabaja en una sola sesión
      de Claude Code: las pruebas usan simuladores y las pruebas reales corren
      en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
      la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa

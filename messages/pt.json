@@ -197,6 +197,12 @@
       "title": "Datas que vendem",
       "description": "As próximas datas comerciais do Equador, com a ideia do anúncio pronta.",
       "viewAll": "Ver calendário"
+    },
+    "director": {
+      "eyebrow": "Novo",
+      "title": "Não sabe o que anunciar? Eu ajudo com a ideia",
+      "description": "O diretor criativo faz algumas perguntas e propõe 3 ideias com roteiro.",
+      "cta": "Experimentar o diretor criativo"
     }
   },
   "EmpresaHome": {
@@ -977,6 +983,172 @@
       "title": "Calendário comercial",
       "description": "As datas que mais vendem no Equador nos próximos 12 meses. Para cada uma sugerimos um modelo e um texto: publique alguns dias antes.",
       "eyebrow": "Equador"
+    }
+  },
+  "Director": {
+    "steps": {
+      "label": "Etapas do diretor criativo",
+      "conversation": "Me conte",
+      "tier": "Nível",
+      "ideas": "Ideias",
+      "script": "Roteiro"
+    },
+    "start": {
+      "eyebrow": "Novo · Beta",
+      "title": "Diretor criativo",
+      "description": "Me conte sobre o seu negócio em poucas perguntas e eu proponho 3 ideias de anúncio com roteiro, prontas para produzir.",
+      "format": "Onde você vai publicar?",
+      "season": "Anúncio para {season}",
+      "submit": "Começar",
+      "starting": "Preparando a primeira pergunta…",
+      "howTitle": "Como funciona",
+      "how": {
+        "conversation": "Faço até 6 perguntas, com respostas de um toque.",
+        "tier": "Você escolhe o nível de produção.",
+        "ideas": "Proponho 3 ideias diferentes; se não gostar, peça outras.",
+        "script": "Escrevo o roteiro cena por cena e ajustamos juntos."
+      }
+    },
+    "recent": {
+      "title": "Continue de onde parou",
+      "untitled": "Anúncio sem terminar",
+      "status": {
+        "conversation": "Conversando",
+        "briefed": "Escolhendo o nível",
+        "ideas": "Escolhendo a ideia",
+        "scripted": "Roteiro pronto"
+      }
+    },
+    "session": {
+      "back": "Voltar ao diretor criativo",
+      "eyebrow": "Diretor criativo",
+      "titles": {
+        "conversation": "Me conte sobre o seu anúncio",
+        "briefed": "Qual nível de produção você quer?",
+        "ideas": "3 ideias para o seu anúncio",
+        "scripted": "Seu roteiro"
+      },
+      "descriptions": {
+        "conversation": "Responda com um toque, escreva do seu jeito ou deixe que eu decida.",
+        "briefed": "Foi isto que eu entendi. Escolha o nível e eu proponho 3 ideias.",
+        "ideas": "Escolha a que você mais gostar ou peça outras 3.",
+        "scripted": "Revise cada cena. Se quiser mudar algo, peça com as suas palavras."
+      }
+    },
+    "conversation": {
+      "history": "Suas respostas",
+      "progress": "Pergunta {current} de no máximo {max}",
+      "thinking": "Pensando…",
+      "options": "Respostas sugeridas",
+      "ownAnswer": "Sua resposta",
+      "ownAnswerPlaceholder": "Ou escreva a sua…",
+      "send": "Enviar",
+      "decide": "Não sei, decida você",
+      "decided": "Decida você",
+      "skip": "Pular",
+      "skipped": "Pulada",
+      "interrupted": "Sua última resposta foi salva, mas o diretor criativo não conseguiu responder.",
+      "retry": "Tentar de novo"
+    },
+    "brief": {
+      "title": "Foi isto que eu entendi",
+      "fields": {
+        "objective": "Objetivo",
+        "product": "O que anunciamos",
+        "differentiator": "O que o torna especial",
+        "offer": "Oferta",
+        "audience": "Para quem",
+        "tone": "Tom",
+        "brandElements": "Da sua marca",
+        "mustInclude": "Incluir",
+        "avoid": "Evitar"
+      }
+    },
+    "tier": {
+      "title": "Nível do anúncio",
+      "description": "Mais nível significa mais cenas e mais produção.",
+      "recommended": "Recomendado",
+      "details": "{seconds} s · até {shots, plural, one {# cena} other {# cenas}}",
+      "priceLater": "Você verá o preço antes de criar a imagem de teste e o vídeo.",
+      "thinking": "Pensando em 3 ideias…",
+      "submit": "Ver 3 ideias"
+    },
+    "tiers": {
+      "rapido": {
+        "name": "Rápido",
+        "description": "Conteúdo do dia a dia: uma cena, simples e direto."
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Anúncio para tráfego pago: várias cenas, luz e câmera caprichadas, gancho forte."
+      },
+      "cine": {
+        "name": "Cinema",
+        "description": "Campanha de marca: direção de cinema, visual premium e história marcante."
+      }
+    },
+    "ideas": {
+      "insight": "A verdade por trás do seu anúncio",
+      "more": "Outras 3 ideias",
+      "thinkingMore": "Pensando em outras 3 ideias…",
+      "tier": "Nível: {tier}",
+      "choose": "Escolher esta ideia",
+      "chooseNamed": "Escolher a ideia «{title}»",
+      "writing": "Escrevendo o roteiro…",
+      "chosen": "Ideia escolhida",
+      "angles": {
+        "humor": "Humor",
+        "emotional": "Emoção",
+        "demonstration": "Demonstração",
+        "aspirational": "Aspiracional",
+        "other": "Outro olhar"
+      }
+    },
+    "script": {
+      "duration": "{seconds} s",
+      "shotTime": "{start}–{end} s",
+      "camera": "Câmera",
+      "sound": "Som",
+      "onScreenText": "Texto na tela",
+      "callToAction": "Fechamento:",
+      "curious": {
+        "title": "Para curiosos: é assim que pedimos à IA",
+        "description": "Vai em inglês porque os modelos de vídeo entendem melhor. O texto do anúncio é adicionado depois, em uma camada separada.",
+        "parts": {
+          "subject": "Protagonista",
+          "action": "Ação",
+          "environment": "Lugar",
+          "camera": "Câmera",
+          "lighting": "Luz",
+          "style": "Estilo",
+          "sound": "Som",
+          "constraints": "Restrições"
+        }
+      },
+      "revise": {
+        "label": "Quer mudar alguma coisa?",
+        "placeholder": "Ex.: que o gato seja rajado, ou que aconteça à noite",
+        "previous": "{count, plural, one {Você já pediu # mudança} other {Você já pediu # mudanças}}",
+        "thinking": "Aplicando a sua mudança…",
+        "submit": "Aplicar mudança"
+      },
+      "otherIdea": "Escolher outra ideia",
+      "hideIdeas": "Ocultar as ideias",
+      "next": {
+        "title": "Próximo: imagem de teste",
+        "description": "Em breve você verá o primeiro quadro do seu vídeo, com marca d'água, antes de criá-lo. Depois vem o vídeo com o texto animado.",
+        "soon": "Em breve"
+      }
+    },
+    "errors": {
+      "notFound": "Não encontramos esta sessão. Comece uma nova no diretor criativo.",
+      "invalidState": "Esta sessão já avançou. Recarregue a página para ver onde parou.",
+      "invalidAnswer": "Revise a sua resposta: ela não pode ficar vazia nem passar de 500 caracteres.",
+      "moderation": "Esse texto não pode ser usado em um anúncio. Escreva de outra forma.",
+      "rateLimited": "Você fez muitos pedidos em pouco tempo. Aguarde alguns minutos e tente de novo.",
+      "conflict": "A sessão mudou em outra aba. Recarregue a página para continuar.",
+      "providerFailed": "O diretor criativo não respondeu. Tente de novo em um instante.",
+      "unexpected": "Algo deu errado. Tente de novo."
     }
   }
 }

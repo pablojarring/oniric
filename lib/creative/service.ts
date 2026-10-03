@@ -1,4 +1,4 @@
-import { and, count, eq, gt, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, sql } from "drizzle-orm";
 
 import {
   type CreativeSession,
@@ -15,8 +15,9 @@ import type { TextProvider, TextRequest } from "@/lib/providers/text";
 import type { SeasonId } from "@/lib/seasons";
 
 import type { BusinessContext } from "./context";
+import { MAX_FREE_TEXT, MAX_QUESTIONS } from "./limits";
 import type { CreativeBrief, QualityTier } from "./schemas";
-import { conversationRequest, MAX_QUESTIONS } from "./tasks/conversation";
+import { conversationRequest } from "./tasks/conversation";
 import { ideasRequest } from "./tasks/ideas";
 import { scriptRequest } from "./tasks/script";
 import { tierSettings } from "./tiers";
@@ -29,14 +30,12 @@ import type {
 
 // El director creativo (docs/director-creativo.md): conversación guiada,
 // brief, nivel de calidad, 3 ideas, guion por tomas y prompts. Cada pedido al
-// proveedor de texto queda en `text_usage` con su costo. Las pantallas llegan
-// en el siguiente PR; la imagen de prueba y el video, en el paso 3.
+// proveedor de texto queda en `text_usage` con su costo. Las pantallas están
+// en `app/[locale]/(pyme)/director`; la imagen de prueba y el video llegan en
+// el paso 3.
 
 /** Pedidos de texto por organización y hora, para frenar abusos. */
 export const TEXT_RATE_LIMIT = { maxRequests: 120, windowSeconds: 3600 };
-
-/** Largo máximo de lo que escribe el dueño en cada respuesta o cambio. */
-export const MAX_FREE_TEXT = 500;
 
 export type CreativeContext = {
   organization: {
@@ -269,6 +268,39 @@ export async function getCreativeSession(
     throw new CreativeFlowError("notFound", "Sesión creativa inexistente.");
   }
   return session;
+}
+
+/** Resumen de una sesión para retomarla desde el inicio del director. */
+export type CreativeSessionSummary = {
+  id: string;
+  status: CreativeSessionStatus;
+  /** Título del guion o, si todavía no hay, el producto del brief. */
+  title: string | null;
+  updatedAt: Date;
+};
+
+/** Últimas sesiones de la organización, de la más reciente a la más antigua. */
+export async function listCreativeSessions(
+  db: Database,
+  context: CreativeContext,
+  options: { limit: number },
+): Promise<CreativeSessionSummary[]> {
+  const rows = await db
+    .select({
+      id: creativeSessions.id,
+      status: creativeSessions.status,
+      scriptTitle: sql<string | null>`${creativeSessions.script} ->> 'title'`,
+      product: sql<string | null>`${creativeSessions.brief} ->> 'product'`,
+      updatedAt: creativeSessions.updatedAt,
+    })
+    .from(creativeSessions)
+    .where(eq(creativeSessions.organizationId, context.organization.id))
+    .orderBy(desc(creativeSessions.updatedAt), desc(creativeSessions.id))
+    .limit(options.limit);
+  return rows.map(({ scriptTitle, product, ...row }) => ({
+    ...row,
+    title: scriptTitle ?? product,
+  }));
 }
 
 /** Costo de texto acumulado de una sesión (la "preparación" del precio). */

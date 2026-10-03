@@ -44,6 +44,7 @@ export type Feature =
   | "templates"
   | "buyCredits"
   | "seasonalCalendar"
+  | "creativeDirector"
   | "modelSelector"
   | "advancedParameters"
   | "batchGeneration"
@@ -73,6 +74,7 @@ export const segmentConfig: Record<Segment, SegmentConfig> = {
       "templates",
       "buyCredits",
       "seasonalCalendar",
+      "creativeDirector",
     ]),
     navigation: ["home", "create", "ads", "credits"],
   },

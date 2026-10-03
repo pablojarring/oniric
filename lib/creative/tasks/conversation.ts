@@ -7,6 +7,7 @@ import {
   describeBusiness,
   describeConversation,
 } from "../context";
+import { MAX_QUESTIONS } from "../limits";
 import {
   type ConversationTurnOutput,
   conversationTurnSchema,
@@ -17,9 +18,6 @@ import type { ConversationTurn } from "../types";
 // Conversación guiada (docs/fase-a/experiencia-y-marca.md): una pregunta a la
 // vez, con respuestas de un toque generadas para cada negocio, y solo lo que
 // hace falta. Cuando alcanza, el director creativo devuelve el brief.
-
-/** Preguntas como máximo antes de cerrar con lo que haya. */
-export const MAX_QUESTIONS = 6;
 
 export function conversationRequest(
   business: BusinessContext,
