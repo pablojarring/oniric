@@ -81,3 +81,5 @@ Bocetos navegables para aprobar antes de programar: Mi marca, objetivo,
 material (tablero y personas), ideas, guion y vista previa, edición, y en el
 admin el lote de evaluación y el tope de gasto. Antes de integrar cada modelo
 hay que confirmar sus parámetros en la consola de Higgsfield.
+
+Hecha en [fase-b/README.md](../fase-b/README.md), con los bocetos para aprobar.

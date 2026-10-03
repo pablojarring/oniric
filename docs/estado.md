@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #17).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #18).
 
 ## Dónde estamos
 
@@ -14,9 +14,10 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #17).
   que el producto no sea solo "videos con Higgsfield" y que tenga un plus
   llamativo para empresarios ecuatorianos). Hecho: calendario comercial
   ecuatoriano (PR #15, [temporadas.md](./temporadas.md)). En curso: el **flujo
-  creativo nuevo**, con la fase A (investigación) terminada (PR #17,
-  [fase-a/README.md](./fase-a/README.md)); sigue la fase B (diseño en
-  bocetos). Detalle en "Pendientes", punto 2.
+  creativo nuevo**: fase A (investigación) terminada (PR #17,
+  [fase-a/README.md](./fase-a/README.md)); fase B (diseño) con bocetos
+  navegables y documento listos para aprobar (PR #18,
+  [fase-b/README.md](./fase-b/README.md)). Detalle en "Pendientes", punto 2.
 
 ## Historial de PRs (pablojarring/oniric)
 
@@ -38,6 +39,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #17).
 | #15   | Calendario comercial de Ecuador: próximas fechas, calendario y anuncios de temporada.   |
 | #16   | Laboratorio de prompts de Higgsfield (`pnpm higgsfield:lab`) y subida de fotos.         |
 | #17   | Fase A del flujo creativo: investigación, manual creativo, rúbrica y herramientas.      |
+| #18   | Fase B del flujo creativo: bocetos navegables, búsqueda de inspiración y personajes.    |
 
 ## Entornos
 
@@ -99,7 +101,11 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   fase A: manual creativo y rúbrica v1 aprobados; **GPT-6 Luna** para todo el
   texto; **Remotion** para la edición (gratis: ONIRIASOLUTIONS tiene 1
   persona); niveles de calidad Rápido, Pro y Cine con su precio visible; los
-  ejemplos de las plantillas de inspiración los genera Oniric.
+  ejemplos de las plantillas de inspiración los genera Oniric. Para la fase B:
+  la inspiración sale de una búsqueda inteligente y mixta (producto + estilo)
+  en internet, además de plantillas propias; set propio de personajes
+  ficticios, editables y reutilizables; se empieza con plantillas de imagen por
+  el límite de Supabase Free.
 
 ## Pendientes, en orden sugerido
 
@@ -124,15 +130,21 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
    profesional, y que un publicista no pueda desacreditar los resultados.
    - **Fase A, investigación:** hecha (PR #17). Manual creativo, rúbrica v1,
      catálogo de herramientas con precios y experiencia del cliente.
-   - **Fase B, diseño:** bocetos navegables para aprobar antes de programar.
-     Incluye Mi marca, objetivo, material (plantillas de inspiración, tablero y
-     personas), 3 ideas, guion y vista previa, edición, y en el admin el lote
-     de evaluación y el tope de gasto.
-   - **Fase C, construcción** con el simulador: conversación guiada con
-     respuestas dinámicas, director creativo (modelo de texto neutral entre
-     proveedores), prompts detallados, capa de edición (texto, motion
-     graphics, voz y música), tope de gasto del proveedor y lote de
-     evaluación.
+   - **Fase B, diseño:** bocetos navegables (16 pantallas, Artifact privado
+     del dueño) y documento listos (PR #18,
+     [fase-b/README.md](./fase-b/README.md)). Falta la aprobación del dueño
+     (lista en la sección 5 del documento): recorrido, búsqueda mixta de
+     inspiración (plantillas Oniric, YouTube, TikTok y Pinterest con sus
+     reproductores oficiales, Pexels como referencia directa), personajes
+     Oniric, imagen de prueba, tope de gasto y lista de plantillas.
+   - **Fase C, construcción** con el simulador, en el orden de la sección 6
+     de [fase-b/README.md](./fase-b/README.md): modelo de datos,
+     `TextProvider` (GPT-6 Luna y simulador), conversación guiada, búsqueda
+     de inspiración, director creativo, tope de gasto y lote de evaluación, y
+     capa de edición con Remotion. `OPENAI_API_KEY` ya está en Vercel y en la
+     configuración del entorno de Claude Code (se ve desde una sesión nueva).
+     Claves nuevas para la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY`
+     (gratis).
    - **Fase D, pruebas pagadas en la app real** con la rúbrica. Negocios:
      Panadería La Esquina (Quito) y Estudio Brillo, salón de belleza
      ficticio (Guayaquil). Claude califica desde los enlaces del lote
