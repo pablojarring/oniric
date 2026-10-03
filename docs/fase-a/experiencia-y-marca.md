@@ -112,6 +112,27 @@ para discutir:
 - Cada plantilla sugiere el modelo de Higgsfield adecuado (por ejemplo, Cinema
   Studio o LTX para cine, Kling o Wan para lo rápido).
 
+## ¿Qué tan pro? (nivel de calidad y precio)
+
+El cliente decide qué tan producido quiere su anuncio y ve el impacto en el
+precio antes de generar. Cada nivel elige modelos, duración y resolución
+distintos. Precios aproximados para un video, con la fórmula actual (margen
+del 35 %, 1 crédito = US$0,01):
+
+| Nivel  | Para qué                         | Cómo se hace                                                | Precio aproximado                  |
+| ------ | -------------------------------- | ----------------------------------------------------------- | ---------------------------------- |
+| Rápido | Estados y redes del día a día.   | Wan 3.0 o Kling 3.0, 5–10 s.                                | 43–86 créditos (US$0,43–0,86)      |
+| Pro    | Publicidad pagada, lanzamientos. | Kling 3.0 u O3 con referencias y audio, 10–15 s.            | 86–292 créditos (US$0,86–2,92)     |
+| Cine   | Campañas de marca.               | Cinema Studio 4.0 o Seedance 2.5, varias tomas, hasta 30 s. | 292–1.252 créditos (US$2,92–12,52) |
+
+- El director creativo sugiere un nivel según el objetivo, pero decide el
+  cliente.
+- Cada nivel muestra un ejemplo y el precio exacto antes de generar, como hoy.
+- Con el paquete de US$5 (500 créditos) alcanzan unos 6 anuncios Rápidos o 1
+  de Cine.
+- Los precios se recalculan con el costo real de cada modelo (estimación de
+  Higgsfield) y los márgenes del admin; esta tabla es orientativa.
+
 ## Tablero de inspiración
 
 Por anuncio, y guardable como "Mi estilo":

@@ -95,8 +95,11 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   en la fase 2; nunca se obliga a crear lo que el negocio no tiene. Tablero de
   inspiración por anuncio y como "Mi estilo"; plantillas de inspiración con
   ejemplos; personas reales con consentimiento o ficticias por descripción;
-  respuestas de un toque generadas por la IA, nunca estáticas; modelos de
-  texto sin casarse con un proveedor.
+  respuestas de un toque generadas por la IA, nunca estáticas. Después de la
+  fase A: manual creativo y rúbrica v1 aprobados; **GPT-6 Luna** para todo el
+  texto; **Remotion** para la edición (gratis: ONIRIASOLUTIONS tiene 1
+  persona); niveles de calidad Rápido, Pro y Cine con su precio visible; los
+  ejemplos de las plantillas de inspiración los genera Oniric.
 
 ## Pendientes, en orden sugerido
 
@@ -136,9 +139,9 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      (cuadros del video, sin audio) y se comparan las notas.
    - **Fase E:** iterar prompts y capa; la capa se rehace sin volver a pagar
      el video.
-   - Por decidir (lista en [fase-a/README.md](./fase-a/README.md)): aprobar
-     manual, rúbrica y plantillas de inspiración; modelo de texto; licencia
-     de Remotion y dónde renderizar; audio; primeros modelos a integrar.
+   - Por decidir (lista en [fase-a/README.md](./fase-a/README.md)): la lista
+     de plantillas de inspiración, dónde renderizar, audio y primeros modelos
+     a integrar.
    - **Calendario comercial:** hecho (PR #15). Siguiente paso: aviso por correo
      unos días antes de cada fecha (ver [temporadas.md](./temporadas.md)).
    - Después: plantillas por industria ecuatoriana, enlace de WhatsApp con

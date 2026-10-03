@@ -53,19 +53,27 @@ desacreditar ni los resultados ni la app.
   todas las cuentas y un tope de gasto.
 - Segundo negocio de prueba: un salón de belleza ficticio.
 
+Después de revisar la investigación:
+
+- **Manual creativo y rúbrica v1: aprobados.**
+- **GPT-6 Luna para todo el texto** (US$0,10 / 0,50 por millón de tokens).
+- **Remotion** para la edición: gratis, porque ONIRIASOLUTIONS tiene 1 persona.
+  La licencia depende de quien construye la app, no de los clientes.
+- **Niveles de calidad:** el cliente decide qué tan pro quiere su anuncio
+  (Rápido, Pro, Cine) y ve el precio antes de generar.
+- **Ejemplos de las plantillas:** los genera Oniric, con su receta guardada; no
+  se toman de la galería de Higgsfield.
+
 ## Por decidir
 
-1. Aprobar el manual creativo, la rúbrica (criterios y pesos) y la primera
-   lista de plantillas de inspiración.
-2. Modelo de texto: el más barato para todo, o uno mejor solo para las ideas
-   (prueba a ciegas entre proveedores).
-3. Edición: confirmar cuántas personas tiene ONIRIASOLUTIONS (licencia de
-   Remotion) y dónde renderizar.
-4. Audio: empezar por el audio propio del modelo y agregar voz y música solo
+1. Aprobar la primera lista de plantillas de inspiración (estilos de anuncio,
+   en [experiencia-y-marca.md](./experiencia-y-marca.md)).
+2. Dónde renderizar los videos de Remotion.
+3. Audio: empezar por el audio propio del modelo y agregar voz y música solo
    si hace falta.
-5. Primeros modelos a integrar: Kling 3.0 con sonido, Wan 3.0 (barato),
+4. Primeros modelos a integrar: Kling 3.0 con sonido, Wan 3.0 (barato),
    Seedance 2.5 o Kling O3 (referencias), Soul 2 (personajes) y Marketing
-   Studio (imágenes). Cinema Studio como opción premium.
+   Studio (imágenes). Cinema Studio para el nivel Cine.
 
 ## Siguiente: fase B (diseño del flujo)
 

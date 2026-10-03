@@ -66,6 +66,26 @@ Ejemplos: un video de Kling 3.0 de 10 s cuesta ≈ US$0,42, uno de Wan 3.0
 a 10 videos cortos más varias imágenes, no para muchos videos de Cinema
 Studio (10 s ≈ US$2,06).
 
+### ¿Se pueden traer de Higgsfield los videos de ejemplo de su galería?
+
+La galería de Higgsfield ("Explore") muestra los videos de vitrina de cada
+modelo, los mismos que trae su catálogo (`preview_video`). No hay una API de
+galería con los prompts de cada ejemplo, ni una licencia que permita mostrarlos
+dentro de otra app: son la publicidad de Higgsfield, con personas y marcas
+propias. Por eso:
+
+- **Los ejemplos de las plantillas de inspiración los genera Oniric** una vez,
+  con Higgsfield, por plantilla y rubro. Son nuestros, se parecen a los
+  negocios de nuestros clientes (no a desfiles de moda en Nueva York) y, sobre
+  todo, guardamos la receta exacta (prompt, modelo y parámetros), así el
+  anuncio del cliente puede reproducir ese estilo con su producto. Un video
+  de vitrina ajeno no trae receta.
+- Costo aproximado: 10 plantillas por 3 rubros, en clips de 5 s con Kling 3.0
+  (≈ US$0,21 cada uno), cuesta ≈ US$6. Se puede empezar con imágenes clave
+  (≈ US$0,014 cada una) y videos solo en las más usadas.
+- TODO: preguntar a Higgsfield (soporte o Discord) si permiten usar su galería
+  en apps de terceros; sería un complemento, no la base.
+
 ### Cuidados
 
 - Las referencias del cliente (fotos o videos de otros anuncios) se usan como
@@ -100,9 +120,15 @@ decide qué decir y con qué estilo; el motor de edición lo arma.
 | ffmpeg     | Gratis.                                                                             | Superpone imágenes sobre el video; poco movimiento.                                                                                                                    |
 
 Recomendación: Remotion, por la vista previa en vivo y el control fino de
-tipografías y animación. TODO(producto): confirmar cuántas personas tiene
-ONIRIASOLUTIONS (define si aplica la licencia gratuita) y elegir dónde
-renderizar.
+tipografías y animación. Falta elegir dónde renderizar.
+
+**Licencia:** se paga según las personas de la empresa que **construye** la app
+(ONIRIASOLUTIONS, hoy 1 persona: gratis), no según los clientes. Los negocios
+que usan Oniric no necesitan licencia, tengan el tamaño que tengan. Si
+ONIRIASOLUTIONS llega a 4 personas o más (contando freelancers o estudios
+contratados para el proyecto), pasa a "Remotion for Automators": US$0,01 por
+video renderizado, con un mínimo de US$100 al mes. Por anuncio es un crédito;
+lo que pesa es el mínimo mensual mientras haya poco volumen.
 
 **Ventaja clave:** la capa de edición va encima del video, así que se puede
 rehacer las veces que haga falta sobre el mismo video sin volver a pagar a
@@ -110,20 +136,24 @@ Higgsfield.
 
 ## 4. Modelos de texto (el "director creativo" por dentro)
 
-Precios por millón de tokens, entrada / salida (octubre de 2026):
+**Decisión del dueño (3 de octubre de 2026): GPT-6 Luna para todo el texto**
+(conversación, brief, ideas, guion y prompts). Modelo `gpt-6-luna`, US$0,10 por
+millón de tokens de entrada y US$0,50 de salida (tarifa estándar, después de la
+rebaja del 50 % de septiembre de 2026). Una conversación completa con su brief,
+3 ideas, guion y prompts cuesta menos de medio centavo: menos de 1 crédito.
 
-| Modelo           | Precio         | Nota                         |
-| ---------------- | -------------- | ---------------------------- |
-| GPT-5 nano       | US$0,05 / 0,40 | El más barato.               |
-| GPT-5.4 nano     | US$0,20 / 1,25 | El nano más nuevo de OpenAI. |
-| Claude Haiku 4.5 | US$1 / 5       | El más barato de Anthropic.  |
+Opciones que se compararon (por millón de tokens, entrada / salida):
 
-Las tres opciones aceptan imágenes, para leer el tablero de inspiración.
-Escribir un brief, tres ideas y un prompt cuesta menos de un centavo con
-cualquiera. Como un video cuesta ≈ US$0,42, conviene evaluar también un modelo
-mejor solo para el paso de las ideas, donde está la creatividad: sigue siendo
-una fracción de centavo frente al video. TODO(producto): decidir con una prueba
-a ciegas.
+| Modelo           | Precio         |
+| ---------------- | -------------- |
+| GPT-6 Luna       | US$0,10 / 0,50 |
+| GPT-5 nano       | US$0,05 / 0,40 |
+| GPT-5.4 nano     | US$0,20 / 1,25 |
+| Claude Haiku 4.5 | US$1 / 5       |
+
+TODO: confirmar en la documentación de OpenAI que GPT-6 Luna acepta imágenes
+(para leer el tablero de inspiración). Hace falta una clave de OpenAI
+(`OPENAI_API_KEY`) en Vercel y en el entorno de Claude Code.
 
 ## Fuentes
 
