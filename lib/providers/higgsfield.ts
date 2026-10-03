@@ -19,6 +19,8 @@ import type {
 // - Envío: `POST /<endpoint del modelo>` → `{ request_id, status, ... }`.
 // - Estado: `GET /requests/<request_id>/status`.
 // - Estimación: `POST /estimate/<endpoint del modelo>` → `{ credits, usd }`.
+// - Archivos: `POST /files/generate-upload-url` → URL prefirmada para subir y
+//   URL pública para pasar como `image_url`.
 // - Webhook: `?hf_webhook=<url>` al enviar; no viene firmado, así que nunca
 //   se confía en su contenido (ver app/api/webhooks/higgsfield).
 
@@ -261,6 +263,43 @@ export class HiggsfieldProvider implements GenerationProvider {
     }
   }
 
+  /**
+   * Sube un archivo al almacenamiento temporal de Higgsfield y devuelve su URL
+   * pública, para pasarla como `image_url`
+   * (docs.higgsfield.ai/docs/concepts/file-uploads). La URL de subida vence en
+   * una hora y nunca recibe nuestras credenciales.
+   */
+  async uploadFile(
+    bytes: Uint8Array<ArrayBuffer>,
+    contentType: string,
+  ): Promise<string> {
+    const data = await this.request<{
+      public_url?: unknown;
+      upload_url?: unknown;
+      upload_headers?: unknown;
+    }>("POST", "/files/generate-upload-url", { content_type: contentType });
+    if (
+      typeof data.public_url !== "string" ||
+      typeof data.upload_url !== "string"
+    ) {
+      throw new Error("Higgsfield no devolvió las URLs para subir el archivo.");
+    }
+    const response = await this.fetchFn(data.upload_url, {
+      method: "PUT",
+      headers: isStringRecord(data.upload_headers)
+        ? data.upload_headers
+        : { "Content-Type": contentType },
+      body: bytes,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `No se pudo subir el archivo a Higgsfield (${response.status}).`,
+      );
+    }
+    return data.public_url;
+  }
+
   async fetchOutput(providerJobId: string): Promise<OutputFile[]> {
     const data = await this.fetchStatus(providerJobId);
     if (data.status !== "completed") {
@@ -349,6 +388,14 @@ export function verifyWebhookSignature(
   const received = Buffer.from(signature, "hex");
   return (
     received.length === expected.length && timingSafeEqual(received, expected)
+  );
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Object.values(value).every((item) => typeof item === "string")
   );
 }
 
