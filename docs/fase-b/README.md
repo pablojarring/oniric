@@ -333,28 +333,58 @@ regresiva), más **Psicodélico**, **Nueva era**, **Clásico**, **Hogareño** y
 Ejemplo, Pro de 10 s: video ≈ 86 créditos + edición ≈ 13 = **≈ 99 créditos**,
 más la imagen de prueba (3).
 
-## 10. Fase C: construcción con el simulador
+## 10. Fase C por tramos: cuándo se puede probar
 
-En este orden, cada paso con su PR y sus pruebas, sin gastar saldo real:
+Cada paso es un PR con sus pruebas, construido con el simulador y sin gastar
+saldo real. Al final de cada tramo hay una ronda de **pruebas pagadas en la app
+real** (fase D) con la rúbrica, dentro de los topes de cada proveedor. El
+asistente actual de 3 pasos sigue funcionando hasta que el flujo nuevo lo
+reemplace.
 
-1. **Modelo de datos:** perfil de marca, personajes, tableros, plantillas de
-   inspiración con receta, caché de búsquedas, gasto del proveedor y lotes de
-   evaluación.
-2. **Proveedor de texto:** una interfaz `TextProvider` como
-   `GenerationProvider`, con GPT-6 Luna y un simulador para desarrollo y
-   pruebas. TODO: confirmar el id del modelo y si acepta imágenes.
-3. **Conversación guiada** con respuestas dinámicas y opciones de respaldo.
-4. **Búsqueda de inspiración y fichas visuales** con una interfaz por fuente
-   (simuladas en pruebas). Claves nuevas: `YOUTUBE_API_KEY` y `PEXELS_API_KEY`,
-   gratis; se cargan en Vercel, nunca en el repositorio.
-5. **Director creativo:** insight, 3 ideas, guion por tomas y prompt detallado.
-6. **Imagen de prueba** como primer cuadro, con marca de agua.
-7. **Precio con edición y preparación** en `lib/billing`.
-8. **Tope de gasto y lote de evaluación** en el admin.
-9. **Capa de motion graphics** con Remotion: biblioteca de animaciones,
-   análisis del video, recorte del sujeto, vista en vivo y render.
+**Tramo 1: la creatividad y el video** (la primera prueba pagada)
 
-Después, la **fase D**: pruebas pagadas en la app real con la rúbrica.
+1. Datos nuevos y `TextProvider` (GPT-6 Luna y su simulador). TODO: confirmar el
+   id del modelo y si acepta imágenes.
+2. Conversación guiada con respuestas dinámicas, y director creativo: insight,
+   3 ideas, guion por tomas y prompt detallado.
+3. Imagen de prueba como primer cuadro (con marca de agua), video con Kling (ya
+   integrado) y el precio nuevo con preparación y edición.
+4. Topes de gasto por proveedor y lote de evaluación en el admin.
+
+→ **Ronda 1:** se activa `HIGGSFIELD_API_KEY` en Vercel y se prueba la
+Panadería La Esquina. El texto todavía va encima sin motion graphics.
+
+**Tramo 2: motion graphics y voz**
+
+5. Remotion: biblioteca con los 3 primeros estilos y vista en vivo.
+6. Análisis del video, recorte del sujeto y render en Remotion Lambda.
+7. Voz con ElevenLabs v4 y los 5 estilos nuevos.
+
+→ **Ronda 2:** los mismos anuncios, ahora con edición profesional.
+
+**Tramo 3: inspiración y marca**
+
+8. Búsqueda mixta y fichas visuales.
+9. Mi marca, personajes Oniric y tablero.
+
+→ **Ronda 3:** Estudio Brillo, con la estilista ficticia y un tablero.
+
+**Tramo 4: antes de vender**
+
+10. Planes, barra de uso y prueba gratis. Primero con la Suscripción Recurrente
+    de Payphone Business y acreditación manual.
+11. Cobro automático con la tokenización de Payphone.
+
+La música se decide después de las rondas 1 y 2.
+
+**Lo que el dueño tendrá que cargar, y cuándo** (Claude avisa en su momento):
+
+| Tramo | Qué                                                                                               |
+| ----- | ------------------------------------------------------------------------------------------------- |
+| 1     | Nada nuevo: `OPENAI_API_KEY` ya está en Vercel. Al final, activar `HIGGSFIELD_API_KEY` en Vercel. |
+| 2     | Cuenta de AWS para Remotion Lambda; si hace falta, claves de recorte de video o de ElevenLabs.    |
+| 3     | `YOUTUBE_API_KEY` y `PEXELS_API_KEY`.                                                             |
+| 4     | Pedir a Payphone la aprobación de la tokenización.                                                |
 
 ## Fuentes
 
