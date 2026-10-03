@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #19).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #20).
 
 ## Dónde estamos
 
@@ -42,6 +42,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #19).
 | #17   | Fase A del flujo creativo: investigación, manual creativo, rúbrica y herramientas.      |
 | #18   | Fase B del flujo creativo: bocetos navegables, búsqueda de inspiración y personajes.    |
 | #19   | Fase B: decisiones del dueño, motion graphics, imagen de prueba y cobro de la edición.  |
+| #20   | Fase B: recálculo de precios, audio con ElevenLabs v4, estilos y propuesta de planes.   |
 
 ## Entornos
 
@@ -120,11 +121,14 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 1. **Higgsfield:** el proveedor ya está (PR #14, ver
    [higgsfield.md](./higgsfield.md)). Falta:
    - **la prueba pagada**, que se hará **dentro de la app real** (fase D del
-     flujo creativo, punto 2), no con el script. El dueño cargó **US$5** en
-     Higgsfield y su clave está como `HIGGSFIELD_TEST_KEY` en Vercel (la app no
-     la lee) y en la configuración del entorno de Claude Code. Para la fase D
-     se activa Higgsfield para todas las cuentas (`HIGGSFIELD_API_KEY`), pero
-     solo después de construir el tope de gasto. `pnpm higgsfield:lab` queda
+     flujo creativo, punto 2), no con el script. El dueño tiene **US$15**
+     cargados en la API de Higgsfield (su tope de prueba) y fijó un tope de
+     **US$10 en OpenAI**. La clave de Higgsfield está como
+     `HIGGSFIELD_TEST_KEY` en Vercel (la app no la lee) y en la configuración
+     del entorno de Claude Code. Para la fase D se activa Higgsfield para todas
+     las cuentas (`HIGGSFIELD_API_KEY`), pero solo después de construir los
+     topes de gasto por proveedor (ver
+     [fase-b/precios.md](./fase-b/precios.md), sección 5). `pnpm higgsfield:lab` queda
      como herramienta interna opcional
      ([higgsfield.md](./higgsfield.md#laboratorio-de-prompts-prueba-pagada));
    - el panel del saldo del proveedor con alerta y el reporte mensual para el
@@ -145,7 +149,14 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      referencias, la imagen de prueba como primer cuadro, los motion graphics
      y el cobro de la edición (secciones 5 a 9). Falta aprobar el tope de
      gasto, la lista de plantillas y los estilos de animación; decidir dónde
-     renderizar (recomendado: Remotion Lambda).
+     renderizar (recomendado: Remotion Lambda). Después: topes, plantillas y
+     estilos aprobados (más psicodélico, nueva era, clásico, hogareño y estilo
+     TikTok); recálculo de precios, audio con ElevenLabs v4 y propuesta de
+     planes mensuales con créditos en [fase-b/precios.md](./fase-b/precios.md).
+     Pendientes del dueño: aprobar el modelo mixto (planes y paquetes), los
+     precios y nombres de los planes, la prueba gratis y la fuente de la
+     música. Riesgo: los precios de Higgsfield tienen hoy descuentos del 30 al
+     50 % sin fecha de fin.
    - **Fase C, construcción** con el simulador, en el orden de la sección 10
      de [fase-b/README.md](./fase-b/README.md). Se trabaja en una sola sesión
      de Claude Code: las pruebas usan simuladores y las pruebas reales corren

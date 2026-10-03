@@ -177,7 +177,12 @@ transferencia), detrás de `lib/storage`, sin tocar el resto de la app.
 - **Cobro:** el texto y la edición van incluidos, pero se cobran al cliente
   dentro del precio en créditos. Nunca es un costo que Oniric absorbe
   (sección 9).
-- Siguen por aprobar: el tope de gasto y la lista de plantillas.
+- Después (mismo día): **aprobados** la lista de plantillas y los estilos de
+  animación, más cinco estilos nuevos (psicodélico, nueva era, clásico,
+  hogareño y estilo TikTok). Topes: Higgsfield US$15 (ya cargados en la API) y
+  OpenAI US$10. El recálculo de precios, el audio con ElevenLabs v4 y la
+  comparación entre créditos y suscripción están en
+  [precios.md](./precios.md).
 
 ## 6. Que las referencias de internet sirvan de verdad
 
@@ -282,9 +287,10 @@ datos y código), se ve en vivo en el navegador y se renderiza en un servidor.
    al instante en el navegador.
 4. **Render final** en un servidor con Remotion.
 
-Estilos de animación para empezar (se aprueban sobre los bocetos): **Portada de
-revista** (como la demo), **De barrio** (cálido, a mano) y **Oferta relámpago**
-(rápido, precio y cuenta regresiva).
+Estilos de animación aprobados: **Portada de revista** (como la demo), **De
+barrio** (rótulo pintado a mano) y **Oferta relámpago** (rápido, precio y cuenta
+regresiva), más **Psicodélico**, **Nueva era**, **Clásico**, **Hogareño** y
+**Estilo TikTok**. Detalle y tipografías en [precios.md](./precios.md), sección 7.
 
 ### Costo por anuncio de 10 s (al proveedor)
 
@@ -317,7 +323,8 @@ revista** (como la demo), **De barrio** (cálido, a mano) y **Oferta relámpago*
   adaptada al video, hasta 3 cambios del texto), sin montos por partida. El
   desglose queda en el admin y en el registro de créditos.
 - **Cambios:** cambiar el texto nunca vuelve a cobrar el video ni el análisis.
-  Los 3 primeros renders están incluidos; desde el cuarto, 1 crédito cada uno.
+  Los 3 primeros renders están incluidos; desde el cuarto, ≈ 2 créditos cada
+  uno en un video de 10 s.
 - **Preparación** (propuesta, con la misma regla): la conversación, las
   búsquedas en internet y las fichas visuales cuestan de US$0,01 a 0,03 por
   anuncio. Se suman al precio de cada anuncio como un componente fijo pequeño,
