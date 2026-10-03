@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { aspectRatios } from "@/lib/providers/generation-provider";
+import { seasonIds } from "@/lib/seasons";
 import { adTemplates, templateIds } from "@/lib/templates";
 
 import { adFieldLimits } from "./types";
@@ -16,6 +17,7 @@ const adFormSchema = z
     photo: z.instanceof(Blob).nullable(),
     photoConsent: z.boolean(),
     expectedPriceCredits: z.coerce.number().int().positive(),
+    seasonId: z.enum(seasonIds).optional(),
   })
   .superRefine((form, context) => {
     const template = adTemplates[form.templateId];
@@ -52,5 +54,6 @@ export function parseAdForm(formData: FormData) {
     photo: photoFrom(formData.get("photo")),
     photoConsent: formData.get("photoConsent") === "on",
     expectedPriceCredits: formData.get("expectedPriceCredits"),
+    seasonId: formData.get("seasonId") || undefined,
   });
 }

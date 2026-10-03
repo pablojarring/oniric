@@ -3,13 +3,14 @@
 El cliente pyme crea un anuncio en 3 pasos, sin elegir modelos ni parámetros
 (CLAUDE.md §4). La plantilla decide el modelo, la duración y los formatos.
 
-| Ruta         | Qué hace                                                           |
-| ------------ | ------------------------------------------------------------------ |
-| `/home`      | Saldo, botón "Crear anuncio", plantillas y los últimos anuncios.   |
-| `/create`    | Asistente de 3 pasos (`?template=<id>` llega con esa plantilla).   |
-| `/ads`       | Galería con todos los anuncios de la organización, por páginas.    |
-| `/ads/[id]`  | Estado y resultado del anuncio, descarga y enlace público.         |
-| `/s/[token]` | Página pública de un anuncio compartido (sin sesión, no indexada). |
+| Ruta         | Qué hace                                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| `/home`      | Saldo, botón "Crear anuncio", próximas fechas, plantillas y los últimos anuncios.                         |
+| `/create`    | Asistente de 3 pasos (`?template=<id>` llega con esa plantilla; `?season=<id>`, con una fecha comercial). |
+| `/calendar`  | Calendario comercial del país (ver [temporadas.md](./temporadas.md)).                                     |
+| `/ads`       | Galería con todos los anuncios de la organización, por páginas.                                           |
+| `/ads/[id]`  | Estado y resultado del anuncio, descarga y enlace público.                                                |
+| `/s/[token]` | Página pública de un anuncio compartido (sin sesión, no indexada).                                        |
 
 ## Los 3 pasos
 

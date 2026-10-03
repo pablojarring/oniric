@@ -43,6 +43,7 @@ export type Feature =
   | "guidedWizard"
   | "templates"
   | "buyCredits"
+  | "seasonalCalendar"
   | "modelSelector"
   | "advancedParameters"
   | "batchGeneration"
@@ -67,7 +68,12 @@ export const segmentConfig: Record<Segment, SegmentConfig> = {
   pyme: {
     homePath: "/home",
     // TODO(producto): compra de créditos para empresa (facturación mensual).
-    features: new Set(["guidedWizard", "templates", "buyCredits"]),
+    features: new Set([
+      "guidedWizard",
+      "templates",
+      "buyCredits",
+      "seasonalCalendar",
+    ]),
     navigation: ["home", "create", "ads", "credits"],
   },
   empresa: {

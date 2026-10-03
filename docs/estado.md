@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #14).
+al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #15).
 
 ## Dónde estamos
 
@@ -10,6 +10,11 @@ al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #14).
   de la **fase 3** para lanzar el modo pyme antes del modo empresa (fase 2):
   portada de venta, despliegue en planes gratuitos y pagos con Payphone.
 - **Modo empresa (fase 2): no empezado.** El workspace empresa es un marcador.
+- **Valor agregado del modo pyme** (pedido del dueño el 1 de octubre de 2026:
+  que el producto no sea solo "videos con Higgsfield" y que tenga un plus
+  llamativo para empresarios ecuatorianos). Hoja de ruta acordada en
+  "Pendientes". Primer paso hecho: calendario comercial ecuatoriano (PR #15,
+  [temporadas.md](./temporadas.md)).
 
 ## Historial de PRs (pablojarring/oniric)
 
@@ -28,6 +33,7 @@ al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #14).
 | #12   | Mensajes de pago no aprobado o cancelado y motivo de Payphone en el admin.              |
 | #13   | Nueva interfaz del modo pyme: menú y saldo, inicio, asistente, galería y recarga.       |
 | #14   | Proveedor real de Higgsfield, webhook firmado y foto encuadrada en el formato elegido.  |
+| #15   | Calendario comercial de Ecuador: próximas fechas, calendario y anuncios de temporada.   |
 
 ## Entornos
 
@@ -92,17 +98,40 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      empresarial → saldo prepagado de Higgsfield (ISD 5 % en el pago al
      exterior). Higgsfield no documenta recarga automática ni un endpoint de
      saldo: TODO confirmarlo en su consola.
-2. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
-3. **Con el contador:** ISD, IVA de servicios digitales importados y retención
+2. **Valor agregado del modo pyme**, en este orden (acordado con el dueño):
+   - **Calendario comercial:** hecho (PR #15). Siguiente paso: aviso por correo
+     unos días antes de cada fecha (necesita envío de correos desde la app,
+     baja de la lista y registro de avisos; ver
+     [temporadas.md](./temporadas.md)).
+   - **Texto, precio y logo sobre el anuncio** (capa propia, no de la IA). El
+     dueño pide tipografías y diseño actuales, que no tapen lo que genera
+     Higgsfield ni parezcan "hechos por IA", y coherencia con el prompt: el
+     video debe salir sin texto y con espacio libre donde va la capa. Antes,
+     la prueba pagada de Higgsfield (punto 1) para calibrar prompts y zonas
+     libres con resultados reales.
+   - **Copy con IA:** aprobado en principio, con un modelo barato que no afecte
+     la rentabilidad. Propuesta: Claude Haiku 4.5 (US$1 por millón de tokens
+     de entrada y US$5 de salida, precio vigente al 25 de septiembre de 2026),
+     menos de medio centavo por texto. Va junto con la capa: el mismo paso
+     escribe el texto de la capa y la escena para Higgsfield. TODO(producto):
+     confirmar el modelo y si el texto cobra créditos o va incluido.
+   - Plantillas por industria ecuatoriana (menú del día, turismo bilingüe…).
+   - Enlace de WhatsApp con seguimiento de clics y página del negocio.
+   - Oniric por WhatsApp (foto por WhatsApp, anuncio de vuelta). TODO(producto):
+     el dueño decide si inicia la verificación de la empresa en Meta.
+   - Kit de marca ligero en pyme. TODO(producto): CLAUDE.md lo ubica en la
+     fase 2 (empresa); el dueño decide si se adelanta.
+3. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
+4. **Con el contador:** ISD, IVA de servicios digitales importados y retención
    en pagos al exterior; si algo no se recupera, subir el factor de costos del
    proveedor en `lib/billing/config.ts`.
-4. **Antes de cobrar de verdad:** Payphone a producción, regenerar credenciales
+5. **Antes de cobrar de verdad:** Payphone a producción, regenerar credenciales
    (token de Payphone y contraseña de la base de datos), Vercel Pro (uso
    comercial), revisar límites de Supabase Free.
-5. **Factura electrónica automática** (`InvoiceProvider`, firma `.p12`, SRI).
-6. Páginas legales (términos y privacidad), imagen Open Graph, monitoreo de
+6. **Factura electrónica automática** (`InvoiceProvider`, firma `.p12`, SRI).
+7. Páginas legales (términos y privacidad), imagen Open Graph, monitoreo de
    errores, login con Google.
-7. Fase 2 (modo empresa).
+8. Fase 2 (modo empresa).
 
 Los `TODO(producto)` y `TODO(fase 3)` del código y de `docs/` detallan cada
 punto.
