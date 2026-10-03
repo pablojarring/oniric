@@ -19,6 +19,13 @@ export default defineConfig({
     baseURL,
     locale: "es-EC",
     trace: "on-first-retry",
+    // Micrófono falso para probar las notas de voz del director creativo.
+    launchOptions: {
+      args: [
+        "--use-fake-ui-for-media-stream",
+        "--use-fake-device-for-media-stream",
+      ],
+    },
   },
   projects: [
     {

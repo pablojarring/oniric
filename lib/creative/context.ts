@@ -2,7 +2,8 @@ import type { Locale } from "@/i18n/config";
 import type { Country, Industry } from "@/lib/onboarding/options";
 import { seasons, type SeasonId } from "@/lib/seasons";
 
-import type { CreativeBrief } from "./schemas";
+import { brandCharacters } from "./brand";
+import type { CreativeBrief, Featuring } from "./schemas";
 import type { ConversationTurn } from "./types";
 
 // Contexto que comparten las tareas del director creativo: el negocio, el
@@ -72,4 +73,27 @@ function describeAnswer(turn: ConversationTurn): string {
 
 export function describeBrief(brief: CreativeBrief): string {
   return `<brief>\n${JSON.stringify(brief, null, 2)}\n</brief>`;
+}
+
+/** Quién puede salir en el video, según lo que eligió el dueño. */
+export function featuringRule(
+  featuring: Featuring | null,
+  brief: CreativeBrief,
+): string {
+  switch (featuring) {
+    case "nobody":
+      return "No people on screen: the product and the place are the stars. Hands at work are fine, faces are not.";
+    case "brandCharacter": {
+      const characters = brandCharacters(brief)
+        .map((element) => `${element.name} (${element.description})`)
+        .join(", ");
+      return `The brand's own character is the star: ${characters}. Keep it identical in every shot. No other recognizable people.`;
+    }
+    case "owner":
+      return "The business owner appears on screen (they agreed). Describe them neutrally, without inventing physical traits: a reference photo will be provided. No other real people; extras only as clearly fictional adults.";
+    case "fictional":
+      return "Fictional adult people may appear, clearly fictional, never presented as real customers or testimonials. No real people.";
+    case null:
+      return "Choose who appears: the product alone or fictional adult people (clearly fictional, never presented as real customers or testimonials). No real people.";
+  }
 }

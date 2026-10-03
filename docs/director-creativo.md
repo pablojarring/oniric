@@ -6,8 +6,10 @@ el guion por tomas con los prompts para Higgsfield. Usa el
 [proveedor de texto](./proveedor-de-texto.md): GPT-6 Luna, o el simulador en
 desarrollo y tests.
 
-La lógica y los datos llegaron en el PR #23 y las pantallas en el PR #24. La
-imagen de prueba, el video y el precio llegan en el paso 3.
+La lógica y los datos llegaron en el PR #23, las pantallas en el PR #24 y las
+decisiones del dueño sobre ellas (notas de voz, corregir el brief, otras
+respuestas, confirmar el insight y ¿Quién sale?) en el PR #25. La imagen de
+prueba, el video, el precio y la foto del producto llegan en el paso 3.
 
 ## Recorrido de una sesión
 
@@ -23,7 +25,10 @@ imagen de prueba, el video y el precio llegan en el paso 3.
 Son del modo guiado (flag `creativeDirector` en `lib/segment`). Los textos
 están en `messages/*.json`, en el espacio `Director`, en español y portugués.
 
-- **Entrada:** una tarjeta "Nuevo" en el inicio lleva a `/director`.
+- **Entrada:** una tarjeta "Nuevo · Beta" en el inicio ("Crea tu anuncio con
+  el director creativo") lleva a `/director`. Cuando el director haga videos,
+  "Crear anuncio" llevará siempre aquí y el asistente viejo de 3 pasos se
+  quitará después de la ronda 1 (decisión del dueño).
 - **`/director`:**
   - se elige el formato (9:16, 1:1 o 16:9) y se empieza;
   - acepta `?season=` del calendario comercial;
@@ -32,35 +37,61 @@ están en `messages/*.json`, en el espacio `Director`, en español y portugués.
 - **`/director/[id]`:** arriba van los 4 pasos (Cuéntame, Nivel, Ideas y
   Guion) y debajo, la pantalla del estado de la sesión:
   - **Conversación**, como un chat:
-    - la pregunta con sus respuestas de un toque;
-    - texto propio, "No sé, decide tú" y "Saltar";
+    - la pregunta con sus respuestas de un toque, y "Otras respuestas" para
+      pedir opciones distintas (`refreshTurnOptions`);
+    - texto propio (Enter envía) o una **nota de voz** de hasta 30 s: se
+      transcribe y el texto queda en la caja para revisarlo antes de enviar;
+    - "No sé, decide tú" y "Saltar";
     - las respuestas anteriores quedan arriba;
-    - si el proveedor falla después de guardar la respuesta, aparece
-      "Reintentar".
-  - **Nivel:** lo que entendió el director (el brief) y la elección entre
-    Rápido, Pro (recomendado) y Cine.
-  - **Ideas:** el insight, las 3 ideas con su ángulo y "Otras 3 ideas".
+    - si el proveedor falla después de guardar la respuesta, aparece un
+      mensaje al estilo de Claude ("algo salió mal de nuestro lado, inténtalo
+      de nuevo en unos minutos") y "Reintentar".
+  - **Nivel:**
+    - lo que entendió el director (el brief), que el dueño puede **corregir a
+      mano** antes de pedir las ideas (`updateCreativeBrief`): los textos, las
+      listas de incluir y evitar, y qué elementos de la marca se usan;
+    - Rápido, Pro (recomendado) o Cine;
+    - **¿Quién sale?** (versión simple): que decida el director, nadie (solo
+      el producto), el personaje de la marca (si el brief tiene uno), el
+      dueño o una persona ficticia (`setCreativeSettings`).
+  - **Ideas:**
+    - el insight, que el dueño **confirma con un toque** o rechaza con "No
+      del todo": entonces el director busca otra verdad y propone 3 ideas
+      nuevas (`answerCreativeInsight`);
+    - las 3 ideas con su ángulo y "Otras 3 ideas".
   - **Guion:**
     - las tomas con sus tiempos, cámara, sonido y texto en pantalla, y el
       cierre;
     - "Para curiosos", con las partes del prompt en inglés;
-    - se puede pedir un cambio o elegir otra idea;
+    - se puede pedir un cambio (escrito o con nota de voz) o elegir otra
+      idea;
     - el paso siguiente (imagen de prueba) aparece como "Muy pronto".
 - **Acciones** (`lib/creative/actions.ts`):
   - validan lo que llega del navegador y llaman al servicio;
   - refrescan la página, que vuelve a leer la sesión, también cuando fallan,
     porque una respuesta puede haber quedado guardada;
+  - la nota de voz no cambia la sesión: el texto vuelve a la pantalla;
   - los prompts completos del video y del primer cuadro no se mandan al
     navegador.
 
-Pendientes:
+### ¿Quién sale?
 
-- TODO(producto): responder con notas de voz (transcripción).
-- TODO(producto): opciones de respaldo curadas cuando el modelo falla. Hoy se
-  reintenta.
-- TODO(producto): corregir el brief a mano antes de las ideas.
-- El costo de texto de cada sesión queda en `text_usage` y entra al precio en
-  el paso 3. Hasta entonces no se cobra.
+`featuringRule` (`lib/creative/context.ts`) le dice a las ideas y al guion
+quién puede salir:
+
+| Elección                 | Regla para el modelo                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| Que decida el director   | Solo el producto o personas adultas ficticias, nunca como clientes reales.         |
+| Nadie, solo el producto  | Sin personas en cuadro; solo manos trabajando.                                     |
+| El personaje de la marca | El personaje del brief (mascota o personaje), igual en cada toma.                  |
+| Tú (el dueño)            | El dueño sale, descrito sin inventar rasgos: su foto se pide en el paso 3.         |
+| Una persona ficticia     | Personas adultas ficticias, nunca presentadas como clientes reales ni testimonios. |
+
+En todos los casos: sin famosos ni marcas ajenas. "Otra persona real", con su
+consentimiento, y los personajes Oniric llegan en el tramo 3.
+
+El costo de texto de cada sesión (y de cada nota de voz) queda en `text_usage`
+y entra al precio en el paso 3. Hasta entonces no se cobra.
 
 ## Tareas del modelo
 
@@ -131,9 +162,13 @@ precio de cada nivel llegan en el paso 3.
 ## Cuidados
 
 - **Propiedad:** cada función verifica que la sesión sea de la organización.
-- **Moderación:** el texto libre del dueño (respuestas y cambios al guion) pasa
-  por `moderateText` y tiene un máximo de 500 caracteres.
-- **Límite de uso:** 120 pedidos de texto por organización y por hora.
+- **Moderación:** el texto libre del dueño (respuestas, cambios al guion y el
+  brief corregido) pasa por `moderateText`. Cada respuesta tiene un máximo de
+  500 caracteres; cada campo del brief, 300.
+- **Notas de voz:** webm, mp4, mp3 o wav, hasta 30 s y 2 MB. La transcripción
+  vuelve a la pantalla y se modera recién al enviarla.
+- **Límite de uso:** 120 pedidos de texto y notas de voz por organización y
+  por hora.
 - **Respuestas simultáneas:** si dos respuestas llegan a la vez, la segunda
   falla con `conflict` en vez de pisar a la primera.
 - **Fallas del modelo:** si el proveedor falla después de una respuesta, la
@@ -141,4 +176,5 @@ precio de cada nivel llegan en el paso 3.
   pregunta.
 
 Los errores son `CreativeFlowError` con un código: `notFound`, `invalidState`,
-`invalidAnswer`, `moderation`, `rateLimited`, `conflict` o `providerFailed`.
+`invalidAnswer`, `invalidAudio`, `moderation`, `rateLimited`, `conflict` o
+`providerFailed`.

@@ -199,9 +199,9 @@
       "viewAll": "Ver calendário"
     },
     "director": {
-      "eyebrow": "Novo",
-      "title": "Não sabe o que anunciar? Eu ajudo com a ideia",
-      "description": "O diretor criativo faz algumas perguntas e propõe 3 ideias com roteiro.",
+      "eyebrow": "Novo · Beta",
+      "title": "Crie seu anúncio com o diretor criativo",
+      "description": "Conte o que você quer anunciar ou deixe que ele proponha: com poucas perguntas, entrega 3 ideias e o roteiro. Em breve, também o vídeo.",
       "cta": "Experimentar o diretor criativo"
     }
   },
@@ -1047,8 +1047,10 @@
       "decided": "Decida você",
       "skip": "Pular",
       "skipped": "Pulada",
-      "interrupted": "Sua última resposta foi salva, mas o diretor criativo não conseguiu responder.",
-      "retry": "Tentar de novo"
+      "interrupted": "Algo deu errado do nosso lado e o diretor criativo não conseguiu responder. Sua última resposta foi salva. Tente de novo em alguns minutos.",
+      "retry": "Tentar de novo",
+      "moreOptions": "Outras respostas",
+      "refreshing": "Buscando outras respostas…"
     },
     "brief": {
       "title": "Foi isto que eu entendi",
@@ -1062,7 +1064,14 @@
         "brandElements": "Da sua marca",
         "mustInclude": "Incluir",
         "avoid": "Evitar"
-      }
+      },
+      "edit": "Corrigir",
+      "editTitle": "Corrija o que eu entendi",
+      "onePerLine": "Uma por linha.",
+      "useBrandElement": "Usar {name}",
+      "save": "Salvar",
+      "saving": "Salvando…",
+      "cancel": "Cancelar"
     },
     "tier": {
       "title": "Nível do anúncio",
@@ -1102,7 +1111,12 @@
         "demonstration": "Demonstração",
         "aspirational": "Aspiracional",
         "other": "Outro olhar"
-      }
+      },
+      "insightQuestion": "É isso mesmo?",
+      "insightYes": "Sim, é isso",
+      "insightNo": "Não exatamente",
+      "insightConfirmed": "Confirmado",
+      "insightThinking": "Buscando outra verdade e 3 ideias novas…"
     },
     "script": {
       "duration": "{seconds} s",
@@ -1143,12 +1157,46 @@
     "errors": {
       "notFound": "Não encontramos esta sessão. Comece uma nova no diretor criativo.",
       "invalidState": "Esta sessão já avançou. Recarregue a página para ver onde parou.",
-      "invalidAnswer": "Revise a sua resposta: ela não pode ficar vazia nem passar de 500 caracteres.",
+      "invalidAnswer": "Revise o que você escreveu: não pode ficar vazio nem ser longo demais.",
       "moderation": "Esse texto não pode ser usado em um anúncio. Escreva de outra forma.",
       "rateLimited": "Você fez muitos pedidos em pouco tempo. Aguarde alguns minutos e tente de novo.",
       "conflict": "A sessão mudou em outra aba. Recarregue a página para continuar.",
-      "providerFailed": "O diretor criativo não respondeu. Tente de novo em um instante.",
-      "unexpected": "Algo deu errado. Tente de novo."
+      "providerFailed": "Algo deu errado do nosso lado e o diretor criativo não conseguiu responder. O que você já fez foi salvo. Tente de novo em alguns minutos.",
+      "unexpected": "Algo deu errado do nosso lado. Tente de novo em alguns minutos.",
+      "invalidAudio": "Não conseguimos ouvir bem a nota de voz. Grave de novo ou escreva sua resposta.",
+      "micDenied": "Não conseguimos usar o microfone. Verifique a permissão do navegador ou escreva sua resposta."
+    },
+    "voice": {
+      "record": "Nota de voz",
+      "recording": "Gravando… {seconds} de {max} s",
+      "stop": "Pronto",
+      "cancel": "Cancelar",
+      "transcribing": "Ouvindo sua nota…"
+    },
+    "featuring": {
+      "title": "Quem aparece no anúncio?",
+      "options": {
+        "decide": {
+          "name": "O diretor decide",
+          "description": "Só o produto ou pessoas fictícias, nunca pessoas reais."
+        },
+        "nobody": {
+          "name": "Ninguém, só o produto",
+          "description": "O produto e o seu espaço são os protagonistas."
+        },
+        "brandCharacter": {
+          "name": "{names}, da sua marca",
+          "description": "O personagem da sua marca protagoniza o anúncio."
+        },
+        "owner": {
+          "name": "Você",
+          "description": "Você aparece no anúncio. Antes do vídeo, pediremos uma foto sua."
+        },
+        "fictional": {
+          "name": "Uma pessoa fictícia",
+          "description": "Criada pela IA, nunca apresentada como cliente real."
+        }
+      }
     }
   }
 }

@@ -28,7 +28,11 @@ import { authUsers } from "drizzle-orm/supabase";
 
 import type { Locale } from "../i18n/config";
 import type { AdBrief } from "../lib/ads/types";
-import type { CreativeBrief, QualityTier } from "../lib/creative/schemas";
+import type {
+  CreativeBrief,
+  Featuring,
+  QualityTier,
+} from "../lib/creative/schemas";
 import type {
   ConversationTurn,
   CreativeIdeas,
@@ -411,6 +415,8 @@ export const creativeSessions = pgTable(
     seasonId: text().$type<SeasonId>(),
     aspectRatio: text().$type<AspectRatio>().notNull().default("9:16"),
     tier: text().$type<QualityTier>(),
+    /** Quién sale en el anuncio; null: decide el director creativo. */
+    featuring: text().$type<Featuring>(),
     turns: jsonb()
       .$type<ConversationTurn[]>()
       .notNull()

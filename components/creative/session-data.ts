@@ -11,6 +11,7 @@ export type CreativeSessionData = Pick<
   | "id"
   | "status"
   | "tier"
+  | "featuring"
   | "aspectRatio"
   | "turns"
   | "brief"
@@ -34,6 +35,7 @@ export function toSessionData(session: CreativeSession): CreativeSessionData {
     id: session.id,
     status: session.status,
     tier: session.tier,
+    featuring: session.featuring,
     aspectRatio: session.aspectRatio,
     turns: session.turns,
     brief: session.brief,

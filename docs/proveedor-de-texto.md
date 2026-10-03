@@ -77,10 +77,31 @@ Los mensajes de error nunca incluyen la clave.
 
 - `OPENAI_API_KEY`: con ella, **cada pedido gasta saldo real de OpenAI**
   (centavos por anuncio). No la definas en desarrollo ni en tests (CLAUDE.md
-  §8). En Vercel ya está cargada. Este PR todavía no llama al proveedor desde
-  ninguna pantalla, así que no gasta nada.
+  §8). En Vercel ya está cargada y la usa el director creativo
+  ([director-creativo.md](./director-creativo.md)).
 - `OPENAI_TEXT_MODEL`: opcional, para cambiar de modelo. Tiene que tener precio
   en `textModelPrices`.
 - Tope de prueba del dueño: US$10. Conviene ponerlo también como límite de
   presupuesto del proyecto en el panel de OpenAI (docs/fase-b/precios.md,
   sección 5).
+
+## Transcripción de notas de voz
+
+`lib/providers/transcription/` sigue el mismo patrón: la interfaz
+`TranscriptionProvider`, la implementación de OpenAI y un simulador.
+
+- **Modelo:** `gpt-transcribe`, a US$0,0045 por minuto de audio (documentación
+  de OpenAI, octubre de 2026). Acepta mp3, mp4, mpeg, mpga, m4a, wav y webm,
+  hasta 25 MB.
+- **Pedido:** `POST /v1/audio/transcriptions` en multipart con `file`, `model`
+  y `prompt` (el nombre del negocio y la pregunta, para reconocer los nombres).
+- **Costo:** con los segundos que informa la API (`usage.seconds`) o, si no
+  vienen, con la duración que midió el navegador. Queda en `text_usage` como
+  tarea `voice_note`.
+- **Límites:** 30 segundos y 2 MB por nota (`lib/creative/limits.ts`).
+- **Simulador:** sin `OPENAI_API_KEY` devuelve siempre "Quiero que más gente
+  conozca mi negocio".
+- `OPENAI_TRANSCRIPTION_MODEL`: opcional, para cambiar de modelo. Tiene que
+  tener precio en `transcriptionPricesPerMinute`.
+- TODO: probar las pistas de idioma (`languages`) y las palabras clave
+  (`keywords`) cuando se confirme cómo se mandan los arreglos en multipart.

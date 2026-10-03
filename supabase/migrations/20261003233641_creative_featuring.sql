@@ -1,0 +1,1 @@
+ALTER TABLE "creative_sessions" ADD COLUMN "featuring" text;

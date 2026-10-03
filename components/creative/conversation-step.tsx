@@ -2,6 +2,7 @@
 
 import { cn } from "cn";
 import {
+  RefreshCwIcon,
   RotateCcwIcon,
   SendIcon,
   SkipForwardIcon,
@@ -14,9 +15,10 @@ import { useOptimistic, useState } from "react";
 import { appCardClassName, appPrimaryClassName } from "@/components/app/ui";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   answerCreativeTurnAction,
+  refreshTurnOptionsAction,
   resumeCreativeConversationAction,
 } from "@/lib/creative/actions";
 import { MAX_FREE_TEXT } from "@/lib/creative/limits";
@@ -27,11 +29,12 @@ import { CreativeError } from "./creative-error";
 import type { CreativeSessionData } from "./session-data";
 import { Thinking } from "./thinking";
 import { useCreativeAction } from "./use-creative-action";
+import { VoiceNoteButton } from "./voice-note-button";
 
 /**
- * Conversación guiada: una pregunta a la vez, con respuestas de un toque,
- * texto propio, "No sé, decide tú" o "Saltar". Las respuestas anteriores
- * quedan arriba, como en un chat.
+ * Conversación guiada: una pregunta a la vez, con respuestas de un toque
+ * ("Otras respuestas" pide más), texto propio o nota de voz, "No sé, decide
+ * tú" o "Saltar". Las respuestas anteriores quedan arriba, como en un chat.
  */
 export function ConversationStep({
   session,
@@ -42,6 +45,7 @@ export function ConversationStep({
 }) {
   const t = useTranslations("Director.conversation");
   const { pending, error, run } = useCreativeAction();
+  const options = useCreativeAction();
   const [draft, setDraft] = useState("");
   // La respuesta que se está enviando, para mostrarla mientras llega la
   // siguiente pregunta.
@@ -59,6 +63,11 @@ export function ConversationStep({
       },
       () => setDraft(""),
     );
+  }
+
+  function sendDraft() {
+    const text = draft.trim();
+    if (text) answer({ kind: "text", text }, text);
   }
 
   function answerLabel(value: TurnAnswer): string {
@@ -109,50 +118,76 @@ export function ConversationStep({
             </>
           ) : (
             <>
-              <div
-                role="group"
-                aria-label={t("options")}
-                className="grid gap-2 sm:grid-cols-2"
-              >
-                {question.options.map((option, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() =>
-                      answer(
-                        { kind: "option", optionIndex: index },
-                        option.label,
-                      )
-                    }
-                    className="flex flex-col items-start gap-0.5 rounded-2xl border bg-background px-4 py-3 text-left transition-[border-color,box-shadow] outline-none hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/10 focus-visible:ring-3 focus-visible:ring-ring/50"
+              {options.pending ? (
+                <Thinking label={t("refreshing")} />
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <div
+                    role="group"
+                    aria-label={t("options")}
+                    className="grid gap-2 sm:grid-cols-2"
                   >
-                    <span className="text-sm font-semibold">
-                      {option.label}
-                    </span>
-                    {option.hint && (
-                      <span className="text-xs text-muted-foreground">
-                        {option.hint}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
+                    {question.options.map((option, index) => (
+                      <button
+                        key={`${option.label}-${index}`}
+                        type="button"
+                        onClick={() =>
+                          answer(
+                            { kind: "option", optionIndex: index },
+                            option.label,
+                          )
+                        }
+                        className="flex flex-col items-start gap-0.5 rounded-2xl border bg-background px-4 py-3 text-left transition-[border-color,box-shadow] outline-none hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/10 focus-visible:ring-3 focus-visible:ring-ring/50"
+                      >
+                        <span className="text-sm font-semibold">
+                          {option.label}
+                        </span>
+                        {option.hint && (
+                          <span className="text-xs text-muted-foreground">
+                            {option.hint}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="w-fit"
+                    onClick={() =>
+                      options.run(() => refreshTurnOptionsAction(session.id))
+                    }
+                  >
+                    <RefreshCwIcon aria-hidden />
+                    {t("moreOptions")}
+                  </Button>
+                  <CreativeError error={options.error} />
+                </div>
+              )}
 
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
-                  const text = draft.trim();
-                  if (text) answer({ kind: "text", text }, text);
+                  sendDraft();
                 }}
-                className="flex gap-2"
+                className="flex items-end gap-2"
               >
-                <Input
+                <Textarea
                   aria-label={t("ownAnswer")}
                   placeholder={t("ownAnswerPlaceholder")}
                   maxLength={MAX_FREE_TEXT}
+                  rows={1}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
-                  className="h-11 rounded-xl"
+                  onKeyDown={(event) => {
+                    // Enter envía; Shift+Enter hace un salto de línea.
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      sendDraft();
+                    }
+                  }}
+                  className="min-h-11 rounded-xl py-2.5"
                 />
                 <Button
                   type="submit"
@@ -181,6 +216,11 @@ export function ConversationStep({
                   <SkipForwardIcon aria-hidden />
                   {t("skip")}
                 </Button>
+                <VoiceNoteButton
+                  sessionId={session.id}
+                  disabled={options.pending}
+                  onTranscript={(text) => setDraft(text)}
+                />
               </div>
             </>
           )}

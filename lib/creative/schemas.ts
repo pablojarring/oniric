@@ -9,6 +9,19 @@ import { z } from "zod";
 export const qualityTiers = ["rapido", "pro", "cine"] as const;
 export type QualityTier = (typeof qualityTiers)[number];
 
+/**
+ * Quién sale en el anuncio ("¿Quién sale?", versión simple del tramo 1). Sin
+ * elegir, decide el director creativo (sin personas reales). "Otra persona
+ * real", con su consentimiento, llega con los personajes en el tramo 3.
+ */
+export const featuringOptions = [
+  "nobody",
+  "brandCharacter",
+  "owner",
+  "fictional",
+] as const;
+export type Featuring = (typeof featuringOptions)[number];
+
 /** De qué trata cada pregunta de la conversación guiada. */
 export const turnTopics = [
   "objective",

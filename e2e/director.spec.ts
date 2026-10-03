@@ -2,8 +2,12 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { signInWithOrganization } from "./support/flows";
 
-// El director creativo usa el simulador de texto (sin OPENAI_API_KEY): pregunta
-// el objetivo, el producto y qué lo hace distinto, y después arma el brief.
+// El director creativo usa el simulador de texto y de transcripción (sin
+// OPENAI_API_KEY): pregunta el objetivo, el producto y qué lo hace distinto, y
+// después arma el brief. Las notas de voz usan el micrófono falso de Chromium
+// (playwright.config.ts).
+
+test.use({ permissions: ["microphone"] });
 
 async function pyme(page: Page) {
   await signInWithOrganization(page, { teamSize: "2-5", teamType: "owner" });
@@ -99,6 +103,64 @@ test.describe("director creativo", () => {
     await expect(page.getByTestId("director-recent")).toContainText(
       "Guion listo",
     );
+  });
+
+  test("otras respuestas, nota de voz, corregir el resumen, ¿quién sale? y el insight", async ({
+    page,
+  }) => {
+    await pyme(page);
+    await page.goto("/director");
+    await page.getByRole("button", { name: "Empezar" }).click();
+    await expect(page).toHaveURL(/\/director\/[0-9a-f-]{36}$/);
+
+    // "Otras respuestas" cambia las opciones de la misma pregunta.
+    await page.getByRole("button", { name: "Otras respuestas" }).click();
+    await page
+      .getByRole("button", { name: "Atraer clientes nuevos del barrio" })
+      .click();
+
+    // Nota de voz: el texto queda en la caja para revisarlo antes de enviar.
+    await expect(
+      page.getByRole("heading", {
+        name: "¿Qué producto o servicio quieres mostrar?",
+      }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Nota de voz" }).click();
+    await expect(page.getByText(/Grabando…/)).toBeVisible();
+    await page.getByRole("button", { name: "Listo" }).click();
+    await expect(page.getByLabel("Tu respuesta")).toHaveValue(
+      "Quiero que más gente conozca mi negocio",
+    );
+    await page.getByLabel("Tu respuesta").fill("Pan de yuca");
+    await page.getByLabel("Tu respuesta").press("Enter");
+    await page.getByRole("button", { name: "Saltar" }).click();
+
+    // Corregir a mano lo que entendió el director.
+    await expect(
+      page.getByRole("heading", { name: "¿Qué tan pro lo quieres?" }),
+    ).toBeVisible();
+    const brief = page.getByTestId("director-brief");
+    await expect(brief).toContainText("Atraer clientes nuevos del barrio");
+    await brief.getByRole("button", { name: "Corregir" }).click();
+    const editor = page.getByTestId("director-brief-editor");
+    await editor.getByLabel("Qué anunciamos").fill("Pan de yuca con queso");
+    await editor.getByLabel("Evitar").fill("Precios");
+    await editor.getByRole("button", { name: "Guardar" }).click();
+    await expect(brief).toContainText("Pan de yuca con queso");
+    await expect(brief).toContainText("Precios");
+
+    // ¿Quién sale? y las ideas.
+    await page.getByRole("radio", { name: /Nadie, solo el producto/ }).click();
+    await page.getByRole("button", { name: "Ver 3 ideas" }).click();
+    await expect(page.getByTestId("director-idea")).toHaveCount(3);
+
+    // El insight se confirma con un toque, o se pide otro.
+    const insight = page.getByTestId("director-insight");
+    const first = await insight.textContent();
+    await page.getByRole("button", { name: "No del todo" }).click();
+    await expect(insight).not.toHaveText(first ?? "");
+    await page.getByRole("button", { name: "Sí, es así" }).click();
+    await expect(page.getByText("Confirmado")).toBeVisible();
   });
 
   test("el texto bloqueado por la moderación se avisa sin perder la pregunta", async ({

@@ -26,8 +26,10 @@ import { requestCreativeIdeasAction } from "@/lib/creative/actions";
 import { qualityTiers, type QualityTier } from "@/lib/creative/schemas";
 import { tierSettings } from "@/lib/creative/tiers";
 
+import { BriefEditor } from "./brief-editor";
 import { BriefSummary } from "./brief-summary";
 import { CreativeError } from "./creative-error";
+import { type FeaturingChoice, FeaturingField } from "./featuring-field";
 import type { CreativeSessionData } from "./session-data";
 import { Thinking } from "./thinking";
 import { useCreativeAction } from "./use-creative-action";
@@ -38,12 +40,19 @@ export const tierIcons: Record<QualityTier, LucideIcon> = {
   cine: ClapperboardIcon,
 };
 
-/** Lo que entendió el director creativo y qué tan pro quiere el anuncio. */
+/**
+ * Lo que entendió el director creativo (que el dueño puede corregir), qué tan
+ * pro quiere el anuncio y quién sale.
+ */
 export function TierStep({ session }: { session: CreativeSessionData }) {
   const t = useTranslations("Director.tier");
   const tTiers = useTranslations("Director.tiers");
   const { pending, error, run } = useCreativeAction();
   const [tier, setTier] = useState<QualityTier>(session.tier ?? "pro");
+  const [featuring, setFeaturing] = useState<FeaturingChoice>(
+    session.featuring ?? "decide",
+  );
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
@@ -106,6 +115,12 @@ export function TierStep({ session }: { session: CreativeSessionData }) {
           </RadioGroup>
         </FieldSet>
 
+        <FeaturingField
+          brief={session.brief}
+          value={featuring}
+          onChange={setFeaturing}
+        />
+
         <p className="text-sm text-muted-foreground">{t("priceLater")}</p>
 
         {pending ? (
@@ -113,8 +128,14 @@ export function TierStep({ session }: { session: CreativeSessionData }) {
         ) : (
           <button
             type="button"
+            disabled={editing}
             onClick={() =>
-              run(() => requestCreativeIdeasAction(session.id, tier))
+              run(() =>
+                requestCreativeIdeasAction(session.id, {
+                  tier,
+                  featuring: featuring === "decide" ? null : featuring,
+                }),
+              )
             }
             className={cn(appPrimaryClassName, "w-fit")}
           >
@@ -125,7 +146,19 @@ export function TierStep({ session }: { session: CreativeSessionData }) {
         <CreativeError error={error} />
       </div>
 
-      {session.brief && <BriefSummary brief={session.brief} />}
+      {session.brief &&
+        (editing ? (
+          <BriefEditor
+            sessionId={session.id}
+            brief={session.brief}
+            onDone={() => setEditing(false)}
+          />
+        ) : (
+          <BriefSummary
+            brief={session.brief}
+            onEdit={pending ? undefined : () => setEditing(true)}
+          />
+        ))}
     </div>
   );
 }
