@@ -12,11 +12,22 @@ import { moderateText } from "@/lib/moderation";
 import type { Country, Industry } from "@/lib/onboarding/options";
 import type { AspectRatio } from "@/lib/providers/generation-provider";
 import type { TextProvider, TextRequest } from "@/lib/providers/text";
+import type { TranscriptionProvider } from "@/lib/providers/transcription";
 import type { SeasonId } from "@/lib/seasons";
 
+import { brandCharacters } from "./brand";
 import type { BusinessContext } from "./context";
-import { MAX_FREE_TEXT, MAX_QUESTIONS } from "./limits";
-import type { CreativeBrief, QualityTier } from "./schemas";
+import {
+  MAX_BRIEF_FIELD,
+  MAX_BRIEF_ITEM,
+  MAX_BRIEF_ITEMS,
+  MAX_FREE_TEXT,
+  MAX_QUESTIONS,
+  MAX_VOICE_BYTES,
+  MAX_VOICE_SECONDS,
+  voiceMimeTypes,
+} from "./limits";
+import type { CreativeBrief, Featuring, QualityTier } from "./schemas";
 import { conversationRequest } from "./tasks/conversation";
 import { ideasRequest } from "./tasks/ideas";
 import { scriptRequest } from "./tasks/script";
@@ -53,6 +64,7 @@ export type CreativeErrorCode =
   | "notFound"
   | "invalidState"
   | "invalidAnswer"
+  | "invalidAudio"
   | "moderation"
   | "rateLimited"
   | "conflict"
@@ -149,16 +161,171 @@ export async function resumeCreativeConversation(
   return askNext(db, deps, context, session);
 }
 
-/** El dueño elige qué tan pro quiere el anuncio; se puede cambiar antes del guion. */
-export async function setCreativeTier(
+/** "Otras respuestas": la misma pregunta pendiente con opciones nuevas. */
+export async function refreshTurnOptions(
+  db: Database,
+  deps: CreativeDeps,
+  context: CreativeContext,
+  sessionId: string,
+): Promise<CreativeSession> {
+  const session = await getCreativeSession(db, context, sessionId);
+  assertStatus(session, ["conversation"]);
+  const current = session.turns.at(-1);
+  if (!current || current.answer) {
+    throw new CreativeFlowError("invalidState", "No hay pregunta pendiente.");
+  }
+  const output = await runTask(
+    db,
+    deps,
+    context,
+    session.id,
+    conversationRequest(businessContext(context, session), session.turns, {
+      alternatives: true,
+    }),
+  );
+  if (output.options.length < 2) {
+    throw new CreativeFlowError(
+      "providerFailed",
+      "El director creativo no propuso otras respuestas.",
+    );
+  }
+  const turns = [
+    ...session.turns.slice(0, -1),
+    { ...current, options: output.options },
+  ];
+  const [updated] = await db
+    .update(creativeSessions)
+    .set({ turns })
+    .where(
+      and(
+        eq(creativeSessions.id, session.id),
+        sql`jsonb_array_length(${creativeSessions.turns}) = ${session.turns.length}`,
+        sql`${creativeSessions.turns} -> -1 -> 'answer' = 'null'::jsonb`,
+      ),
+    )
+    .returning();
+  if (!updated) {
+    throw new CreativeFlowError(
+      "conflict",
+      "La sesión cambió mientras se pedían otras respuestas.",
+    );
+  }
+  return updated;
+}
+
+/**
+ * El dueño elige qué tan pro quiere el anuncio y quién sale (null: decide el
+ * director creativo). Se puede cambiar antes del guion.
+ */
+export async function setCreativeSettings(
   db: Database,
   context: CreativeContext,
   sessionId: string,
-  tier: QualityTier,
+  settings: { tier: QualityTier; featuring: Featuring | null },
 ): Promise<CreativeSession> {
   const session = await getCreativeSession(db, context, sessionId);
   assertStatus(session, ["briefed", "ideas"]);
-  return updateSession(db, session, { tier });
+  if (
+    settings.featuring === "brandCharacter" &&
+    brandCharacters(requireBrief(session)).length === 0
+  ) {
+    throw new CreativeFlowError(
+      "invalidAnswer",
+      "La marca no tiene un personaje para el anuncio.",
+    );
+  }
+  return updateSession(db, session, {
+    tier: settings.tier,
+    featuring: settings.featuring,
+  });
+}
+
+/** Lo que el dueño puede corregir a mano en "Esto entendí". */
+export type BriefEdit = {
+  objective: string;
+  product: string;
+  audience: string;
+  differentiator: string;
+  offer: string;
+  tone: string;
+  mustInclude: string[];
+  avoid: string[];
+  /** Índices de los elementos de la marca que se quedan. */
+  keepBrandElements: number[];
+};
+
+/** Corrige a mano el brief antes de pedir las ideas. */
+export async function updateCreativeBrief(
+  db: Database,
+  context: CreativeContext,
+  sessionId: string,
+  edit: BriefEdit,
+): Promise<CreativeSession> {
+  const session = await getCreativeSession(db, context, sessionId);
+  assertStatus(session, ["briefed"]);
+  const current = requireBrief(session);
+
+  const required = (value: string) => {
+    const clean = value.trim();
+    if (!clean || clean.length > MAX_BRIEF_FIELD) {
+      throw new CreativeFlowError("invalidAnswer", "Campo vacío o muy largo.");
+    }
+    return clean;
+  };
+  const optional = (value: string) => {
+    const clean = value.trim();
+    if (clean.length > MAX_BRIEF_FIELD) {
+      throw new CreativeFlowError("invalidAnswer", "Campo muy largo.");
+    }
+    return clean || null;
+  };
+  const list = (items: string[]) => {
+    const clean = items.map((item) => item.trim()).filter(Boolean);
+    if (
+      clean.length > MAX_BRIEF_ITEMS ||
+      clean.some((item) => item.length > MAX_BRIEF_ITEM)
+    ) {
+      throw new CreativeFlowError("invalidAnswer", "Lista muy larga.");
+    }
+    return clean;
+  };
+
+  const brief: CreativeBrief = {
+    objective: required(edit.objective),
+    product: required(edit.product),
+    audience: optional(edit.audience),
+    differentiator: optional(edit.differentiator),
+    offer: optional(edit.offer),
+    tone: optional(edit.tone),
+    brandElements: current.brandElements.filter((_, index) =>
+      edit.keepBrandElements.includes(index),
+    ),
+    mustInclude: list(edit.mustInclude),
+    avoid: list(edit.avoid),
+  };
+  const texts = [
+    brief.objective,
+    brief.product,
+    brief.audience,
+    brief.differentiator,
+    brief.offer,
+    brief.tone,
+    ...brief.mustInclude,
+    ...brief.avoid,
+  ].filter((text): text is string => Boolean(text));
+  if (!moderateText(texts).allowed) {
+    throw new CreativeFlowError(
+      "moderation",
+      "El texto no pasó la moderación.",
+    );
+  }
+  // Sin el personaje en la marca, "¿Quién sale?" vuelve a decidirlo el director.
+  const featuring =
+    session.featuring === "brandCharacter" &&
+    brandCharacters(brief).length === 0
+      ? null
+      : session.featuring;
+  return updateSession(db, session, { brief, featuring });
 }
 
 /** Insight y 3 ideas. Volver a llamarla pide 3 ideas distintas. */
@@ -170,38 +337,33 @@ export async function generateCreativeIdeas(
 ): Promise<CreativeSession> {
   const session = await getCreativeSession(db, context, sessionId);
   assertStatus(session, ["briefed", "ideas"]);
-  const brief = requireBrief(session);
-  if (!session.tier) {
-    throw new CreativeFlowError("invalidState", "Falta elegir el nivel.");
-  }
+  return writeIdeas(db, deps, context, session, {
+    rejectedInsights: session.ideas?.rejectedInsights ?? [],
+  });
+}
 
-  const previousTitles = session.ideas
-    ? [
-        ...session.ideas.previousTitles,
-        ...session.ideas.ideas.map((idea) => idea.title),
-      ]
-    : [];
-  const output = await runTask(
-    db,
-    deps,
-    context,
-    session.id,
-    ideasRequest({
-      business: businessContext(context, session),
-      brief,
-      tier: session.tier,
-      previousTitles,
-    }),
-  );
-  const ideas: CreativeIdeas = {
-    ...output,
-    round: (session.ideas?.round ?? 0) + 1,
-    previousTitles,
-  };
-  return updateSession(db, session, {
-    status: "ideas",
-    ideas,
-    chosenIdea: null,
+/**
+ * El dueño confirma el insight con un toque, o dice que no es del todo así y
+ * el director propone otro, con 3 ideas nuevas.
+ */
+export async function answerCreativeInsight(
+  db: Database,
+  deps: CreativeDeps,
+  context: CreativeContext,
+  sessionId: string,
+  agrees: boolean,
+): Promise<CreativeSession> {
+  const session = await getCreativeSession(db, context, sessionId);
+  assertStatus(session, ["ideas"]);
+  const ideas = session.ideas;
+  if (!ideas) throw new CreativeFlowError("invalidState", "No hay ideas.");
+  if (agrees) {
+    return updateSession(db, session, {
+      ideas: { ...ideas, insightConfirmed: true },
+    });
+  }
+  return writeIdeas(db, deps, context, session, {
+    rejectedInsights: [...(ideas.rejectedInsights ?? []), ideas.insight],
   });
 }
 
@@ -247,6 +409,73 @@ export async function reviseCreativeScript(
   }
   const script = await writeScript(db, deps, context, session, idea, change);
   return updateSession(db, session, { script });
+}
+
+/**
+ * Transcribe una nota de voz del dueño para responder una pregunta o pedir un
+ * cambio al guion. Devuelve el texto para que lo revise antes de enviarlo; el
+ * costo queda en `text_usage` como tarea `voice_note`.
+ */
+export async function transcribeVoiceNote(
+  db: Database,
+  deps: { transcription: TranscriptionProvider },
+  context: CreativeContext,
+  sessionId: string,
+  input: { audio: Blob; durationSeconds: number },
+): Promise<string> {
+  const session = await getCreativeSession(db, context, sessionId);
+  assertStatus(session, ["conversation", "scripted"]);
+  const mimeType = input.audio.type.split(";")[0]?.trim() ?? "";
+  const extension = voiceMimeTypes[mimeType as keyof typeof voiceMimeTypes];
+  if (
+    !extension ||
+    input.audio.size === 0 ||
+    input.audio.size > MAX_VOICE_BYTES
+  ) {
+    throw new CreativeFlowError("invalidAudio", "Nota de voz inválida.");
+  }
+  await assertWithinRateLimit(db, context);
+
+  const question =
+    session.status === "conversation" ? session.turns.at(-1)?.question : null;
+  let result;
+  try {
+    result = await deps.transcription.transcribe({
+      audio: input.audio,
+      filename: `nota.${extension}`,
+      durationSeconds: Math.min(
+        Math.max(Math.ceil(input.durationSeconds), 1),
+        MAX_VOICE_SECONDS,
+      ),
+      context: question
+        ? `${context.organization.name} answers: "${question}"`
+        : `${context.organization.name} asks for a change to an ad script.`,
+    });
+  } catch (error) {
+    throw new CreativeFlowError(
+      "providerFailed",
+      "No se pudo transcribir la nota de voz.",
+      { cause: error },
+    );
+  }
+  await db.insert(textUsage).values({
+    organizationId: context.organization.id,
+    sessionId: session.id,
+    provider: deps.transcription.id,
+    model: result.model,
+    task: "voice_note",
+    inputTokens: 0,
+    cachedInputTokens: 0,
+    outputTokens: 0,
+    costMicroUsd: result.costMicroUsd,
+  });
+  const text = result.text.trim();
+  if (!text) {
+    throw new CreativeFlowError("invalidAudio", "La nota de voz está vacía.");
+  }
+  return text.length > MAX_FREE_TEXT
+    ? text.slice(0, MAX_FREE_TEXT).replace(/\s+\S*$/, "")
+    : text;
 }
 
 /** Sesión de la organización, o error `notFound` si es de otra o no existe. */
@@ -362,6 +591,51 @@ async function askNext(
   return updateSession(db, session, { turns: [...session.turns, turn] });
 }
 
+async function writeIdeas(
+  db: Database,
+  deps: CreativeDeps,
+  context: CreativeContext,
+  session: CreativeSession,
+  options: { rejectedInsights: string[] },
+): Promise<CreativeSession> {
+  const brief = requireBrief(session);
+  if (!session.tier) {
+    throw new CreativeFlowError("invalidState", "Falta elegir el nivel.");
+  }
+  const previousTitles = session.ideas
+    ? [
+        ...session.ideas.previousTitles,
+        ...session.ideas.ideas.map((idea) => idea.title),
+      ]
+    : [];
+  const output = await runTask(
+    db,
+    deps,
+    context,
+    session.id,
+    ideasRequest({
+      business: businessContext(context, session),
+      brief,
+      tier: session.tier,
+      featuring: session.featuring,
+      previousTitles,
+      rejectedInsights: options.rejectedInsights,
+    }),
+  );
+  const ideas: CreativeIdeas = {
+    ...output,
+    round: (session.ideas?.round ?? 0) + 1,
+    previousTitles,
+    insightConfirmed: false,
+    rejectedInsights: options.rejectedInsights,
+  };
+  return updateSession(db, session, {
+    status: "ideas",
+    ideas,
+    chosenIdea: null,
+  });
+}
+
 async function writeScript(
   db: Database,
   deps: CreativeDeps,
@@ -383,6 +657,7 @@ async function writeScript(
       brief: requireBrief(session),
       idea,
       tier,
+      featuring: session.featuring,
       aspectRatio: session.aspectRatio,
       revision:
         change && session.script
@@ -434,24 +709,7 @@ async function runTask<T>(
   sessionId: string,
   request: TextRequest<T>,
 ): Promise<T> {
-  const [recent] = await db
-    .select({ requests: count() })
-    .from(textUsage)
-    .where(
-      and(
-        eq(textUsage.organizationId, context.organization.id),
-        gt(
-          textUsage.createdAt,
-          sql`now() - make_interval(secs => ${TEXT_RATE_LIMIT.windowSeconds})`,
-        ),
-      ),
-    );
-  if ((recent?.requests ?? 0) >= TEXT_RATE_LIMIT.maxRequests) {
-    throw new CreativeFlowError(
-      "rateLimited",
-      "Límite de pedidos de texto alcanzado.",
-    );
-  }
+  await assertWithinRateLimit(db, context);
 
   let result;
   try {
@@ -478,13 +736,45 @@ async function runTask<T>(
   return result.output;
 }
 
+/** Límite de pedidos de texto (y notas de voz) por organización y hora. */
+async function assertWithinRateLimit(
+  db: Database,
+  context: CreativeContext,
+): Promise<void> {
+  const [recent] = await db
+    .select({ requests: count() })
+    .from(textUsage)
+    .where(
+      and(
+        eq(textUsage.organizationId, context.organization.id),
+        gt(
+          textUsage.createdAt,
+          sql`now() - make_interval(secs => ${TEXT_RATE_LIMIT.windowSeconds})`,
+        ),
+      ),
+    );
+  if ((recent?.requests ?? 0) >= TEXT_RATE_LIMIT.maxRequests) {
+    throw new CreativeFlowError(
+      "rateLimited",
+      "Límite de pedidos de texto alcanzado.",
+    );
+  }
+}
+
 async function updateSession(
   db: Database,
   session: CreativeSession,
   values: Partial<
     Pick<
       CreativeSession,
-      "status" | "tier" | "turns" | "brief" | "ideas" | "chosenIdea" | "script"
+      | "status"
+      | "tier"
+      | "featuring"
+      | "turns"
+      | "brief"
+      | "ideas"
+      | "chosenIdea"
+      | "script"
     >
   >,
 ): Promise<CreativeSession> {

@@ -29,6 +29,10 @@ export type CreativeIdeas = CreativeIdeasOutput & {
   round: number;
   /** Títulos de tandas anteriores, para no repetirlos. */
   previousTitles: string[];
+  /** El dueño confirmó el insight con un toque. */
+  insightConfirmed?: boolean;
+  /** Insights que el dueño dijo que no son del todo ciertos. */
+  rejectedInsights?: string[];
 };
 
 export type CreativeScript = CreativeScriptOutput & {

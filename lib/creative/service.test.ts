@@ -1,14 +1,17 @@
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import { textUsage } from "@/db/schema";
+import { creativeSessions, textUsage } from "@/db/schema";
 import { MockTextProvider } from "@/lib/providers/text/mock";
 import type { TextRequest, TextResult } from "@/lib/providers/text";
+import { MockTranscriptionProvider } from "@/lib/providers/transcription/mock";
 import { createTestDatabase, type TestDatabase } from "@/test/db";
 import { createOrganization } from "@/test/fixtures";
 
 import {
+  answerCreativeInsight,
   answerCreativeTurn,
+  type BriefEdit,
   chooseCreativeIdea,
   type CreativeContext,
   CreativeFlowError,
@@ -16,12 +19,15 @@ import {
   getCreativeSession,
   listCreativeSessions,
   normalizeShots,
+  refreshTurnOptions,
   resumeCreativeConversation,
   reviseCreativeScript,
   sessionTextCostMicroUsd,
-  setCreativeTier,
+  setCreativeSettings,
   startCreativeSession,
   TEXT_RATE_LIMIT,
+  transcribeVoiceNote,
+  updateCreativeBrief,
 } from "./service";
 
 let testDb: TestDatabase;
@@ -191,7 +197,10 @@ describe("ideas y guion", () => {
 
   it("propone un insight y 3 ideas, y otras 3 sin repetir", async () => {
     let session = await briefedSession();
-    session = await setCreativeTier(testDb.db, context, session.id, "pro");
+    session = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "pro",
+      featuring: null,
+    });
     session = await generateCreativeIdeas(testDb.db, deps, context, session.id);
 
     expect(session.status).toBe("ideas");
@@ -211,7 +220,10 @@ describe("ideas y guion", () => {
 
   it("escribe el guion de la idea elegida con la duración del nivel", async () => {
     let session = await briefedSession();
-    session = await setCreativeTier(testDb.db, context, session.id, "cine");
+    session = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "cine",
+      featuring: null,
+    });
     session = await generateCreativeIdeas(testDb.db, deps, context, session.id);
     session = await chooseCreativeIdea(testDb.db, deps, context, session.id, 2);
 
@@ -229,7 +241,10 @@ describe("ideas y guion", () => {
 
   it("revisa el guion con el cambio pedido y lo registra", async () => {
     let session = await briefedSession();
-    session = await setCreativeTier(testDb.db, context, session.id, "rapido");
+    session = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "rapido",
+      featuring: null,
+    });
     session = await generateCreativeIdeas(testDb.db, deps, context, session.id);
     session = await chooseCreativeIdea(testDb.db, deps, context, session.id, 0);
     session = await reviseCreativeScript(
@@ -246,7 +261,10 @@ describe("ideas y guion", () => {
 
   it("no acepta ideas inexistentes", async () => {
     let session = await briefedSession();
-    session = await setCreativeTier(testDb.db, context, session.id, "pro");
+    session = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "pro",
+      featuring: null,
+    });
     session = await generateCreativeIdeas(testDb.db, deps, context, session.id);
     expect(
       await errorCode(
@@ -256,11 +274,301 @@ describe("ideas y guion", () => {
   });
 });
 
+/** Proveedor de texto que guarda las instrucciones de cada pedido. */
+function recordingProvider() {
+  const instructions: string[] = [];
+  return {
+    instructions,
+    text: {
+      id: "mock",
+      model: "mock",
+      generate: <T>(request: TextRequest<T>): Promise<TextResult<T>> => {
+        instructions.push(request.instructions);
+        return deps.text.generate(request);
+      },
+    },
+  };
+}
+
+async function ideasSession() {
+  let session = await briefedSession();
+  session = await setCreativeSettings(testDb.db, context, session.id, {
+    tier: "pro",
+    featuring: null,
+  });
+  return generateCreativeIdeas(testDb.db, deps, context, session.id);
+}
+
+describe("decisiones del dueño", () => {
+  it("¿Quién sale? llega a las ideas y al guion", async () => {
+    const recorder = recordingProvider();
+    let session = await briefedSession();
+    session = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "pro",
+      featuring: "nobody",
+    });
+    expect(session.featuring).toBe("nobody");
+    session = await generateCreativeIdeas(
+      testDb.db,
+      { text: recorder.text },
+      context,
+      session.id,
+    );
+    await chooseCreativeIdea(
+      testDb.db,
+      { text: recorder.text },
+      context,
+      session.id,
+      0,
+    );
+    expect(recorder.instructions).toHaveLength(2);
+    for (const text of recorder.instructions) {
+      expect(text).toContain("No people on screen");
+    }
+  });
+
+  it("el personaje de la marca solo se puede elegir si la marca lo tiene", async () => {
+    const session = await briefedSession();
+    expect(
+      await errorCode(
+        setCreativeSettings(testDb.db, context, session.id, {
+          tier: "pro",
+          featuring: "brandCharacter",
+        }),
+      ),
+    ).toBe("invalidAnswer");
+
+    await testDb.db
+      .update(creativeSessions)
+      .set({
+        brief: {
+          ...session.brief!,
+          brandElements: [
+            {
+              name: "Mishi",
+              kind: "pet",
+              description: "El gato de la panadería",
+              saveToBrand: true,
+            },
+          ],
+        },
+      })
+      .where(eq(creativeSessions.id, session.id));
+    const updated = await setCreativeSettings(testDb.db, context, session.id, {
+      tier: "pro",
+      featuring: "brandCharacter",
+    });
+    expect(updated.featuring).toBe("brandCharacter");
+  });
+
+  it("el dueño corrige a mano lo que entendió el director", async () => {
+    const session = await briefedSession();
+    await testDb.db
+      .update(creativeSessions)
+      .set({
+        featuring: "brandCharacter",
+        brief: {
+          ...session.brief!,
+          brandElements: [
+            {
+              name: "Mishi",
+              kind: "pet",
+              description: "El gato",
+              saveToBrand: true,
+            },
+          ],
+        },
+      })
+      .where(eq(creativeSessions.id, session.id));
+    const edit: BriefEdit = {
+      objective: "  Vender más pan de yuca  ",
+      product: "Pan de yuca recién horneado",
+      audience: "",
+      differentiator: "Receta de la abuela",
+      offer: "",
+      tone: "Alegre",
+      mustInclude: ["El horno de leña", " "],
+      avoid: ["Precios"],
+      keepBrandElements: [],
+    };
+    const updated = await updateCreativeBrief(
+      testDb.db,
+      context,
+      session.id,
+      edit,
+    );
+    expect(updated.brief).toMatchObject({
+      objective: "Vender más pan de yuca",
+      product: "Pan de yuca recién horneado",
+      audience: null,
+      differentiator: "Receta de la abuela",
+      offer: null,
+      tone: "Alegre",
+      brandElements: [],
+      mustInclude: ["El horno de leña"],
+      avoid: ["Precios"],
+    });
+    // Sin el personaje, "¿Quién sale?" vuelve a decidirlo el director.
+    expect(updated.featuring).toBeNull();
+
+    expect(
+      await errorCode(
+        updateCreativeBrief(testDb.db, context, session.id, {
+          ...edit,
+          product: "   ",
+        }),
+      ),
+    ).toBe("invalidAnswer");
+    expect(
+      await errorCode(
+        updateCreativeBrief(testDb.db, context, session.id, {
+          ...edit,
+          offer: "Un video con cocaina",
+        }),
+      ),
+    ).toBe("moderation");
+  });
+
+  it("el brief solo se corrige antes de pedir las ideas", async () => {
+    const session = await ideasSession();
+    expect(
+      await errorCode(
+        updateCreativeBrief(testDb.db, context, session.id, {
+          objective: "Vender",
+          product: "Pan",
+          audience: "",
+          differentiator: "",
+          offer: "",
+          tone: "",
+          mustInclude: [],
+          avoid: [],
+          keepBrandElements: [],
+        }),
+      ),
+    ).toBe("invalidState");
+  });
+
+  it("otras respuestas cambian las opciones sin cambiar la pregunta", async () => {
+    const session = await startCreativeSession(testDb.db, deps, context, {
+      locale: "es",
+    });
+    const before = session.turns[0];
+    const updated = await refreshTurnOptions(
+      testDb.db,
+      deps,
+      context,
+      session.id,
+    );
+    expect(updated.turns).toHaveLength(1);
+    const after = updated.turns[0];
+    expect(after?.question).toBe(before?.question);
+    expect(after?.answer).toBeNull();
+    expect(after?.options.map((option) => option.label)).not.toEqual(
+      before?.options.map((option) => option.label),
+    );
+
+    const answered = await answerCreativeTurn(
+      testDb.db,
+      deps,
+      context,
+      session.id,
+      { kind: "option", optionIndex: 0 },
+    );
+    expect(answered.turns[0]?.answer).toMatchObject({
+      text: after?.options[0]?.label,
+    });
+  });
+
+  it("el dueño confirma el insight o pide otro", async () => {
+    const session = await ideasSession();
+    const confirmed = await answerCreativeInsight(
+      testDb.db,
+      deps,
+      context,
+      session.id,
+      true,
+    );
+    expect(confirmed.ideas?.insightConfirmed).toBe(true);
+    expect(confirmed.ideas?.round).toBe(1);
+
+    const rejected = await answerCreativeInsight(
+      testDb.db,
+      deps,
+      context,
+      session.id,
+      false,
+    );
+    expect(rejected.ideas?.round).toBe(2);
+    expect(rejected.ideas?.insightConfirmed).toBe(false);
+    expect(rejected.ideas?.rejectedInsights).toEqual([session.ideas?.insight]);
+    expect(rejected.ideas?.insight).not.toBe(session.ideas?.insight);
+  });
+});
+
+describe("notas de voz", () => {
+  const transcription = { transcription: new MockTranscriptionProvider() };
+  const audio = (type = "audio/webm;codecs=opus", size = 2_000) =>
+    new Blob([new Uint8Array(size)], { type });
+
+  it("transcribe la nota y registra su costo", async () => {
+    const session = await startCreativeSession(testDb.db, deps, context, {
+      locale: "es",
+    });
+    const text = await transcribeVoiceNote(
+      testDb.db,
+      transcription,
+      context,
+      session.id,
+      { audio: audio(), durationSeconds: 12 },
+    );
+    expect(text).toBe("Quiero que más gente conozca mi negocio");
+
+    const [row] = await testDb.db
+      .select()
+      .from(textUsage)
+      .where(eq(textUsage.task, "voice_note"));
+    // 12 s a US$0,0045 por minuto.
+    expect(row?.costMicroUsd).toBe(900);
+    expect(row?.sessionId).toBe(session.id);
+  });
+
+  it("rechaza formatos no admitidos, audios vacíos o muy grandes", async () => {
+    const session = await startCreativeSession(testDb.db, deps, context, {
+      locale: "es",
+    });
+    const send = (blob: Blob) =>
+      transcribeVoiceNote(testDb.db, transcription, context, session.id, {
+        audio: blob,
+        durationSeconds: 5,
+      });
+    expect(await errorCode(send(audio("audio/ogg")))).toBe("invalidAudio");
+    expect(await errorCode(send(audio("audio/webm", 0)))).toBe("invalidAudio");
+    expect(await errorCode(send(audio("audio/mp4", 3 * 1024 * 1024)))).toBe(
+      "invalidAudio",
+    );
+  });
+
+  it("solo sirve para responder o pedir cambios al guion", async () => {
+    const session = await briefedSession();
+    expect(
+      await errorCode(
+        transcribeVoiceNote(testDb.db, transcription, context, session.id, {
+          audio: audio(),
+          durationSeconds: 5,
+        }),
+      ),
+    ).toBe("invalidState");
+  });
+});
+
 describe("sesiones recientes", () => {
   it("lista las sesiones de la organización con su título, la última primero", async () => {
     const first = await briefedSession();
     let second = await briefedSession();
-    second = await setCreativeTier(testDb.db, context, second.id, "pro");
+    second = await setCreativeSettings(testDb.db, context, second.id, {
+      tier: "pro",
+      featuring: null,
+    });
     second = await generateCreativeIdeas(testDb.db, deps, context, second.id);
     second = await chooseCreativeIdea(testDb.db, deps, context, second.id, 0);
     const other = await createOrganization(testDb);

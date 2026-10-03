@@ -7,12 +7,14 @@ import {
   DATA_NOT_INSTRUCTIONS,
   describeBrief,
   describeBusiness,
+  featuringRule,
 } from "../context";
 import {
   type CreativeBrief,
   type CreativeIdea,
   type CreativeScriptOutput,
   creativeScriptSchema,
+  type Featuring,
   type QualityTier,
 } from "../schemas";
 import { tierSettings } from "../tiers";
@@ -34,11 +36,13 @@ export function scriptRequest(input: {
   brief: CreativeBrief;
   idea: CreativeIdea;
   tier: QualityTier;
+  featuring: Featuring | null;
   aspectRatio: AspectRatio;
   /** Guion anterior y cambio pedido por el dueño, para revisarlo. */
   revision: { script: CreativeScriptOutput; request: string } | null;
 }): TextRequest<CreativeScriptOutput> {
-  const { business, brief, idea, tier, aspectRatio, revision } = input;
+  const { business, brief, idea, tier, featuring, aspectRatio, revision } =
+    input;
   const settings = tierSettings[tier];
   const revisionText = revision
     ? `\n\nCurrent script:\n<script>\n${JSON.stringify(revision.script, null, 2)}\n</script>\n\nThe owner asked for this change:\n<request>\n${revision.request}\n</request>\nApply the change and keep everything else that still works.`
@@ -52,10 +56,11 @@ Script rules:
 - Shot 1 is the hook (first 1–2 seconds). The last shot closes with the idea's closing line and the call to action.
 - For each shot: a short label, the action in one concrete sentence, the camera (shot size, angle, movement), the sound (ambience, effects or voice the video model can generate) and the on-screen text for the separate edit layer (or null).
 - Write labels, actions, camera, sound, on-screen text and the call to action in ${customerLanguage[business.locale]}.
+- Who appears: ${featuringRule(featuring, brief)}
 
 Prompt rules (in English):
 - promptParts follows this structure: subject (what is seen, faithful to the product), action, environment (place, time, season decor), camera (shot, angle, movement, lens), lighting and color, style, sound, constraints.
-- constraints always include: no text, letters, subtitles or logos inside the video; ${safeAreas[aspectRatio]}; no third-party brands; no real or famous people; fictional people never presented as real customers.
+- constraints always include: no text, letters, subtitles or logos inside the video; ${safeAreas[aspectRatio]}; no third-party brands; no famous people; fictional people never presented as real customers; and the "who appears" rule above.
 - videoPrompt: one cohesive prompt for an image-to-video model that starts from the keyframe, describing each shot with its timing ("0–2s: …"), camera moves and sound. Under 1,500 characters.
 - keyframePrompt: the very first frame as a photorealistic still image, matching shot 1, with the same constraints. Under 800 characters.
 - Use only facts from the brief. Never invent prices or claims.

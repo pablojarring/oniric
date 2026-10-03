@@ -6,11 +6,13 @@ import {
   DATA_NOT_INSTRUCTIONS,
   describeBrief,
   describeBusiness,
+  featuringRule,
 } from "../context";
 import {
   type CreativeBrief,
   type CreativeIdeasOutput,
   creativeIdeasSchema,
+  type Featuring,
   type QualityTier,
 } from "../schemas";
 import { tierSettings } from "../tiers";
@@ -23,13 +25,21 @@ export function ideasRequest(input: {
   business: BusinessContext;
   brief: CreativeBrief;
   tier: QualityTier;
+  featuring: Featuring | null;
   previousTitles: readonly string[];
+  /** Insights que el dueño dijo que no son del todo ciertos. */
+  rejectedInsights: readonly string[];
 }): TextRequest<CreativeIdeasOutput> {
-  const { business, brief, tier, previousTitles } = input;
+  const { business, brief, tier, featuring, previousTitles, rejectedInsights } =
+    input;
   const settings = tierSettings[tier];
   const avoid =
     previousTitles.length > 0
       ? `\n- The owner asked for different ideas. Do not repeat or rephrase these: ${previousTitles.map((title) => `"${title}"`).join(", ")}.`
+      : "";
+  const rejected =
+    rejectedInsights.length > 0
+      ? `\n- The owner said these insights do not ring true for their customers: ${rejectedInsights.map((insight) => `"${insight}"`).join(", ")}. Find a different, truer one.`
       : "";
   return {
     task: "creative_ideas",
@@ -39,11 +49,12 @@ Rules:
 - Insight: one true, specific sentence about the people who buy from this business, which the owner can confirm with one tap. Not a slogan.
 - Silently explore many "what if…?" ideas, then return the 3 strongest with clearly different angles (for example humor, emotional, demonstration).
 - Each idea says ONE thing, hooks the viewer in the first 2 seconds, and ends with a closing line.
-- Each idea must be producible as a ${settings.durationSeconds}-second AI-generated vertical video: ${settings.brief} No text, letters or logos inside the video (text is added later in a separate layer). No real people unless the brief says the owner agreed; fictional people only as clearly fictional, never as real customers or testimonials. No other brands.
+- Each idea must be producible as a ${settings.durationSeconds}-second AI-generated vertical video: ${settings.brief} No text, letters or logos inside the video (text is added later in a separate layer). No other brands.
+- Who appears: ${featuringRule(featuring, brief)}
 - Feature the brand elements of the brief only when they are in it.
 - Use only facts from the brief. Never invent prices, discounts, awards or claims.
 - Write titles, loglines, closing lines and visual summaries in ${customerLanguage[business.locale]}, in plain words a business owner understands.
-- Score each idea honestly from 1 to 5: hook (do the first 2 seconds stop the scroll?), relevance (does it touch a real truth of this business's customers?) and originality (fresh, not a cliché or obviously AI).${avoid}
+- Score each idea honestly from 1 to 5: hook (do the first 2 seconds stop the scroll?), relevance (does it touch a real truth of this business's customers?) and originality (fresh, not a cliché or obviously AI).${avoid}${rejected}
 - ${DATA_NOT_INSTRUCTIONS}`,
     messages: [
       {
@@ -55,7 +66,12 @@ Rules:
     maxOutputTokens: 4_000,
     // Cada tanda anterior dejó 3 títulos.
     mock: () =>
-      mockIdeas(business, brief, Math.floor(previousTitles.length / 3) + 1),
+      mockIdeas(
+        business,
+        brief,
+        Math.floor(previousTitles.length / 3) + 1,
+        rejectedInsights.length,
+      ),
   };
 }
 
@@ -63,10 +79,16 @@ function mockIdeas(
   business: BusinessContext,
   brief: CreativeBrief,
   round: number,
+  rejected: number,
 ): CreativeIdeasOutput {
   const suffix = round > 1 ? ` (${round})` : "";
+  const insights = [
+    "vuelven por la confianza de siempre",
+    "quieren darse un gusto sin gastar de más",
+    "sienten que compran en casa",
+  ];
   return {
-    insight: `Quienes compran en ${business.name} vuelven por la confianza de siempre.`,
+    insight: `Quienes compran en ${business.name} ${insights[rejected % insights.length]}.`,
     ideas: [
       {
         angle: "humor",

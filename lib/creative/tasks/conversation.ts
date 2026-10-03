@@ -22,8 +22,14 @@ import type { ConversationTurn } from "../types";
 export function conversationRequest(
   business: BusinessContext,
   turns: readonly ConversationTurn[],
+  /** El dueño pidió otras respuestas para la pregunta pendiente. */
+  options: { alternatives?: boolean } = {},
 ): TextRequest<ConversationTurnOutput> {
   const answered = turns.filter((turn) => turn.answer).length;
+  const pending = turns.at(-1);
+  const alternatives = Boolean(
+    options.alternatives && pending && !pending.answer,
+  );
   return {
     task: "conversation_turn",
     instructions: `You are the creative director of Oniric, an app that makes video ads for small businesses in Latin America. You are interviewing the owner, who has no marketing background, to brief one ad. Talk like a warm, sharp creative partner.
@@ -43,12 +49,17 @@ Rules:
     messages: [
       {
         role: "user",
-        content: `${describeBusiness(business)}\n\n${describeConversation(turns)}\n\nQuestions answered so far: ${answered}. Give the next step.`,
+        content: alternatives
+          ? `${describeBusiness(business)}\n\n${describeConversation(turns)}\n\nThe owner asked for other one-tap answers to the waiting question. Return status "ask" with the same topic and the same question, and 3 to 5 new options that are clearly different from the ones shown.`
+          : `${describeBusiness(business)}\n\n${describeConversation(turns)}\n\nQuestions answered so far: ${answered}. Give the next step.`,
       },
     ],
     schema: conversationTurnSchema,
     maxOutputTokens: 2_000,
-    mock: () => mockTurn(business, turns),
+    mock: () =>
+      alternatives && pending
+        ? mockAlternatives(pending)
+        : mockTurn(business, turns),
   };
 }
 
@@ -107,6 +118,35 @@ function mockTurn(
     question: "",
     options: [],
     brief: briefFromAnswers(turns),
+  };
+}
+
+/** Simulador de "Otras respuestas": la misma pregunta con opciones nuevas. */
+function mockAlternatives(turn: ConversationTurn): ConversationTurnOutput {
+  const alternatives: Partial<Record<ConversationTurn["topic"], string[]>> = {
+    objective: [
+      "Atraer clientes nuevos del barrio",
+      "Que me escriban más por WhatsApp",
+      "Mostrar cómo trabajamos",
+    ],
+    product: [
+      "Lo que más piden los fines de semana",
+      "Algo para regalar",
+      "Lo que preparamos por temporada",
+    ],
+  };
+  return {
+    status: "ask",
+    topic: turn.topic,
+    question: turn.question,
+    options: (
+      alternatives[turn.topic] ?? [
+        "Algo que me piden mucho",
+        "Lo que más me enorgullece",
+        "Lo nuevo de esta semana",
+      ]
+    ).map((label) => ({ label, hint: null })),
+    brief: null,
   };
 }
 
