@@ -1,8 +1,9 @@
 import { cn } from "cn";
-import { ClipboardListIcon } from "lucide-react";
+import { ClipboardListIcon, PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { appCardClassName } from "@/components/app/ui";
+import { Button } from "@/components/ui/button";
 import type { CreativeBrief } from "@/lib/creative/schemas";
 
 const textFields = [
@@ -14,8 +15,17 @@ const textFields = [
   "tone",
 ] as const;
 
-/** Lo que el director creativo entendió de la conversación. */
-export function BriefSummary({ brief }: { brief: CreativeBrief }) {
+/**
+ * Lo que el director creativo entendió de la conversación. Con `onEdit`, el
+ * dueño lo puede corregir a mano.
+ */
+export function BriefSummary({
+  brief,
+  onEdit,
+}: {
+  brief: CreativeBrief;
+  onEdit?: () => void;
+}) {
   const t = useTranslations("Director.brief");
   const lists = [
     {
@@ -36,9 +46,18 @@ export function BriefSummary({ brief }: { brief: CreativeBrief }) {
         <span className="grid size-9 place-items-center rounded-xl bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-200">
           <ClipboardListIcon aria-hidden className="size-4.5" />
         </span>
-        <h2 id="brief-title" className="font-heading text-lg font-semibold">
+        <h2
+          id="brief-title"
+          className="flex-1 font-heading text-lg font-semibold"
+        >
           {t("title")}
         </h2>
+        {onEdit && (
+          <Button type="button" variant="ghost" size="sm" onClick={onEdit}>
+            <PencilIcon aria-hidden />
+            {t("edit")}
+          </Button>
+        )}
       </div>
       <dl className="grid gap-3 text-sm">
         {textFields.map((field) => {

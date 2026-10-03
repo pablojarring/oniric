@@ -30,6 +30,7 @@ import { IdeaCards, InsightCard } from "./ideas-step";
 import type { CreativeSessionData } from "./session-data";
 import { Thinking } from "./thinking";
 import { useCreativeAction } from "./use-creative-action";
+import { VoiceNoteButton } from "./voice-note-button";
 
 const promptPartKeys: readonly (keyof PromptParts)[] = [
   "subject",
@@ -44,7 +45,8 @@ const promptPartKeys: readonly (keyof PromptParts)[] = [
 
 /**
  * El guion de la idea elegida, toma por toma, con lo que se le pide a la IA
- * ("Para curiosos"). Se puede pedir un cambio o elegir otra idea.
+ * ("Para curiosos"). Se puede pedir un cambio (escrito o con una nota de voz)
+ * o elegir otra idea.
  */
 export function ScriptStep({ session }: { session: CreativeSessionData }) {
   const t = useTranslations("Director.script");
@@ -182,14 +184,21 @@ export function ScriptStep({ session }: { session: CreativeSessionData }) {
           {revise.pending ? (
             <Thinking label={t("revise.thinking")} />
           ) : (
-            <Button
-              type="submit"
-              disabled={pending || !change.trim()}
-              className="h-10 w-fit rounded-full px-5"
-            >
-              <PencilIcon aria-hidden />
-              {t("revise.submit")}
-            </Button>
+            <div className="flex flex-wrap items-start gap-2">
+              <Button
+                type="submit"
+                disabled={pending || !change.trim()}
+                className="h-10 w-fit rounded-full px-5"
+              >
+                <PencilIcon aria-hidden />
+                {t("revise.submit")}
+              </Button>
+              <VoiceNoteButton
+                sessionId={session.id}
+                disabled={pending}
+                onTranscript={(text) => setChange(text)}
+              />
+            </div>
           )}
           <CreativeError error={revise.error} />
         </form>

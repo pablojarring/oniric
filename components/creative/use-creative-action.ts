@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import type { CreativeActionResult } from "@/lib/creative/actions";
 import type { CreativeErrorCode } from "@/lib/creative/service";
 
-export type CreativeUiError = CreativeErrorCode | "unexpected";
+export type CreativeUiError = CreativeErrorCode | "unexpected" | "micDenied";
 
 /**
  * Corre una acción del director creativo en una transición: la página se
