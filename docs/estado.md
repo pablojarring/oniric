@@ -175,8 +175,14 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      En Vercel usa GPT-6 Luna (gasta saldo real de OpenAI, menos de un
      centavo por sesión típica, con el límite de 120 pedidos por hora y
      organización); el tope de
-     gasto llega en el paso 4. Siguiente: paso 3, imagen de prueba como primer
-     cuadro, video con Kling y precio. Se trabaja en una sola sesión
+     gasto llega en el paso 4. **Antes de mergear el #24** hay que aplicar en
+     `oniric-prod` la migración `20261003214021_creative_sessions.sql` (del
+     PR #23, todavía no aplicada): sin ella `/director` falla. Decisiones del
+     dueño del 3 de octubre, para el PR siguiente: responder con notas de voz,
+     mensaje de falla al estilo de Claude ("reintenta en un rato") y corregir
+     el brief a mano ([director-creativo.md](./director-creativo.md)).
+     Después: paso 3, imagen de prueba como primer cuadro, video con Kling y
+     precio. Se trabaja en una sola sesión
      de Claude Code: las pruebas usan simuladores y las pruebas reales corren
      en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
      la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa

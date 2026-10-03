@@ -53,14 +53,19 @@ están en `messages/*.json`, en el espacio `Director`, en español y portugués.
   - los prompts completos del video y del primer cuadro no se mandan al
     navegador.
 
-Pendientes:
+Decisiones del dueño (3 de octubre de 2026), para el PR que sigue al #24:
 
-- TODO(producto): responder con notas de voz (transcripción).
-- TODO(producto): opciones de respaldo curadas cuando el modelo falla. Hoy se
-  reintenta.
-- TODO(producto): corregir el brief a mano antes de las ideas.
-- El costo de texto de cada sesión queda en `text_usage` y entra al precio en
-  el paso 3. Hasta entonces no se cobra.
+- **Notas de voz:** sí, se puede responder con una nota de voz que se
+  transcribe. El modelo de transcripción y su precio se verifican antes de
+  construirlo, y su costo entra en el de la sesión.
+- **Cuando la IA falla:** un mensaje amable, al estilo de Claude, que diga que
+  algo salió mal de nuestro lado y que reintente en un rato. Sin opciones de
+  respaldo curadas.
+- **Corregir el brief:** sí, el dueño puede editar "Esto entendí" a mano antes
+  de pedir las ideas.
+
+El costo de texto de cada sesión queda en `text_usage` y entra al precio en el
+paso 3. Hasta entonces no se cobra.
 
 ## Tareas del modelo
 
