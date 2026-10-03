@@ -12,24 +12,24 @@ Diseño para aprobar antes de programar. Se apoya en la investigación de la
 
 ## 1. El recorrido
 
-| #   | Pantalla           | Qué hace                                                                                                                                                                         |
-| --- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Inicio             | "Crear anuncio", la próxima fecha comercial y el avance de Mi marca.                                                                                                             |
-| 2   | Objetivo           | Primera pregunta, con respuestas de un toque generadas para el negocio, "Otras ideas", "No sé, decide tú", texto libre y nota de voz.                                            |
-| 3   | Conversación       | La IA pregunta solo lo que falta. Si el dueño menciona algo propio (en el ejemplo, Mishi, el gato de la panadería), pregunta si quiere usarlo y si lo guarda en Mi marca.        |
-| 4   | ¿Qué tan pro?      | Rápido, Pro o Cine, con el rango de créditos, la recomendación del director creativo y cuántos anuncios alcanzan con el saldo.                                                   |
-| 5   | Inspiración        | Búsqueda que mezcla el producto con un estilo (sección 2): plantillas Oniric, videos de internet y fotos libres.                                                                 |
-| 6   | Plantilla Oniric   | Ejemplo hecho por Oniric, cómo está armada por tomas y cómo se adapta al producto del cliente.                                                                                   |
-| 7   | Tablero            | Lo guardado, "¿qué te gusta de este video?" (luz, cámara, ritmo, colores, sonido), las etiquetas que entendió la IA y "Guardar como Mi estilo".                                  |
-| 8   | ¿Quién sale?       | Nadie, el personaje de la marca, yo, otra persona real (con confirmación de consentimiento) o una persona ficticia.                                                              |
-| 9   | Personajes Oniric  | Set propio de personajes ficticios, editables (edad, ropa, forma de ser) y reutilizables (sección 3).                                                                            |
-| 10  | Mi marca           | Opcional y por partes: lo esencial, personalidad, voz, logo y colores, personajes y lo propio, lo que no va, Mi estilo. Cada parte ofrece "No tengo", "Ayúdame" o "Ya lo tengo". |
-| 11  | Ideas              | El insight para confirmar con un toque y 3 ideas distintas (con humor, emotiva, demostración) con su cierre y precio.                                                            |
-| 12  | Guion              | Guion por tomas con tiempo, acción, cámara, sonido y texto; cambios por texto o voz; "Para curiosos" muestra lo que se le pide a la IA.                                          |
-| 13  | Imagen de prueba   | Una imagen clave (3 créditos) para aprobar el look antes de pagar el video, ajustes de un toque y el precio final con el saldo que queda.                                        |
-| 14  | Edición            | Texto encima del video en zonas seguras, 3 estilos de texto pensados para la marca, voz en off, música y llamado a la acción. Rehacerla no vuelve a cobrar el video.             |
-| 15  | Admin: tope y lote | Tope de gasto en Higgsfield con su interruptor, aviso al 80 %, costo real del mes y el lote de pruebas con las notas del dueño y de Claude.                                      |
-| 16  | Admin: rúbrica     | Calificación con los 10 criterios, nota ponderada en vivo, nota de Claude al lado, criterios que difieren en más de 1 punto, ética y "¿lo publicarías?".                         |
+| #   | Pantalla           | Qué hace                                                                                                                                                                                   |
+| --- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Inicio             | "Crear anuncio", la próxima fecha comercial y el avance de Mi marca.                                                                                                                       |
+| 2   | Objetivo           | Primera pregunta, con respuestas de un toque generadas para el negocio, "Otras ideas", "No sé, decide tú", texto libre y nota de voz.                                                      |
+| 3   | Conversación       | La IA pregunta solo lo que falta. Si el dueño menciona algo propio (en el ejemplo, Mishi, el gato de la panadería), pregunta si quiere usarlo y si lo guarda en Mi marca.                  |
+| 4   | ¿Qué tan pro?      | Rápido, Pro o Cine, con el rango de créditos, la recomendación del director creativo y cuántos anuncios alcanzan con el saldo.                                                             |
+| 5   | Inspiración        | Búsqueda que mezcla el producto con un estilo (sección 2): plantillas Oniric, videos de internet y fotos libres.                                                                           |
+| 6   | Plantilla Oniric   | Ejemplo hecho por Oniric, cómo está armada por tomas y cómo se adapta al producto del cliente.                                                                                             |
+| 7   | Tablero            | Lo guardado, "¿qué te gusta de este video?" (luz, cámara, ritmo, colores, sonido), las etiquetas que entendió la IA y "Guardar como Mi estilo".                                            |
+| 8   | ¿Quién sale?       | Nadie, el personaje de la marca, yo, otra persona real (con confirmación de consentimiento) o una persona ficticia.                                                                        |
+| 9   | Personajes Oniric  | Set propio de personajes ficticios, editables (edad, ropa, forma de ser) y reutilizables (sección 3).                                                                                      |
+| 10  | Mi marca           | Opcional y por partes: lo esencial, personalidad, voz, logo y colores, personajes y lo propio, lo que no va, Mi estilo. Cada parte ofrece "No tengo", "Ayúdame" o "Ya lo tengo".           |
+| 11  | Ideas              | El insight para confirmar con un toque y 3 ideas distintas (con humor, emotiva, demostración) con su cierre y precio.                                                                      |
+| 12  | Guion              | Guion por tomas con tiempo, acción, cámara, sonido y texto; cambios por texto o voz; "Para curiosos" muestra lo que se le pide a la IA.                                                    |
+| 13  | Imagen de prueba   | El primer cuadro del video, hecho con Higgsfield (3 créditos) y con marca de agua, con la animación del texto encima, ajustes de un toque y el precio final (sección 7).                   |
+| 14  | Edición            | Motion graphics que responden al video (título detrás del sujeto, garabatos, etiquetas, cierre), voz en off, música y llamado a la acción. Cambiar el texto no cobra el video (sección 8). |
+| 15  | Admin: tope y lote | Tope de gasto en Higgsfield con su interruptor, aviso al 80 %, costo real del mes y el lote de pruebas con las notas del dueño y de Claude.                                                |
+| 16  | Admin: rúbrica     | Calificación con los 10 criterios, nota ponderada en vivo, nota de Claude al lado, criterios que difieren en más de 1 punto, ética y "¿lo publicarías?".                                   |
 
 Decisiones de diseño:
 
@@ -81,8 +81,8 @@ además se junte con una búsqueda de comerciales de cine".
    título y lo que le gusta al cliente ("la luz", "el ritmo"). Nada de internet
    se descarga ni se guarda en Supabase.
 5. **Al generar:**
-   - lo marcado como "Solo inspiración" se traduce en palabras para el campo
-     _estilo_ del prompt;
+   - lo marcado como "Solo inspiración" se traduce en una ficha visual para el
+     prompt y para la imagen de prueba (sección 6);
    - las plantillas Oniric, las fotos del cliente y las fotos de Pexels se suben
      a Higgsfield como referencias (subida directa a Higgsfield, ya hecha en el
      PR #16) en los modelos que las aceptan (Kling O3, Seedance 2.5, MiniMax H3,
@@ -162,21 +162,171 @@ que la va a llenar son los videos (unos 100 caben en 1 GB). Cuando se acerque,
 la opción gratis es mover los resultados a Cloudflare R2 (10 GB sin costo de
 transferencia), detrás de `lib/storage`, sin tocar el resto de la app.
 
-## 5. Lo que hay que aprobar
+## 5. Decisiones del dueño sobre los bocetos (3 de octubre de 2026)
 
-1. El orden del recorrido (sección 1).
-2. La búsqueda mixta con las cuatro fuentes y la regla "solo inspiración" vs.
-   "referencia directa".
-3. El set de personajes Oniric.
-4. La imagen de prueba de 3 créditos antes del video.
-5. Propuesta: el texto encima del video incluido en el precio.
-   TODO(producto): si la voz en off, la música y las búsquedas en internet se
-   cobran aparte (cuestan centavos) o van incluidas con un límite por anuncio.
-6. El tope de gasto: se reserva el costo estimado antes de enviar; al llegar
-   al tope, todas las cuentas vuelven al simulador.
-7. La primera lista de plantillas (se puede ajustar sobre los bocetos).
+- **Aprobado:** el orden del recorrido, la búsqueda mixta y los personajes
+  Oniric.
+- **Condición para la búsqueda:** las referencias de internet tienen que
+  llegar bien interpretadas al modelo, no solo como palabras sueltas: que
+  sirvan de verdad como referencia (sección 6).
+- **Imagen de prueba:** preocupa que no haga justicia al video y que el
+  cliente se vaya. Debe venir de Higgsfield y con marca de agua (sección 7).
+- **Edición:** se quiere el nivel de un programa de edición profesional, con
+  motion graphics que respondan al video, como la demo de Higgsfield con
+  Claude Opus 5.5 y After Effects (sección 8).
+- **Cobro:** el texto y la edición van incluidos, pero se cobran al cliente
+  dentro del precio en créditos. Nunca es un costo que Oniric absorbe
+  (sección 9).
+- Siguen por aprobar: el tope de gasto y la lista de plantillas.
 
-## 6. Fase C: construcción con el simulador
+## 6. Que las referencias de internet sirvan de verdad
+
+Una referencia ajena no se puede descargar ni pasar tal cual a Higgsfield
+(sección 2). Para que igual llegue completa al modelo, se hace en dos pasos:
+
+1. **Ficha visual.** Cuando el cliente guarda una referencia, el modelo de texto
+   mira su imagen de vista previa (la miniatura que la plataforma muestra), sin
+   guardarla, y escribe una ficha detallada:
+   - luz: tipo, dirección y hora ("cálida, de lado, como de amanecer");
+   - color: paleta con sus códigos;
+   - encuadre y composición: plano, ángulo, dónde está el producto;
+   - movimiento y ritmo: lo que se deduce de la imagen, el título y la
+     descripción;
+   - ambiente, texturas y estilo de texto, si lo hay.
+
+   El cliente la ve como etiquetas y marca qué quiere tomar ("la luz", "el
+   ritmo").
+
+2. **Referencia puente.** Con la ficha, la plantilla, la foto del producto y Mi
+   marca, Oniric genera **su propia imagen** con Higgsfield: la imagen de prueba
+   (sección 7). Esa imagen sí es nuestra y entra al modelo de video como
+   referencia visual. Así la inspiración externa llega al video como imagen,
+   no solo como texto, sin copiar nada ajeno.
+
+Cuidados:
+
+- TODO(legal): confirmar en los términos de YouTube, TikTok y Pinterest que se
+  puede analizar la miniatura con IA sin guardarla. Las políticas de YouTube
+  prohíben descargar, guardar o modificar su contenido audiovisual y limitan los
+  datos guardados a 30 días; no mencionan el análisis con IA. Si no se permite,
+  la ficha se arma con el título, la descripción y las respuestas del cliente,
+  o con una captura que el cliente suba él mismo.
+- TODO: confirmar que GPT-6 Luna acepta imágenes. Si no, la ficha la escribe
+  otro modelo barato que sí las acepte (por ejemplo, GPT-5 nano).
+
+## 7. Imagen de prueba: el primer cuadro del video
+
+- **Viene de Higgsfield** (Marketing Studio Image, ≈ US$0,014, 3 créditos) con
+  la foto del producto, la ficha visual y la plantilla.
+- **Es el primer cuadro del video:** el video se genera a partir de esa imagen
+  (Kling 3.0 de imagen a video ya recibe la imagen inicial en la integración
+  actual). Lo que el cliente aprueba es exactamente lo que se anima, así que la
+  imagen no puede quedar por debajo del video.
+- **Con marca de agua:** el cliente ve una versión reducida (≈ 540 px) con
+  "Oniric · vista previa" repetido encima, hecha en el servidor. El original
+  limpio queda en el bucket privado y solo se usa para generar el video. Una
+  página web no puede impedir una captura de pantalla; la marca de agua y la
+  baja resolución hacen que la captura no sirva.
+- **Vista animada gratis:** sobre la imagen se reproduce la animación del texto
+  y un movimiento suave de cámara (Remotion Player, en el navegador, sin
+  costo), para que el cliente vea cómo va a quedar antes de pagar el video.
+- Cada imagen nueva cuesta 3 créditos. Se puede saltar e ir directo al video.
+
+## 8. Motion graphics que responden al video
+
+### La referencia: Higgsfield con Claude Opus 5.5
+
+En la demo, un diseño editorial animado ("Best Album '26"):
+
+- tipografía enorme y condensada;
+- el título pasa detrás y delante de la persona (la persona está recortada en
+  su propia capa);
+- un garabato a mano en verde lima;
+- etiquetas y textos pequeños de revista;
+- íconos 3D cromados;
+- una cámara que se acerca y se inclina sobre la composición.
+
+Se hizo con el MCP de Higgsfield y su plugin de After Effects: Claude genera las
+imágenes, quita fondos, arma la composición, anima las capas y entrega un
+proyecto `.aep` editable.
+
+Eso necesita After Effects de escritorio, el plugin instalado y una cuenta de
+Higgsfield, así que no se puede correr en un servidor para cada cliente. El
+equivalente de Oniric es **Remotion**: la composición también es editable (son
+datos y código), se ve en vivo en el navegador y se renderiza en un servidor.
+
+### Cómo se hace en Oniric
+
+1. **Análisis del video** (después de generarlo):
+   - cortes y tiempos de cada toma (ffmpeg);
+   - un cuadro cada medio segundo, leído por el modelo de texto: dónde está el
+     sujeto, qué zonas quedan libres en cada momento, colores dominantes y los
+     momentos sin acción para el texto;
+   - **recorte del sujeto** en cada cuadro (una máscara), para poner el título
+     detrás del sujeto como en la demo y que nada tape la cara ni el producto.
+2. **Plan de animación.** El modelo de texto elige y ajusta piezas de una
+   **biblioteca propia de animaciones hechas por diseñadores**:
+   - tipografía cinética;
+   - garabatos y subrayados a mano;
+   - etiquetas y bloques editoriales;
+   - stickers e íconos;
+   - llamadas que señalan el producto;
+   - precios y cuentas regresivas;
+   - cierre con el logo.
+
+   Cada pieza entra con los cortes de la toma, en las zonas libres, con los
+   colores del video y de Mi marca. La IA dirige, no dibuja: por eso no se ve
+   como un diseño hecho por IA.
+
+3. **Vista en vivo y cambios:** el cliente cambia el texto o el estilo y lo ve
+   al instante en el navegador.
+4. **Render final** en un servidor con Remotion.
+
+Estilos de animación para empezar (se aprueban sobre los bocetos): **Portada de
+revista** (como la demo), **De barrio** (cálido, a mano) y **Oferta relámpago**
+(rápido, precio y cuenta regresiva).
+
+### Costo por anuncio de 10 s (al proveedor)
+
+| Paso                      | Herramienta                                                                           | Costo aproximado                        |
+| ------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
+| Cortes y tiempos          | ffmpeg, en el mismo servidor del render                                               | US$0                                    |
+| Lectura de cuadros y plan | Modelo de texto con imágenes                                                          | menos de US$0,015                       |
+| Recorte del sujeto        | API de recorte de video (Bria en fal.ai: US$0,0042 por segundo; otras, hasta US$0,01) | US$0,04 a 0,10                          |
+| Render (hasta 3)          | Remotion Lambda (en su ejemplo, ≈ US$0,02 por minuto de video)                        | menos de US$0,01                        |
+| Voz en off (opcional)     | ElevenLabs u OpenAI                                                                   | US$0,02 a 0,05                          |
+| **Total**                 |                                                                                       | **≈ US$0,07 a 0,18 (14 a 36 créditos)** |
+
+- TODO: ver en la consola de Higgsfield si su API ofrece recorte de fondo,
+  voz, música y efectos (su MCP los tiene). Sería una sola cuenta para todo.
+- Por decidir: dónde renderizar. Recomendación: Remotion Lambda (cuenta de
+  AWS, se paga por uso y Remotion estima el costo antes de cada render).
+
+## 9. Cómo se cobra la edición
+
+- **La edición es una parte más del precio** en `lib/billing`: su costo
+  estimado (análisis, recorte, hasta 3 renders y la voz o la música si se
+  eligen) pasa por los mismos factores que el video (ISD, banco y margen). Se
+  reserva con el video y se reembolsa si falla. Oniric nunca la absorbe.
+- **Por costo, no por porcentaje del video.** El costo de la edición depende de
+  los segundos y de las opciones, no del modelo de video. Un porcentaje fijo
+  cobraría de más en Cine: el 10 % de 1.252 créditos son 125 créditos por la
+  misma edición que en Rápido cuesta unos 13. Si el dueño prefiere un
+  porcentaje mínimo, se agrega como ajuste en el admin.
+- **Al cliente, un solo precio** con "¿Qué incluye?" (video, animación del texto
+  adaptada al video, hasta 3 cambios del texto), sin montos por partida. El
+  desglose queda en el admin y en el registro de créditos.
+- **Cambios:** cambiar el texto nunca vuelve a cobrar el video ni el análisis.
+  Los 3 primeros renders están incluidos; desde el cuarto, 1 crédito cada uno.
+- **Preparación** (propuesta, con la misma regla): la conversación, las
+  búsquedas en internet y las fichas visuales cuestan de US$0,01 a 0,03 por
+  anuncio. Se suman al precio de cada anuncio como un componente fijo pequeño,
+  en vez de cobrarse aparte.
+
+Ejemplo, Pro de 10 s: video ≈ 86 créditos + edición ≈ 13 = **≈ 99 créditos**,
+más la imagen de prueba (3).
+
+## 10. Fase C: construcción con el simulador
 
 En este orden, cada paso con su PR y sus pruebas, sin gastar saldo real:
 
@@ -185,15 +335,24 @@ En este orden, cada paso con su PR y sus pruebas, sin gastar saldo real:
    evaluación.
 2. **Proveedor de texto:** una interfaz `TextProvider` como
    `GenerationProvider`, con GPT-6 Luna y un simulador para desarrollo y
-   pruebas. TODO: confirmar el id del modelo y si acepta imágenes;
-   `OPENAI_API_KEY` todavía no se ve en esta sesión del entorno de Claude Code
-   (hace falta una sesión nueva).
+   pruebas. TODO: confirmar el id del modelo y si acepta imágenes.
 3. **Conversación guiada** con respuestas dinámicas y opciones de respaldo.
-4. **Búsqueda de inspiración** con una interfaz por fuente (simuladas en
-   pruebas). Claves nuevas: `YOUTUBE_API_KEY` y `PEXELS_API_KEY`, gratis; se
-   cargan en Vercel y en el entorno, nunca en el repositorio.
+4. **Búsqueda de inspiración y fichas visuales** con una interfaz por fuente
+   (simuladas en pruebas). Claves nuevas: `YOUTUBE_API_KEY` y `PEXELS_API_KEY`,
+   gratis; se cargan en Vercel, nunca en el repositorio.
 5. **Director creativo:** insight, 3 ideas, guion por tomas y prompt detallado.
-6. **Tope de gasto y lote de evaluación** en el admin.
-7. **Capa de edición** con Remotion (falta decidir dónde renderizar).
+6. **Imagen de prueba** como primer cuadro, con marca de agua.
+7. **Precio con edición y preparación** en `lib/billing`.
+8. **Tope de gasto y lote de evaluación** en el admin.
+9. **Capa de motion graphics** con Remotion: biblioteca de animaciones,
+   análisis del video, recorte del sujeto, vista en vivo y render.
 
 Después, la **fase D**: pruebas pagadas en la app real con la rúbrica.
+
+## Fuentes
+
+- [Higgsfield y Claude: proyectos de After Effects editables](https://alphasignal.ai/news/higgsfield-lets-claude-build-fully-editable-after-effects-projects)
+  y [MCP de Higgsfield](https://higgsfield.ai/blog/Generate-AI-Videos-From-Claude-with-Higgsfield-MCP).
+- [Remotion Lambda: ejemplo de costo](https://remotion.dev/docs/lambda/cost-example).
+- [Recorte de fondo de video en fal.ai](https://fal.ai/learn/tools/best-background-remover-apis-2026).
+- [Políticas para desarrolladores de YouTube](https://developers.google.com/youtube/terms/developer-policies).
