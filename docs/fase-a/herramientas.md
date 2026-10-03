@@ -151,9 +151,9 @@ Opciones que se compararon (por millón de tokens, entrada / salida):
 | GPT-5.4 nano     | US$0,20 / 1,25 |
 | Claude Haiku 4.5 | US$1 / 5       |
 
-TODO: confirmar en la documentación de OpenAI que GPT-6 Luna acepta imágenes
-(para leer el tablero de inspiración). Hace falta una clave de OpenAI
-(`OPENAI_API_KEY`) en Vercel y en el entorno de Claude Code.
+Confirmado (octubre de 2026): el id es `gpt-6-luna` y acepta imágenes y
+salidas JSON estrictas. La clave `OPENAI_API_KEY` ya está en Vercel. Ver
+[../proveedor-de-texto.md](../proveedor-de-texto.md).
 
 ## Fuentes
 
