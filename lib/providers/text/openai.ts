@@ -259,7 +259,8 @@ function toInputMessage(message: TextMessage) {
   };
 }
 
-async function errorDetail(
+/** Código y mensaje de un error de la API de OpenAI (sin la clave). */
+export async function errorDetail(
   response: Response,
 ): Promise<{ code: string | null; message: string }> {
   try {
