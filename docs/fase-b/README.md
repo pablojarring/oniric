@@ -343,10 +343,12 @@ reemplace.
 
 **Tramo 1: la creatividad y el video** (la primera prueba pagada)
 
-1. Datos nuevos y `TextProvider` (GPT-6 Luna y su simulador). TODO: confirmar el
-   id del modelo y si acepta imágenes.
-2. Conversación guiada con respuestas dinámicas, y director creativo: insight,
-   3 ideas, guion por tomas y prompt detallado.
+1. `TextProvider` (GPT-6 Luna y su simulador). Hecho: el modelo es
+   `gpt-6-luna` y acepta imágenes y salidas estrictas
+   ([proveedor-de-texto.md](../proveedor-de-texto.md)).
+2. Datos de las sesiones creativas, conversación guiada con respuestas
+   dinámicas, y director creativo: insight, 3 ideas, guion por tomas y prompt
+   detallado.
 3. Imagen de prueba como primer cuadro (con marca de agua), video con Kling (ya
    integrado) y el precio nuevo con preparación y edición.
 4. Topes de gasto por proveedor y lote de evaluación en el admin.
