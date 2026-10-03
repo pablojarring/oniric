@@ -14,6 +14,7 @@ import {
   CreativeFlowError,
   generateCreativeIdeas,
   getCreativeSession,
+  listCreativeSessions,
   normalizeShots,
   resumeCreativeConversation,
   reviseCreativeScript,
@@ -252,6 +253,39 @@ describe("ideas y guion", () => {
         chooseCreativeIdea(testDb.db, deps, context, session.id, 3),
       ),
     ).toBe("invalidAnswer");
+  });
+});
+
+describe("sesiones recientes", () => {
+  it("lista las sesiones de la organización con su título, la última primero", async () => {
+    const first = await briefedSession();
+    let second = await briefedSession();
+    second = await setCreativeTier(testDb.db, context, second.id, "pro");
+    second = await generateCreativeIdeas(testDb.db, deps, context, second.id);
+    second = await chooseCreativeIdea(testDb.db, deps, context, second.id, 0);
+    const other = await createOrganization(testDb);
+    await startCreativeSession(
+      testDb.db,
+      deps,
+      { user: other.user, organization: other.organization },
+      { locale: "es" },
+    );
+
+    const sessions = await listCreativeSessions(testDb.db, context, {
+      limit: 5,
+    });
+    expect(sessions.map((session) => session.id)).toEqual([
+      second.id,
+      first.id,
+    ]);
+    expect(sessions[0]).toMatchObject({
+      status: "scripted",
+      title: second.script?.title,
+    });
+    expect(sessions[1]).toMatchObject({
+      status: "briefed",
+      title: "El pan de yuca de los domingos",
+    });
   });
 });
 

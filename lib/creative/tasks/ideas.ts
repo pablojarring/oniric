@@ -53,7 +53,9 @@ Rules:
     ],
     schema: creativeIdeasSchema,
     maxOutputTokens: 4_000,
-    mock: () => mockIdeas(business, brief, previousTitles.length),
+    // Cada tanda anterior dejó 3 títulos.
+    mock: () =>
+      mockIdeas(business, brief, Math.floor(previousTitles.length / 3) + 1),
   };
 }
 
@@ -62,7 +64,7 @@ function mockIdeas(
   brief: CreativeBrief,
   round: number,
 ): CreativeIdeasOutput {
-  const suffix = round > 0 ? ` (${round + 1})` : "";
+  const suffix = round > 1 ? ` (${round})` : "";
   return {
     insight: `Quienes compran en ${business.name} vuelven por la confianza de siempre.`,
     ideas: [
