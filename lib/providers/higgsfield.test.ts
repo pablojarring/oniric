@@ -330,6 +330,51 @@ describe("HiggsfieldProvider", () => {
       );
     });
 
+    it("sube un archivo con la URL prefirmada, sin mandar credenciales", async () => {
+      const api = fakeApi(
+        json({
+          public_url: "https://files.higgsfield.ai/p/foto.jpg",
+          upload_url: "https://upload.test/foto.jpg?firma=1",
+          content_type: "image/jpeg",
+          upload_headers: {
+            "Content-Type": "image/jpeg",
+            "x-amz-tagging": "retention=temporary",
+          },
+        }),
+        new Response(null, { status: 200 }),
+      );
+      const bytes = new Uint8Array([1, 2, 3]);
+
+      await expect(provider(api).uploadFile(bytes, "image/jpeg")).resolves.toBe(
+        "https://files.higgsfield.ai/p/foto.jpg",
+      );
+
+      const [create, upload] = api.calls;
+      expect(create?.url).toBe(
+        "https://api.higgsfield.ai/files/generate-upload-url",
+      );
+      expect(body(create)).toEqual({ content_type: "image/jpeg" });
+      expect(upload?.url).toBe("https://upload.test/foto.jpg?firma=1");
+      expect(upload?.init.method).toBe("PUT");
+      expect(upload?.init.body).toBe(bytes);
+      expect(header(upload, "x-amz-tagging")).toBe("retention=temporary");
+      expect(header(upload, "authorization")).toBeNull();
+    });
+
+    it("falla si la subida no se completa", async () => {
+      const api = fakeApi(
+        json({
+          public_url: "https://p.test/a.jpg",
+          upload_url: "https://u.test/a",
+        }),
+        new Response(null, { status: 403 }),
+      );
+      await expect(
+        provider(api).uploadFile(new Uint8Array([1]), "image/jpeg"),
+      ).rejects.toThrow("No se pudo subir el archivo a Higgsfield (403)");
+      expect(header(api.calls[1], "content-type")).toBe("image/jpeg");
+    });
+
     it("sin credenciales no llama a la API", async () => {
       const api = fakeApi();
       await expect(

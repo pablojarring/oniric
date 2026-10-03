@@ -26,6 +26,7 @@
 
 # misc
 .DS_Store
+/lab-output/
 *.pem
 
 # debug

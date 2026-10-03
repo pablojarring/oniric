@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #15).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #16).
 
 ## Dónde estamos
 
@@ -34,6 +34,7 @@ al terminar cada tarea.** Última actualización: 1 de octubre de 2026 (PR #15).
 | #13   | Nueva interfaz del modo pyme: menú y saldo, inicio, asistente, galería y recarga.       |
 | #14   | Proveedor real de Higgsfield, webhook firmado y foto encuadrada en el formato elegido.  |
 | #15   | Calendario comercial de Ecuador: próximas fechas, calendario y anuncios de temporada.   |
+| #16   | Laboratorio de prompts de Higgsfield (`pnpm higgsfield:lab`) y subida de fotos.         |
 
 ## Entornos
 
@@ -91,8 +92,15 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 
 1. **Higgsfield:** el proveedor ya está (PR #14, ver
    [higgsfield.md](./higgsfield.md)). Falta:
-   - una prueba pagada de cada plantilla, con permiso del dueño y un tope de
-     gasto, para validar calidad y costos (TODO(producto) de higgsfield.md);
+   - **la prueba pagada de cada plantilla**, para validar calidad, costos y el
+     prompt "limpio" (sin texto, con espacio para la capa propia). El dueño la
+     autorizó el 3 de octubre de 2026 y cargó **US$5** en Higgsfield. La clave
+     está como `HIGGSFIELD_TEST_KEY` en Vercel (la app no la lee) y en la
+     configuración del entorno de Claude Code (solo la ven las sesiones nuevas).
+     Siguiente paso: en una sesión nueva, `pnpm higgsfield:lab --dry-run`,
+     después `--budget 4.5` (con `--photo` si el dueño manda una foto real), y
+     mostrarle los resultados de `lab-output/` (ver
+     [higgsfield.md](./higgsfield.md#laboratorio-de-prompts-prueba-pagada));
    - el panel del saldo del proveedor con alerta y el reporte mensual para el
      contador (siguiente PR). El dinero va Payphone → Produbanco → tarjeta
      empresarial → saldo prepagado de Higgsfield (ISD 5 % en el pago al
@@ -109,12 +117,28 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      video debe salir sin texto y con espacio libre donde va la capa. Antes,
      la prueba pagada de Higgsfield (punto 1) para calibrar prompts y zonas
      libres con resultados reales.
-   - **Copy con IA:** aprobado en principio, con un modelo barato que no afecte
-     la rentabilidad. Propuesta: Claude Haiku 4.5 (US$1 por millón de tokens
-     de entrada y US$5 de salida, precio vigente al 25 de septiembre de 2026),
-     menos de medio centavo por texto. Va junto con la capa: el mismo paso
-     escribe el texto de la capa y la escena para Higgsfield. TODO(producto):
-     confirmar el modelo y si el texto cobra créditos o va incluido.
+   - **Copy con IA:** aprobado, con el modelo más barato y nuevo de Anthropic
+     **u OpenAI** (el dueño pidió no casarse con un proveedor). Precios por
+     millón de tokens (entrada/salida, octubre de 2026): GPT-5 nano US$0,05 /
+     0,40; GPT-5.4 nano US$0,20 / 1,25; Claude Haiku 4.5 US$1 / 5. Todos
+     cuestan menos de 1 crédito por texto. Propuesta: interfaz de copy
+     desacoplada del proveedor (como `GenerationProvider`, con mock) y prueba
+     a ciegas de los tres con 20 negocios reales. Va junto con la capa: el
+     mismo paso escribe el texto de la capa y la escena para Higgsfield.
+     TODO(producto): elegir el modelo y si el texto cobra créditos; hacen
+     falta las claves de OpenAI y/o Anthropic.
+   - **Tablero de inspiración** (idea del dueño, 3 de octubre de 2026): antes
+     de generar, el cliente arma un tablero con material de inspiración
+     (fotos, capturas de anuncios, colores, palabras de estilo) que sirve para
+     construir el prompt final de Higgsfield. Propuesta: paso opcional del
+     asistente, con estilos curados para quien no tenga referencias; un modelo
+     barato con visión resume el estilo (luz, colores, encuadre, ritmo) en un
+     brief editable. Ese brief alimenta el mismo paso que escribe la escena
+     para Higgsfield, el texto y el estilo de la capa. Las imágenes del
+     tablero solo se analizan; no se mandan a Higgsfield ni se copian marcas o
+     personas (CLAUDE.md §7). Se puede guardar como "Mi estilo" del negocio.
+     Después, opcional: una imagen de vista previa barata para aprobar antes
+     de pagar el video. TODO(producto): confirmar el alcance con el dueño.
    - Plantillas por industria ecuatoriana (menú del día, turismo bilingüe…).
    - Enlace de WhatsApp con seguimiento de clics y página del negocio.
    - Oniric por WhatsApp (foto por WhatsApp, anuncio de vuelta). TODO(producto):
