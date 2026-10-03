@@ -127,8 +127,18 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      mismo paso escribe el texto de la capa y la escena para Higgsfield.
      TODO(producto): elegir el modelo y si el texto cobra créditos; hacen
      falta las claves de OpenAI y/o Anthropic.
-   - TODO(producto): el dueño tiene una idea para el paso previo al video;
-     preguntarle antes de diseñar la capa.
+   - **Tablero de inspiración** (idea del dueño, 3 de octubre de 2026): antes
+     de generar, el cliente arma un tablero con material de inspiración
+     (fotos, capturas de anuncios, colores, palabras de estilo) que sirve para
+     construir el prompt final de Higgsfield. Propuesta: paso opcional del
+     asistente, con estilos curados para quien no tenga referencias; un modelo
+     barato con visión resume el estilo (luz, colores, encuadre, ritmo) en un
+     brief editable. Ese brief alimenta el mismo paso que escribe la escena
+     para Higgsfield, el texto y el estilo de la capa. Las imágenes del
+     tablero solo se analizan; no se mandan a Higgsfield ni se copian marcas o
+     personas (CLAUDE.md §7). Se puede guardar como "Mi estilo" del negocio.
+     Después, opcional: una imagen de vista previa barata para aprobar antes
+     de pagar el video. TODO(producto): confirmar el alcance con el dueño.
    - Plantillas por industria ecuatoriana (menú del día, turismo bilingüe…).
    - Enlace de WhatsApp con seguimiento de clics y página del negocio.
    - Oniric por WhatsApp (foto por WhatsApp, anuncio de vuelta). TODO(producto):
