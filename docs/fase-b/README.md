@@ -183,6 +183,17 @@ transferencia), detrás de `lib/storage`, sin tocar el resto de la app.
   OpenAI US$10. El recálculo de precios, el audio con ElevenLabs v4 y la
   comparación entre créditos y suscripción están en
   [precios.md](./precios.md).
+- Sobre las pantallas del director (3 de octubre, PR #24): responder con
+  **notas de voz**; cuando la IA falla, un **mensaje al estilo de Claude** que
+  pide reintentar en un rato; **corregir el brief** a mano antes de las ideas.
+- **El director es el flujo de siempre:** cuando haga videos, "Crear anuncio"
+  lleva al director y el asistente viejo de 3 pasos se quita después de la
+  ronda 1.
+- **Se adelantan al tramo 1:** la **foto del producto** (paso 3, la usa la
+  imagen de prueba) y un **"¿Quién sale?" simple** (nadie, el personaje de la
+  marca, el dueño o una persona ficticia; PR #25). Lo demás del tramo 3 sigue
+  igual: búsqueda e inspiración, plantillas Oniric, tablero, "otra persona
+  real" con consentimiento, personajes Oniric y Mi marca.
 
 ## 6. Que las referencias de internet sirvan de verdad
 
@@ -348,10 +359,13 @@ reemplace.
    ([proveedor-de-texto.md](../proveedor-de-texto.md)).
 2. Datos de las sesiones creativas, conversación guiada con respuestas
    dinámicas, y director creativo: insight, 3 ideas, guion por tomas y prompt
-   detallado. Hecho en dos PRs: la lógica (#23) y las pantallas (#24)
+   detallado. Hecho en tres PRs: la lógica (#23), las pantallas (#24) y las
+   decisiones del dueño sobre ellas (#25: notas de voz, corregir el brief,
+   otras respuestas, confirmar el insight y "¿Quién sale?" simple)
    ([director-creativo.md](../director-creativo.md)).
-3. Imagen de prueba como primer cuadro (con marca de agua), video con Kling (ya
-   integrado) y el precio nuevo con preparación y edición.
+3. Foto del producto (y del dueño si elige salir), imagen de prueba como
+   primer cuadro (con marca de agua), video con Kling (ya integrado) y el
+   precio nuevo con preparación y edición.
 4. Topes de gasto por proveedor y lote de evaluación en el admin.
 
 → **Ronda 1:** se activa `HIGGSFIELD_API_KEY` en Vercel y se prueba la
@@ -367,8 +381,9 @@ Panadería La Esquina. El texto todavía va encima sin motion graphics.
 
 **Tramo 3: inspiración y marca**
 
-8. Búsqueda mixta y fichas visuales.
-9. Mi marca, personajes Oniric y tablero.
+8. Búsqueda mixta, fichas visuales y plantillas Oniric (pantallas 5 y 6).
+9. Mi marca, tablero, personajes Oniric y "¿Quién sale?" completo, con otra
+   persona real y su consentimiento (pantallas 7 a 10).
 
 → **Ronda 3:** Estudio Brillo, con la estilista ficticia y un tablero.
 

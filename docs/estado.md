@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #24).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #25).
 
 ## Dónde estamos
 
@@ -47,6 +47,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #24).
 | #22   | Fase C, tramo 1: `TextProvider` con GPT-6 Luna y su simulador.                          |
 | #23   | Fase C, tramo 1: lógica del director creativo (conversación, ideas, guion y prompts).   |
 | #24   | Fase C, tramo 1: pantallas del director creativo, del inicio al guion.                  |
+| #25   | Fase C, tramo 1: voz, corregir el brief, otras respuestas, insight y ¿Quién sale?       |
 
 ## Entornos
 
@@ -165,25 +166,29 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      fecha de fin.
    - **Fase C, construcción** con el simulador, por tramos (sección 10 de
      [fase-b/README.md](./fase-b/README.md)). La primera prueba pagada es al
-     final del tramo 1 (5 PRs); cada tramo cierra con una ronda de pruebas en
+     final del tramo 1 (6 PRs); cada tramo cierra con una ronda de pruebas en
      la app real. Tramo 1, paso 1 hecho: `TextProvider` con GPT-6 Luna y su
-     simulador (PR #22, [proveedor-de-texto.md](./proveedor-de-texto.md));
-     Paso 2 hecho: datos y lógica del director creativo (PR #23) y sus
-     pantallas (PR #24, [director-creativo.md](./director-creativo.md)): en
-     `/director` el dueño conversa, elige el nivel, recibe 3 ideas y el guion,
-     y puede pedir cambios. La entrada está en el inicio, como "Nuevo · Beta".
-     En Vercel usa GPT-6 Luna (gasta saldo real de OpenAI, menos de un
-     centavo por sesión típica, con el límite de 120 pedidos por hora y
-     organización); el tope de gasto llega en el paso 4. La migración
-     `20261003214021_creative_sessions.sql` quedó aplicada en `oniric-prod`
-     el 3 de octubre, antes de probar `/director`. Decisiones del
-     dueño del 3 de octubre, para el PR siguiente: responder con notas de voz,
-     mensaje de falla al estilo de Claude ("reintenta en un rato") y corregir
-     el brief a mano ([director-creativo.md](./director-creativo.md)).
-     Después: paso 3, imagen de prueba como primer cuadro, video con Kling y
-     precio. Se trabaja en una sola sesión
-     de Claude Code: las pruebas usan simuladores y las pruebas reales corren
-     en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
+     simulador (PR #22, [proveedor-de-texto.md](./proveedor-de-texto.md)).
+     Paso 2 hecho: datos y lógica del director creativo (PR #23), sus
+     pantallas (PR #24) y las decisiones del dueño sobre ellas (PR #25):
+     notas de voz con `gpt-transcribe`, mensaje de falla al estilo de Claude,
+     corregir el brief a mano, otras respuestas, confirmar el insight y un
+     "¿Quién sale?" simple ([director-creativo.md](./director-creativo.md)).
+     En `/director` el dueño conversa, elige el nivel y quién sale, recibe 3
+     ideas y el guion, y puede pedir cambios. La entrada está en el inicio,
+     como "Nuevo · Beta". En Vercel usa GPT-6 Luna (gasta saldo real de
+     OpenAI, menos de un centavo por sesión típica, con el límite de 120
+     pedidos por hora y organización); el tope de gasto llega en el paso 4.
+     Migraciones del director en `oniric-prod`:
+     `20261003214021_creative_sessions.sql` aplicada el 3 de octubre;
+     `20261003233641_creative_featuring.sql` (PR #25) hay que aplicarla
+     **antes de mergear el #25**. Decisiones del dueño: cuando el director
+     haga videos, "Crear anuncio" lleva siempre a él y el asistente viejo se
+     quita después de la ronda 1; la foto del producto entra en el paso 3; el
+     tramo 3 sigue igual. Siguiente: paso 3, foto del producto, imagen de
+     prueba como primer cuadro, video con Kling y precio. Se trabaja en una
+     sola sesión de Claude Code: las pruebas usan simuladores y las pruebas
+     reales corren en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
      la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa
      cuando hagan falta, para cargarlas en Vercel.
    - **Fase D, pruebas pagadas en la app real** con la rúbrica. Negocios:
