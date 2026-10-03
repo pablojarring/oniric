@@ -76,6 +76,7 @@ genera el propio flujo de Oniric: eso es lo que se está probando.
 Cuidado: nada de "antes y después" generado por IA presentado como real (sería
 engañoso).
 
-**Presupuesto:** con US$5, unos 8 videos de 10 s con Kling 3.0 (≈ US$0,42
-cada uno) más las imágenes (≈ US$0,014 cada una). Los modelos caros (Cinema
-Studio ≈ US$2 por 10 s) solo si el dueño decide gastar más.
+**Presupuesto:** US$15 en Higgsfield (actualizado el 3 de octubre de 2026).
+Este plan de pruebas cuesta ≈ US$6,10 con un Cine de 10 s incluido; el resto
+queda para iterar. Detalle en [../fase-b/precios.md](../fase-b/precios.md),
+sección 5.
