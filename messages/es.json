@@ -197,6 +197,12 @@
       "title": "Fechas que venden",
       "description": "Las próximas fechas comerciales de Ecuador, con la idea del anuncio lista.",
       "viewAll": "Ver calendario"
+    },
+    "director": {
+      "eyebrow": "Nuevo",
+      "title": "¿No sabes qué anunciar? Te ayudo con la idea",
+      "description": "El director creativo te hace unas pocas preguntas y te propone 3 ideas con su guion.",
+      "cta": "Probar el director creativo"
     }
   },
   "EmpresaHome": {
@@ -977,6 +983,172 @@
       "title": "Calendario comercial",
       "description": "Las fechas que más venden en Ecuador durante los próximos 12 meses. Para cada una te sugerimos una plantilla y un texto: publica unos días antes.",
       "eyebrow": "Ecuador"
+    }
+  },
+  "Director": {
+    "steps": {
+      "label": "Pasos del director creativo",
+      "conversation": "Cuéntame",
+      "tier": "Nivel",
+      "ideas": "Ideas",
+      "script": "Guion"
+    },
+    "start": {
+      "eyebrow": "Nuevo · Beta",
+      "title": "Director creativo",
+      "description": "Cuéntame de tu negocio con unas pocas preguntas y te propongo 3 ideas de anuncio con su guion, listas para producir.",
+      "format": "¿Dónde lo vas a publicar?",
+      "season": "Anuncio para {season}",
+      "submit": "Empezar",
+      "starting": "Preparando la primera pregunta…",
+      "howTitle": "Cómo funciona",
+      "how": {
+        "conversation": "Te hago hasta 6 preguntas, con respuestas de un toque.",
+        "tier": "Eliges qué tan pro lo quieres.",
+        "ideas": "Te propongo 3 ideas distintas; si no te convencen, pides otras.",
+        "script": "Te escribo el guion toma por toma y lo ajustamos juntos."
+      }
+    },
+    "recent": {
+      "title": "Retoma donde te quedaste",
+      "untitled": "Anuncio sin terminar",
+      "status": {
+        "conversation": "Conversando",
+        "briefed": "Eligiendo el nivel",
+        "ideas": "Eligiendo la idea",
+        "scripted": "Guion listo"
+      }
+    },
+    "session": {
+      "back": "Volver al director creativo",
+      "eyebrow": "Director creativo",
+      "titles": {
+        "conversation": "Cuéntame de tu anuncio",
+        "briefed": "¿Qué tan pro lo quieres?",
+        "ideas": "3 ideas para tu anuncio",
+        "scripted": "Tu guion"
+      },
+      "descriptions": {
+        "conversation": "Responde con un toque, escribe lo tuyo o deja que yo decida.",
+        "briefed": "Esto es lo que entendí. Elige el nivel y te propongo 3 ideas.",
+        "ideas": "Elige la que más te guste o pide otras 3.",
+        "scripted": "Revisa cada toma. Si quieres cambiar algo, pídelo con tus palabras."
+      }
+    },
+    "conversation": {
+      "history": "Tus respuestas",
+      "progress": "Pregunta {current} de {max} como máximo",
+      "thinking": "Pensando…",
+      "options": "Respuestas sugeridas",
+      "ownAnswer": "Tu respuesta",
+      "ownAnswerPlaceholder": "O escribe la tuya…",
+      "send": "Enviar",
+      "decide": "No sé, decide tú",
+      "decided": "Decide tú",
+      "skip": "Saltar",
+      "skipped": "Saltada",
+      "interrupted": "Tu última respuesta quedó guardada, pero el director creativo no alcanzó a responder.",
+      "retry": "Reintentar"
+    },
+    "brief": {
+      "title": "Esto entendí",
+      "fields": {
+        "objective": "Objetivo",
+        "product": "Qué anunciamos",
+        "differentiator": "Lo que lo hace especial",
+        "offer": "Oferta",
+        "audience": "Para quién",
+        "tone": "Tono",
+        "brandElements": "De tu marca",
+        "mustInclude": "Incluir",
+        "avoid": "Evitar"
+      }
+    },
+    "tier": {
+      "title": "Nivel del anuncio",
+      "description": "Más nivel es más tomas y más producción.",
+      "recommended": "Recomendado",
+      "details": "{seconds} s · hasta {shots, plural, one {# toma} other {# tomas}}",
+      "priceLater": "Verás el precio antes de crear la imagen de prueba y el video.",
+      "thinking": "Pensando 3 ideas…",
+      "submit": "Ver 3 ideas"
+    },
+    "tiers": {
+      "rapido": {
+        "name": "Rápido",
+        "description": "Contenido del día a día: una escena, simple y directo."
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Anuncio para pauta: varias tomas, luz y cámara cuidadas, gancho fuerte."
+      },
+      "cine": {
+        "name": "Cine",
+        "description": "Campaña de marca: dirección de cine, look premium e historia memorable."
+      }
+    },
+    "ideas": {
+      "insight": "La verdad detrás de tu anuncio",
+      "more": "Otras 3 ideas",
+      "thinkingMore": "Pensando otras 3 ideas…",
+      "tier": "Nivel: {tier}",
+      "choose": "Elegir esta idea",
+      "chooseNamed": "Elegir la idea «{title}»",
+      "writing": "Escribiendo el guion…",
+      "chosen": "Idea elegida",
+      "angles": {
+        "humor": "Humor",
+        "emotional": "Emoción",
+        "demonstration": "Demostración",
+        "aspirational": "Aspiracional",
+        "other": "Otra mirada"
+      }
+    },
+    "script": {
+      "duration": "{seconds} s",
+      "shotTime": "{start}–{end} s",
+      "camera": "Cámara",
+      "sound": "Sonido",
+      "onScreenText": "Texto en pantalla",
+      "callToAction": "Cierre:",
+      "curious": {
+        "title": "Para curiosos: así se lo pedimos a la IA",
+        "description": "Va en inglés porque los modelos de video lo entienden mejor. El texto del anuncio se agrega después, en una capa aparte.",
+        "parts": {
+          "subject": "Protagonista",
+          "action": "Acción",
+          "environment": "Lugar",
+          "camera": "Cámara",
+          "lighting": "Luz",
+          "style": "Estilo",
+          "sound": "Sonido",
+          "constraints": "Restricciones"
+        }
+      },
+      "revise": {
+        "label": "¿Quieres cambiar algo?",
+        "placeholder": "Ej.: que el gato sea atigrado, o que pase de noche",
+        "previous": "{count, plural, one {Llevas # cambio} other {Llevas # cambios}}",
+        "thinking": "Aplicando tu cambio…",
+        "submit": "Aplicar cambio"
+      },
+      "otherIdea": "Elegir otra idea",
+      "hideIdeas": "Ocultar las ideas",
+      "next": {
+        "title": "Siguiente: imagen de prueba",
+        "description": "Muy pronto verás el primer cuadro de tu video, con marca de agua, antes de crearlo. Después llega el video con su texto animado.",
+        "soon": "Muy pronto"
+      }
+    },
+    "errors": {
+      "notFound": "No encontramos esta sesión. Empieza una nueva desde el director creativo.",
+      "invalidState": "Esta sesión ya avanzó. Recarga la página para ver dónde quedó.",
+      "invalidAnswer": "Revisa tu respuesta: no puede estar vacía ni pasar de 500 caracteres.",
+      "moderation": "Ese texto no se puede usar en un anuncio. Escríbelo de otra forma.",
+      "rateLimited": "Hiciste muchos pedidos en poco tiempo. Espera unos minutos y vuelve a intentar.",
+      "conflict": "La sesión cambió en otra pestaña. Recarga la página para continuar.",
+      "providerFailed": "El director creativo no respondió. Vuelve a intentarlo en un momento.",
+      "unexpected": "Algo salió mal. Vuelve a intentarlo."
     }
   }
 }

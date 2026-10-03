@@ -25,3 +25,10 @@ export const mockupFormats: Record<AspectRatio, AdMockupProps["format"]> = {
   "1:1": "square",
   "16:9": "landscape",
 };
+
+/** Forma de cada formato en su tarjeta (alto fijo, ancho proporcional). */
+export const formatShapes: Record<AspectRatio, string> = {
+  "9:16": "h-10 w-[22.5px]",
+  "1:1": "size-8",
+  "16:9": "h-7 w-[49.8px]",
+};

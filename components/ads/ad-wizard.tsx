@@ -25,6 +25,7 @@ import {
 } from "react";
 
 import {
+  formatShapes,
   mockupFormats,
   templateVisuals,
 } from "@/components/ads/template-visuals";
@@ -79,13 +80,6 @@ const acceptedImageTypes = Object.keys(imageTypes).join(",");
 
 /** Largo máximo del texto en la vista previa, para que entre en el anuncio. */
 const PREVIEW_COPY_LENGTH = 90;
-
-/** Forma de cada formato en su tarjeta (alto fijo, ancho proporcional). */
-const formatShapes: Record<AspectRatio, string> = {
-  "9:16": "h-10 w-[22.5px]",
-  "1:1": "size-8",
-  "16:9": "h-7 w-[49.8px]",
-};
 
 const tileTones: Record<AdMockupProps["tone"], string> = {
   sunset: "from-orange-400 via-fuchsia-500 to-violet-700",
