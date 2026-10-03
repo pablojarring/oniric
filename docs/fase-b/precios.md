@@ -326,14 +326,33 @@ probar.
 
 No bloquea la fase C: es un trabajo de pagos aparte.
 
-### Decisiones pendientes
+### Decisiones del dueño (3 de octubre de 2026)
 
-- TODO(producto): aprobar el modelo mixto, los precios y los nombres de los
-  planes.
-- TODO(producto): si hay prueba gratis (por ejemplo, el primer anuncio Rápido
-  de regalo, ≈ US$0,32 por cliente nuevo).
-- TODO(producto): fuente de la música (Eleven Music o una biblioteca con
-  licencia).
+- **Modelo mixto: aprobado para probarlo**, con los planes de esta sección y
+  los paquetes actuales. Los nombres de los planes se pueden ajustar.
+- **Barra de uso que el cliente pueda verificar** (como en Claude u OpenAI):
+  - **En el encabezado:** el saldo con una barra pequeña del plan.
+  - **Página "Mi plan y uso":**
+    - el plan y la fecha de renovación;
+    - "Usaste 1.240 de 2.185 créditos" con su barra;
+    - lo que queda traducido en anuncios ("unos 8 anuncios Pro");
+    - los créditos de paquetes con su vencimiento.
+  - **Historial de movimientos:** cada anuncio, imagen de prueba, cambio de
+    texto, pago y devolución. Sale del registro inmutable `credit_transactions`
+    y se descarga en CSV.
+  - **Avisos al 80 % y al 100 %.** Al 100 % el cliente elige si recarga o sube
+    de plan; nunca se cobra de más sin su permiso.
+- **Prueba gratis: sí.** Propuesta:
+  - 70 créditos de bienvenida, que alcanzan para un anuncio Rápido de 10 s con
+    todo;
+  - una vez por negocio, con el correo verificado y sin tarjeta;
+  - vencen a los 30 días;
+  - cuesta ≈ US$0,32 por negocio que la usa, con un tope mensual de pruebas en
+    el admin (propuesta: US$5 al mes) para evitar abusos.
+- **Música:** tiene que sonar profesional; se descarta la biblioteca con
+  licencia. Se decide después de las primeras pruebas (por ejemplo, Eleven
+  Music u otro modelo de música con licencia comercial).
+- **Nueva era:** confirmado como estilo futurista o Y2K.
 - TODO: comisión de Payphone en los cobros con token (no figura en su
   documentación).
 
