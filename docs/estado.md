@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #20).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #21).
 
 ## Dónde estamos
 
@@ -43,6 +43,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #20).
 | #18   | Fase B del flujo creativo: bocetos navegables, búsqueda de inspiración y personajes.    |
 | #19   | Fase B: decisiones del dueño, motion graphics, imagen de prueba y cobro de la edición.  |
 | #20   | Fase B: recálculo de precios, audio con ElevenLabs v4, estilos y propuesta de planes.   |
+| #21   | Fase B cerrada: modelo mixto, barra de uso, prueba gratis y fase C por tramos.          |
 
 ## Entornos
 
@@ -153,12 +154,16 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      estilos aprobados (más psicodélico, nueva era, clásico, hogareño y estilo
      TikTok); recálculo de precios, audio con ElevenLabs v4 y propuesta de
      planes mensuales con créditos en [fase-b/precios.md](./fase-b/precios.md).
-     Pendientes del dueño: aprobar el modelo mixto (planes y paquetes), los
-     precios y nombres de los planes, la prueba gratis y la fuente de la
-     música. Riesgo: los precios de Higgsfield tienen hoy descuentos del 30 al
-     50 % sin fecha de fin.
-   - **Fase C, construcción** con el simulador, en el orden de la sección 10
-     de [fase-b/README.md](./fase-b/README.md). Se trabaja en una sola sesión
+     Después: modelo mixto aprobado para probarlo, con barra de uso
+     verificable; prueba gratis sí (propuesta: 70 créditos); la música debe
+     sonar profesional (sin biblioteca con licencia) y se decide después de
+     las primeras pruebas; "Nueva era" confirmado. **Fase B cerrada.**
+     Riesgo: los precios de Higgsfield tienen hoy descuentos del 30 al 50 % sin
+     fecha de fin.
+   - **Fase C, construcción** con el simulador, por tramos (sección 10 de
+     [fase-b/README.md](./fase-b/README.md)). La primera prueba pagada es al
+     final del tramo 1 (4 PRs); cada tramo cierra con una ronda de pruebas en
+     la app real. Se trabaja en una sola sesión
      de Claude Code: las pruebas usan simuladores y las pruebas reales corren
      en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
      la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa
