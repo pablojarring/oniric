@@ -25,7 +25,8 @@
     "db:reset": "supabase db reset",
     "db:studio": "drizzle-kit studio",
     "credits:grant": "tsx scripts/grant-credits.ts",
-    "admin:grant": "tsx scripts/admin-grant.ts"
+    "admin:grant": "tsx scripts/admin-grant.ts",
+    "higgsfield:lab": "tsx scripts/higgsfield-lab.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
