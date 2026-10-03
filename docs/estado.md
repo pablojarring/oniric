@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #16).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #17).
 
 ## Dónde estamos
 
@@ -12,9 +12,11 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #16).
 - **Modo empresa (fase 2): no empezado.** El workspace empresa es un marcador.
 - **Valor agregado del modo pyme** (pedido del dueño el 1 de octubre de 2026:
   que el producto no sea solo "videos con Higgsfield" y que tenga un plus
-  llamativo para empresarios ecuatorianos). Hoja de ruta acordada en
-  "Pendientes". Primer paso hecho: calendario comercial ecuatoriano (PR #15,
-  [temporadas.md](./temporadas.md)).
+  llamativo para empresarios ecuatorianos). Hecho: calendario comercial
+  ecuatoriano (PR #15, [temporadas.md](./temporadas.md)). En curso: el **flujo
+  creativo nuevo**, con la fase A (investigación) terminada (PR #17,
+  [fase-a/README.md](./fase-a/README.md)); sigue la fase B (diseño en
+  bocetos). Detalle en "Pendientes", punto 2.
 
 ## Historial de PRs (pablojarring/oniric)
 
@@ -35,6 +37,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #16).
 | #14   | Proveedor real de Higgsfield, webhook firmado y foto encuadrada en el formato elegido.  |
 | #15   | Calendario comercial de Ecuador: próximas fechas, calendario y anuncios de temporada.   |
 | #16   | Laboratorio de prompts de Higgsfield (`pnpm higgsfield:lab`) y subida de fotos.         |
+| #17   | Fase A del flujo creativo: investigación, manual creativo, rúbrica y herramientas.      |
 
 ## Entornos
 
@@ -87,64 +90,60 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
 - Pasarela: Payphone (botón por redirección). Facturación: manual en el
   Facturador SRI por ahora, con los datos de `/admin/purchases`.
 - Idiomas: español (por defecto) y portugués.
+- Flujo creativo (3 de octubre de 2026): "Mi marca" (perfil, personalidad,
+  colores y personaje opcional) pasa al modo pyme, aunque CLAUDE.md lo ubicaba
+  en la fase 2; nunca se obliga a crear lo que el negocio no tiene. Tablero de
+  inspiración por anuncio y como "Mi estilo"; plantillas de inspiración con
+  ejemplos; personas reales con consentimiento o ficticias por descripción;
+  respuestas de un toque generadas por la IA, nunca estáticas; modelos de
+  texto sin casarse con un proveedor.
 
 ## Pendientes, en orden sugerido
 
 1. **Higgsfield:** el proveedor ya está (PR #14, ver
    [higgsfield.md](./higgsfield.md)). Falta:
-   - **la prueba pagada de cada plantilla**, para validar calidad, costos y el
-     prompt "limpio" (sin texto, con espacio para la capa propia). El dueño la
-     autorizó el 3 de octubre de 2026 y cargó **US$5** en Higgsfield. La clave
-     está como `HIGGSFIELD_TEST_KEY` en Vercel (la app no la lee) y en la
-     configuración del entorno de Claude Code (solo la ven las sesiones nuevas).
-     Siguiente paso: en una sesión nueva, `pnpm higgsfield:lab --dry-run`,
-     después `--budget 4.5` (con `--photo` si el dueño manda una foto real), y
-     mostrarle los resultados de `lab-output/` (ver
-     [higgsfield.md](./higgsfield.md#laboratorio-de-prompts-prueba-pagada));
+   - **la prueba pagada**, que se hará **dentro de la app real** (fase D del
+     flujo creativo, punto 2), no con el script. El dueño cargó **US$5** en
+     Higgsfield y su clave está como `HIGGSFIELD_TEST_KEY` en Vercel (la app no
+     la lee) y en la configuración del entorno de Claude Code. Para la fase D
+     se activa Higgsfield para todas las cuentas (`HIGGSFIELD_API_KEY`), pero
+     solo después de construir el tope de gasto. `pnpm higgsfield:lab` queda
+     como herramienta interna opcional
+     ([higgsfield.md](./higgsfield.md#laboratorio-de-prompts-prueba-pagada));
    - el panel del saldo del proveedor con alerta y el reporte mensual para el
      contador (siguiente PR). El dinero va Payphone → Produbanco → tarjeta
      empresarial → saldo prepagado de Higgsfield (ISD 5 % en el pago al
      exterior). Higgsfield no documenta recarga automática ni un endpoint de
      saldo: TODO confirmarlo en su consola.
-2. **Valor agregado del modo pyme**, en este orden (acordado con el dueño):
+2. **Flujo creativo nuevo** (plan acordado con el dueño el 3 de octubre de
+   2026; ver [fase-a/README.md](./fase-a/README.md)). Objetivo: que un dueño
+   sin mentalidad de publicista llegue a anuncios creativos y de calidad
+   profesional, y que un publicista no pueda desacreditar los resultados.
+   - **Fase A, investigación:** hecha (PR #17). Manual creativo, rúbrica v1,
+     catálogo de herramientas con precios y experiencia del cliente.
+   - **Fase B, diseño:** bocetos navegables para aprobar antes de programar.
+     Incluye Mi marca, objetivo, material (plantillas de inspiración, tablero y
+     personas), 3 ideas, guion y vista previa, edición, y en el admin el lote
+     de evaluación y el tope de gasto.
+   - **Fase C, construcción** con el simulador: conversación guiada con
+     respuestas dinámicas, director creativo (modelo de texto neutral entre
+     proveedores), prompts detallados, capa de edición (texto, motion
+     graphics, voz y música), tope de gasto del proveedor y lote de
+     evaluación.
+   - **Fase D, pruebas pagadas en la app real** con la rúbrica. Negocios:
+     Panadería La Esquina (Quito) y Estudio Brillo, salón de belleza
+     ficticio (Guayaquil). Claude califica desde los enlaces del lote
+     (cuadros del video, sin audio) y se comparan las notas.
+   - **Fase E:** iterar prompts y capa; la capa se rehace sin volver a pagar
+     el video.
+   - Por decidir (lista en [fase-a/README.md](./fase-a/README.md)): aprobar
+     manual, rúbrica y plantillas de inspiración; modelo de texto; licencia
+     de Remotion y dónde renderizar; audio; primeros modelos a integrar.
    - **Calendario comercial:** hecho (PR #15). Siguiente paso: aviso por correo
-     unos días antes de cada fecha (necesita envío de correos desde la app,
-     baja de la lista y registro de avisos; ver
-     [temporadas.md](./temporadas.md)).
-   - **Texto, precio y logo sobre el anuncio** (capa propia, no de la IA). El
-     dueño pide tipografías y diseño actuales, que no tapen lo que genera
-     Higgsfield ni parezcan "hechos por IA", y coherencia con el prompt: el
-     video debe salir sin texto y con espacio libre donde va la capa. Antes,
-     la prueba pagada de Higgsfield (punto 1) para calibrar prompts y zonas
-     libres con resultados reales.
-   - **Copy con IA:** aprobado, con el modelo más barato y nuevo de Anthropic
-     **u OpenAI** (el dueño pidió no casarse con un proveedor). Precios por
-     millón de tokens (entrada/salida, octubre de 2026): GPT-5 nano US$0,05 /
-     0,40; GPT-5.4 nano US$0,20 / 1,25; Claude Haiku 4.5 US$1 / 5. Todos
-     cuestan menos de 1 crédito por texto. Propuesta: interfaz de copy
-     desacoplada del proveedor (como `GenerationProvider`, con mock) y prueba
-     a ciegas de los tres con 20 negocios reales. Va junto con la capa: el
-     mismo paso escribe el texto de la capa y la escena para Higgsfield.
-     TODO(producto): elegir el modelo y si el texto cobra créditos; hacen
-     falta las claves de OpenAI y/o Anthropic.
-   - **Tablero de inspiración** (idea del dueño, 3 de octubre de 2026): antes
-     de generar, el cliente arma un tablero con material de inspiración
-     (fotos, capturas de anuncios, colores, palabras de estilo) que sirve para
-     construir el prompt final de Higgsfield. Propuesta: paso opcional del
-     asistente, con estilos curados para quien no tenga referencias; un modelo
-     barato con visión resume el estilo (luz, colores, encuadre, ritmo) en un
-     brief editable. Ese brief alimenta el mismo paso que escribe la escena
-     para Higgsfield, el texto y el estilo de la capa. Las imágenes del
-     tablero solo se analizan; no se mandan a Higgsfield ni se copian marcas o
-     personas (CLAUDE.md §7). Se puede guardar como "Mi estilo" del negocio.
-     Después, opcional: una imagen de vista previa barata para aprobar antes
-     de pagar el video. TODO(producto): confirmar el alcance con el dueño.
-   - Plantillas por industria ecuatoriana (menú del día, turismo bilingüe…).
-   - Enlace de WhatsApp con seguimiento de clics y página del negocio.
-   - Oniric por WhatsApp (foto por WhatsApp, anuncio de vuelta). TODO(producto):
-     el dueño decide si inicia la verificación de la empresa en Meta.
-   - Kit de marca ligero en pyme. TODO(producto): CLAUDE.md lo ubica en la
-     fase 2 (empresa); el dueño decide si se adelanta.
+     unos días antes de cada fecha (ver [temporadas.md](./temporadas.md)).
+   - Después: plantillas por industria ecuatoriana, enlace de WhatsApp con
+     seguimiento de clics, y Oniric por WhatsApp (TODO(producto): el dueño
+     decide si inicia la verificación de la empresa en Meta).
 3. Redirigir `oniric-jade.vercel.app` al dominio propio (opcional).
 4. **Con el contador:** ISD, IVA de servicios digitales importados y retención
    en pagos al exterior; si algo no se recupera, subir el factor de costos del
