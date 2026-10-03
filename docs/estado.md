@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #18).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #19).
 
 ## Dónde estamos
 
@@ -16,8 +16,9 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #18).
   ecuatoriano (PR #15, [temporadas.md](./temporadas.md)). En curso: el **flujo
   creativo nuevo**: fase A (investigación) terminada (PR #17,
   [fase-a/README.md](./fase-a/README.md)); fase B (diseño) con bocetos
-  navegables y documento listos para aprobar (PR #18,
-  [fase-b/README.md](./fase-b/README.md)). Detalle en "Pendientes", punto 2.
+  navegables, documento (PR #18) y las decisiones del dueño sobre los bocetos
+  (PR #19, [fase-b/README.md](./fase-b/README.md)). Detalle en "Pendientes",
+  punto 2.
 
 ## Historial de PRs (pablojarring/oniric)
 
@@ -40,6 +41,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #18).
 | #16   | Laboratorio de prompts de Higgsfield (`pnpm higgsfield:lab`) y subida de fotos.         |
 | #17   | Fase A del flujo creativo: investigación, manual creativo, rúbrica y herramientas.      |
 | #18   | Fase B del flujo creativo: bocetos navegables, búsqueda de inspiración y personajes.    |
+| #19   | Fase B: decisiones del dueño, motion graphics, imagen de prueba y cobro de la edición.  |
 
 ## Entornos
 
@@ -105,7 +107,13 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
   la inspiración sale de una búsqueda inteligente y mixta (producto + estilo)
   en internet, además de plantillas propias; set propio de personajes
   ficticios, editables y reutilizables; se empieza con plantillas de imagen por
-  el límite de Supabase Free.
+  el límite de Supabase Free. Sobre los bocetos: recorrido, búsqueda mixta y
+  personajes aprobados; las referencias de internet deben llegar bien
+  interpretadas al modelo (ficha visual y referencia puente); la imagen de
+  prueba viene de Higgsfield, es el primer cuadro del video y lleva marca de
+  agua; la edición es motion graphics que responde al video, con nivel de
+  programa profesional; el texto y la edición se cobran dentro del precio en
+  créditos, nunca los absorbe Oniric.
 
 ## Pendientes, en orden sugerido
 
@@ -131,20 +139,19 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
    - **Fase A, investigación:** hecha (PR #17). Manual creativo, rúbrica v1,
      catálogo de herramientas con precios y experiencia del cliente.
    - **Fase B, diseño:** bocetos navegables (16 pantallas, Artifact privado
-     del dueño) y documento listos (PR #18,
-     [fase-b/README.md](./fase-b/README.md)). Falta la aprobación del dueño
-     (lista en la sección 5 del documento): recorrido, búsqueda mixta de
-     inspiración (plantillas Oniric, YouTube, TikTok y Pinterest con sus
-     reproductores oficiales, Pexels como referencia directa), personajes
-     Oniric, imagen de prueba, tope de gasto y lista de plantillas.
-   - **Fase C, construcción** con el simulador, en el orden de la sección 6
-     de [fase-b/README.md](./fase-b/README.md): modelo de datos,
-     `TextProvider` (GPT-6 Luna y simulador), conversación guiada, búsqueda
-     de inspiración, director creativo, tope de gasto y lote de evaluación, y
-     capa de edición con Remotion. `OPENAI_API_KEY` ya está en Vercel y en la
-     configuración del entorno de Claude Code (se ve desde una sesión nueva).
-     Claves nuevas para la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY`
-     (gratis).
+     del dueño) y documento (PR #18 y #19,
+     [fase-b/README.md](./fase-b/README.md)). Aprobados el recorrido, la
+     búsqueda mixta y los personajes; definidos la ficha visual de las
+     referencias, la imagen de prueba como primer cuadro, los motion graphics
+     y el cobro de la edición (secciones 5 a 9). Falta aprobar el tope de
+     gasto, la lista de plantillas y los estilos de animación; decidir dónde
+     renderizar (recomendado: Remotion Lambda).
+   - **Fase C, construcción** con el simulador, en el orden de la sección 10
+     de [fase-b/README.md](./fase-b/README.md). Se trabaja en una sola sesión
+     de Claude Code: las pruebas usan simuladores y las pruebas reales corren
+     en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
+     la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa
+     cuando hagan falta, para cargarlas en Vercel.
    - **Fase D, pruebas pagadas en la app real** con la rúbrica. Negocios:
      Panadería La Esquina (Quito) y Estudio Brillo, salón de belleza
      ficticio (Guayaquil). Claude califica desde los enlaces del lote
