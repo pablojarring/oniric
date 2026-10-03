@@ -52,6 +52,31 @@ TODO(producto), antes de vender:
   sin foto, porque estimar con foto necesitaría una foto real.
 - Decidir si los videos llevan sonido generado.
 
+## Laboratorio de prompts (prueba pagada)
+
+`pnpm higgsfield:lab` genera anuncios de prueba con Higgsfield real para
+calibrar las plantillas. **Gasta saldo real**, con tope. Usa
+`HIGGSFIELD_TEST_KEY` (la app no la lee), así que no activa el proveedor real
+en la app ni en los tests.
+
+| Comando                          | Qué hace                                                       |
+| -------------------------------- | -------------------------------------------------------------- |
+| `--dry-run`                      | Solo estima cada caso y el total (estimar no gasta).           |
+| `--budget 4.5`                   | Corre, en orden de prioridad, los casos que entran en US$4,50. |
+| `--photo foto.jpg`               | Agrega los casos con foto: la encuadra y la sube a Higgsfield. |
+| `--only oferta-limpio,promo-...` | Solo esos casos.                                               |
+
+- Compara el prompt de producción ("actual", que pide el texto dentro del
+  anuncio) con uno experimental ("limpio": sin texto, con espacio libre para
+  la capa de texto, precio y logo, y cámara lenta). Casos y prompts en
+  `scripts/lab/plan.ts`.
+- Los resultados (videos, imágenes y `results.json` con prompt, costo
+  estimado, estado y tiempo) quedan en `lab-output/<fecha>/`, ignorado por git.
+- Si Higgsfield responde que no hay saldo (403), se detiene.
+- Las fotos se suben con `POST /files/generate-upload-url`
+  (docs.higgsfield.ai/docs/concepts/file-uploads): la URL de subida vence en
+  una hora y nunca recibe nuestras credenciales.
+
 ## Webhook
 
 `POST /api/webhooks/higgsfield?job=<id>&sig=<firma>`.
