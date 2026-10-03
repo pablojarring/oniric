@@ -6,8 +6,8 @@ el guion por tomas con los prompts para Higgsfield. Usa el
 [proveedor de texto](./proveedor-de-texto.md): GPT-6 Luna, o el simulador en
 desarrollo y tests.
 
-Este paso incluye solo la lógica y los datos. Las pantallas llegan en el
-siguiente PR, y la imagen de prueba, el video y el precio en el paso 3.
+La lógica y los datos llegaron en el PR #23 y las pantallas en el PR #24. La
+imagen de prueba, el video y el precio llegan en el paso 3.
 
 ## Recorrido de una sesión
 
@@ -17,6 +17,50 @@ siguiente PR, y la imagen de prueba, el video y el precio en el paso 3.
 | `briefed`      | La conversación terminó y hay brief. El dueño elige el nivel.                      | `setCreativeTier`                                                          |
 | `ideas`        | Insight y 3 ideas con ángulos distintos. Se pueden pedir otras 3.                  | `generateCreativeIdeas`                                                    |
 | `scripted`     | Guion de la idea elegida, con sus prompts. Se puede revisar con un pedido.         | `chooseCreativeIdea`, `reviseCreativeScript`                               |
+
+## Pantallas
+
+Son del modo guiado (flag `creativeDirector` en `lib/segment`). Los textos
+están en `messages/*.json`, en el espacio `Director`, en español y portugués.
+
+- **Entrada:** una tarjeta "Nuevo" en el inicio lleva a `/director`.
+- **`/director`:**
+  - se elige el formato (9:16, 1:1 o 16:9) y se empieza;
+  - acepta `?season=` del calendario comercial;
+  - debajo están las últimas 5 sesiones para retomarlas
+    (`listCreativeSessions`).
+- **`/director/[id]`:** arriba van los 4 pasos (Cuéntame, Nivel, Ideas y
+  Guion) y debajo, la pantalla del estado de la sesión:
+  - **Conversación**, como un chat:
+    - la pregunta con sus respuestas de un toque;
+    - texto propio, "No sé, decide tú" y "Saltar";
+    - las respuestas anteriores quedan arriba;
+    - si el proveedor falla después de guardar la respuesta, aparece
+      "Reintentar".
+  - **Nivel:** lo que entendió el director (el brief) y la elección entre
+    Rápido, Pro (recomendado) y Cine.
+  - **Ideas:** el insight, las 3 ideas con su ángulo y "Otras 3 ideas".
+  - **Guion:**
+    - las tomas con sus tiempos, cámara, sonido y texto en pantalla, y el
+      cierre;
+    - "Para curiosos", con las partes del prompt en inglés;
+    - se puede pedir un cambio o elegir otra idea;
+    - el paso siguiente (imagen de prueba) aparece como "Muy pronto".
+- **Acciones** (`lib/creative/actions.ts`):
+  - validan lo que llega del navegador y llaman al servicio;
+  - refrescan la página, que vuelve a leer la sesión, también cuando fallan,
+    porque una respuesta puede haber quedado guardada;
+  - los prompts completos del video y del primer cuadro no se mandan al
+    navegador.
+
+Pendientes:
+
+- TODO(producto): responder con notas de voz (transcripción).
+- TODO(producto): opciones de respaldo curadas cuando el modelo falla. Hoy se
+  reintenta.
+- TODO(producto): corregir el brief a mano antes de las ideas.
+- El costo de texto de cada sesión queda en `text_usage` y entra al precio en
+  el paso 3. Hasta entonces no se cobra.
 
 ## Tareas del modelo
 

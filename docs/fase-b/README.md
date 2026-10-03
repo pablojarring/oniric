@@ -348,8 +348,8 @@ reemplace.
    ([proveedor-de-texto.md](../proveedor-de-texto.md)).
 2. Datos de las sesiones creativas, conversación guiada con respuestas
    dinámicas, y director creativo: insight, 3 ideas, guion por tomas y prompt
-   detallado. En dos PRs: primero la lógica
-   ([director-creativo.md](../director-creativo.md)), después las pantallas.
+   detallado. Hecho en dos PRs: la lógica (#23) y las pantallas (#24)
+   ([director-creativo.md](../director-creativo.md)).
 3. Imagen de prueba como primer cuadro (con marca de agua), video con Kling (ya
    integrado) y el precio nuevo con preparación y edición.
 4. Topes de gasto por proveedor y lote de evaluación en el admin.
