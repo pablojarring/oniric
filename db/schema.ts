@@ -28,6 +28,12 @@ import { authUsers } from "drizzle-orm/supabase";
 
 import type { Locale } from "../i18n/config";
 import type { AdBrief } from "../lib/ads/types";
+import type { CreativeBrief, QualityTier } from "../lib/creative/schemas";
+import type {
+  ConversationTurn,
+  CreativeIdeas,
+  CreativeScript,
+} from "../lib/creative/types";
 import type { StoredOutput } from "../lib/generation/types";
 import type {
   Country,
@@ -36,7 +42,11 @@ import type {
   TeamType,
   VideoPurpose,
 } from "../lib/onboarding/options";
-import type { GenerationRequest } from "../lib/providers/generation-provider";
+import type {
+  AspectRatio,
+  GenerationRequest,
+} from "../lib/providers/generation-provider";
+import type { SeasonId } from "../lib/seasons";
 
 export const segmentEnum = pgEnum("segment", ["pyme", "empresa"]);
 
@@ -370,6 +380,87 @@ export const creditPurchases = pgTable(
   ],
 ).enableRLS();
 
+// --- Flujo creativo (docs/fase-b/README.md) --------------------------------
+
+export const creativeSessionStatusEnum = pgEnum("creative_session_status", [
+  /** El director creativo está preguntando. */
+  "conversation",
+  /** La conversación terminó: hay brief y falta pedir las ideas. */
+  "briefed",
+  /** Hay 3 ideas para elegir. */
+  "ideas",
+  /** Hay guion y prompts de la idea elegida. */
+  "scripted",
+]);
+
+/**
+ * Un anuncio en preparación con el director creativo: la conversación, el
+ * brief, las ideas y el guion. Ver docs/director-creativo.md.
+ */
+export const creativeSessions = pgTable(
+  "creative_sessions",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    organizationId: uuid()
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    createdBy: uuid().references(() => users.id, { onDelete: "set null" }),
+    status: creativeSessionStatusEnum().notNull().default("conversation"),
+    /** Idioma de las preguntas, las ideas y el guion. */
+    locale: text().$type<Locale>().notNull(),
+    seasonId: text().$type<SeasonId>(),
+    aspectRatio: text().$type<AspectRatio>().notNull().default("9:16"),
+    tier: text().$type<QualityTier>(),
+    turns: jsonb()
+      .$type<ConversationTurn[]>()
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    brief: jsonb().$type<CreativeBrief>(),
+    ideas: jsonb().$type<CreativeIdeas>(),
+    /** Índice de la idea elegida (0 a 2). */
+    chosenIdea: integer(),
+    script: jsonb().$type<CreativeScript>(),
+    ...timestamps,
+  },
+  (table) => [
+    index().on(table.organizationId, table.createdAt),
+    check(
+      "creative_sessions_chosen_idea",
+      sql`${table.chosenIdea} is null or ${table.chosenIdea} between 0 and 2`,
+    ),
+  ],
+).enableRLS();
+
+/**
+ * Registro de cada pedido al proveedor de texto, con su costo. Sirve para el
+ * precio de la preparación, el límite de uso y el tope de gasto por proveedor.
+ */
+export const textUsage = pgTable(
+  "text_usage",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    organizationId: uuid()
+      .notNull()
+      .references(() => organizations.id, { onDelete: "restrict" }),
+    sessionId: uuid().references(() => creativeSessions.id, {
+      onDelete: "set null",
+    }),
+    /** `TextProvider.id` (`openai`, `mock`). */
+    provider: text().notNull(),
+    model: text().notNull(),
+    task: text().notNull(),
+    inputTokens: integer().notNull(),
+    cachedInputTokens: integer().notNull(),
+    outputTokens: integer().notNull(),
+    costMicroUsd: bigint({ mode: "number" }).notNull(),
+    createdAt: timestamps.createdAt,
+  },
+  (table) => [
+    index().on(table.organizationId, table.createdAt),
+    index().on(table.sessionId),
+  ],
+).enableRLS();
+
 export type Segment = (typeof segmentEnum.enumValues)[number];
 export type MembershipRole = (typeof membershipRoleEnum.enumValues)[number];
 export type User = typeof users.$inferSelect;
@@ -383,3 +474,6 @@ export type ModelPricing = typeof modelPricing.$inferSelect;
 export type CreditPurchase = typeof creditPurchases.$inferSelect;
 export type CreditPurchaseStatus =
   (typeof creditPurchaseStatusEnum.enumValues)[number];
+export type CreativeSession = typeof creativeSessions.$inferSelect;
+export type CreativeSessionStatus =
+  (typeof creativeSessionStatusEnum.enumValues)[number];

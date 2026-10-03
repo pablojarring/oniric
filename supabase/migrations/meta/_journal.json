@@ -57,6 +57,13 @@
       "when": 1790793345759,
       "tag": "20260930183545_credit_purchases",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791063621221,
+      "tag": "20261003214021_creative_sessions",
+      "breakpoints": true
     }
   ]
 }

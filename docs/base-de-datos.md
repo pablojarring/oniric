@@ -65,6 +65,13 @@ Créditos y generaciones (detalle en [creditos.md](./creditos.md)):
 | `model_pricing`       | Margen y precio mínimo por proveedor, modelo y segmento, con el admin que lo cambió. |
 | `generation_jobs`     | Cada generación: estado, proveedor, costo, precio, outputs, error.                   |
 
+Flujo creativo (detalle en [director-creativo.md](./director-creativo.md)):
+
+| Tabla               | Qué guarda                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `creative_sessions` | Cada anuncio en preparación: conversación, brief, nivel, ideas, idea elegida y guion.           |
+| `text_usage`        | Cada pedido al proveedor de texto (GPT-6 Luna), con tokens y costo, para el precio y el límite. |
+
 Los anuncios del asistente pyme guardan además en `generation_jobs` la
 plantilla (`template_id`), lo que completó el cliente (`brief`) y la ruta de la
 foto del producto (`input_image_path`). Ver [asistente.md](./asistente.md).

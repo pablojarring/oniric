@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 Resumen para retomar el trabajo sin el historial de conversaciones. **Actualízalo
-al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #22).
+al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #23).
 
 ## Dónde estamos
 
@@ -45,6 +45,7 @@ al terminar cada tarea.** Última actualización: 3 de octubre de 2026 (PR #22).
 | #20   | Fase B: recálculo de precios, audio con ElevenLabs v4, estilos y propuesta de planes.   |
 | #21   | Fase B cerrada: modelo mixto, barra de uso, prueba gratis y fase C por tramos.          |
 | #22   | Fase C, tramo 1: `TextProvider` con GPT-6 Luna y su simulador.                          |
+| #23   | Fase C, tramo 1: lógica del director creativo (conversación, ideas, guion y prompts).   |
 
 ## Entornos
 
@@ -166,8 +167,11 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      final del tramo 1 (4 PRs); cada tramo cierra con una ronda de pruebas en
      la app real. Tramo 1, paso 1 hecho: `TextProvider` con GPT-6 Luna y su
      simulador (PR #22, [proveedor-de-texto.md](./proveedor-de-texto.md));
-     todavía ninguna pantalla lo usa. Siguiente: datos de las sesiones
-     creativas, conversación guiada y director creativo. Se trabaja en una sola sesión
+     todavía ninguna pantalla lo usa. Paso 2, primera parte, hecha: datos y
+     lógica del director creativo (PR #23,
+     [director-creativo.md](./director-creativo.md)), sin pantallas.
+     Siguiente: las pantallas de la conversación, el nivel, las ideas y el
+     guion. Se trabaja en una sola sesión
      de Claude Code: las pruebas usan simuladores y las pruebas reales corren
      en la app de Vercel, que ya tiene `OPENAI_API_KEY`. Claves nuevas para
      la búsqueda: `YOUTUBE_API_KEY` y `PEXELS_API_KEY` (gratis); Claude avisa
