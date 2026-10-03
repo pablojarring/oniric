@@ -174,10 +174,9 @@ Ver [despliegue.md](./despliegue.md) para el procedimiento completo.
      y puede pedir cambios. La entrada está en el inicio, como "Nuevo · Beta".
      En Vercel usa GPT-6 Luna (gasta saldo real de OpenAI, menos de un
      centavo por sesión típica, con el límite de 120 pedidos por hora y
-     organización); el tope de
-     gasto llega en el paso 4. **Antes de mergear el #24** hay que aplicar en
-     `oniric-prod` la migración `20261003214021_creative_sessions.sql` (del
-     PR #23, todavía no aplicada): sin ella `/director` falla. Decisiones del
+     organización); el tope de gasto llega en el paso 4. La migración
+     `20261003214021_creative_sessions.sql` quedó aplicada en `oniric-prod`
+     el 3 de octubre, antes de probar `/director`. Decisiones del
      dueño del 3 de octubre, para el PR siguiente: responder con notas de voz,
      mensaje de falla al estilo de Claude ("reintenta en un rato") y corregir
      el brief a mano ([director-creativo.md](./director-creativo.md)).
